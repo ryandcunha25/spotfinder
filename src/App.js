@@ -1,26 +1,37 @@
 import React from 'react';
-// import LoginRegister from './Components/LoginRegister';
-import "./Components/css/output.css"
+import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
+import "./Components/css/output.css";
 import SignUp from './Components/SignUp';
 import LoginPage from './Components/LoginPage';
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  Navigate,
-} from "react-router-dom";
 import HomePage from './Components/HomePage';
+import Navbar from './Components/Navbar';
 
+function AppContent() {
+  const location = useLocation();
 
+  // Define routes where the Navbar should not be displayed
+  const noNavbarRoutes = ["/", "/signup"];
+
+  return (
+    <div>
+      {/* Conditionally render Navbar */}
+      {!noNavbarRoutes.includes(location.pathname) && <Navbar />}
+      
+      <div>
+        <Routes>
+          <Route exact path="/" element={<LoginPage />} />
+          <Route path="/signup" element={<SignUp />} />
+          <Route path="/homepage" element={<HomePage />} />
+        </Routes>
+      </div>
+    </div>
+  );
+}
 
 function App() {
   return (
     <Router>
-       <Routes>
-          <Route exact path="/" element={ <LoginPage />} />
-          <Route  path="/signup" element={  <SignUp />} />      
-          <Route  path="/homepage" element={  <HomePage />} />      
-        </Routes>
+      <AppContent />
     </Router>
   );
 }
