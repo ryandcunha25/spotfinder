@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import loginBg from './Assets/login_bg.png';
+import loginBg1 from './Assets/login_bg.jpg';
 import loginBg2 from './Assets/login_bg2.jpg';
 import {
     BrowserRouter as Router,
@@ -35,9 +36,9 @@ const LoginPage = () => {
         }
     };
     return (
-        <div className="w-full bg-cover bg-blend-darken" style={{ backgroundImage: `url(${loginBg2})` }}>
+        <div className="w-full bg-cover bg-blend-darken" style={{ backgroundImage: `url(${loginBg1})`,  }}>
             <section className="flex justify-center items-center min-h-screen w-full bg-center bg-cover"  >
-                <div className="relative w-[400px] h-[450px] bg-transparent border-2 border-white/50 rounded-2xl backdrop-blur-lg flex justify-center items-center">
+                <div className="relative filter-none z-10 backdrop-blur-lg w-[400px] h-[450px] bg-transparent border-2 border-white/50 rounded-2xl backdrop-blur-lg flex justify-center items-center">
                     <div className="w-full">
                         <form action="" className="w-full" onSubmit={handleSubmit}>
                             <h2 className="text-2xl text-black text-center font-bold mb-4">Login</h2>
@@ -48,7 +49,7 @@ const LoginPage = () => {
                             </div>
                             <div className="relative w-[310px] border-b-2 border-white mx-auto mb-8">
                                 <label className="text-sm text-black block mb-2">Password</label>
-                                <input type="password" required onChange={handleChange} name="password" placeholder="Enter password" className="w-full h-[50px] bg-transparent border-b-2 border-gray-200 outline-none placeholder-blue-300 text-black text-lg px-2 focus:ring-0 peer" />
+                                <input type="password" required onChange={handleChange} name="password" placeholder="Enter password" className="w-full h-[50px] bg-transparent border-b-2 border-gray-200 outline-none placeholder-gray-100 text-black text-lg px-2 focus:ring-0 peer" />
                                 <ion-icon name="lock-closed-outline" className="absolute right-2 top-[20px] text-black text-lg"></ion-icon>
                             </div>
                             <div className="flex justify-between text-black text-sm mb-4 px-[5px] pl-5">

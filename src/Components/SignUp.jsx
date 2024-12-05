@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import loginBg2 from './Assets/login_bg2.jpg';
+import loginBg1 from './Assets/login_bg.jpg';
 import {
     BrowserRouter as Router,
     Switch,
@@ -35,7 +36,7 @@ const SignUp = () => {
         }
     };
     return (
-        <div className="w-full bg-cover bg-blend-darken min-h-screen"  style={{ backgroundImage: `url(${loginBg2})` }}>
+        <div className="w-full bg-cover bg-blend-darken min-h-screen"  style={{ backgroundImage: `url(${loginBg1})` }}>
             <section className="flex justify-center items-center min-h-screen w-full bg-center bg-cover">
                 <div className="relative w-[500px] bg-transparent border-2 border-white/50 rounded-2xl backdrop-blur-lg p-6">
                     <form className="w-full" onSubmit={handleSubmit}>
