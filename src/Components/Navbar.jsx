@@ -1,4 +1,6 @@
 import React from "react";
+import { Link } from 'react-router-dom';
+
 
 const Navbar = () => {
     return (
@@ -7,9 +9,9 @@ const Navbar = () => {
             <header className="py-4 shadow-sm bg-white">
                 <div className="container flex items-center justify-evenly relative">
                     {/* Logo */}
-                    <a href="#">
+                    <Link to="#">
                         <img src="" alt="logo" className="w-32" />
-                    </a>
+                    </Link>
 
                     {/* Searchbar */}
                     <div className="w-full max-w-xl relative flex">
@@ -29,37 +31,37 @@ const Navbar = () => {
                     {/* Icons */}
                     <div className="flex items-center space-x-4">
                         {/* Wishlist */}
-                        <a
-                            href="wishlist.html"
+                        <Link
+                            to="wishlist.html"
                             className="text-center text-gray-700 hover:text-primary transition relative"
                         >
                             <div className="text-2xl">
                                 <i className="fa fa-heart"></i>
                             </div>
                             <div className="text-xs leading-3">Favourites</div>
-                        </a>
+                        </Link>
 
                         {/* Cart */}
-                        <a
-                            href="cart.html"
+                        <Link
+                            to="cart.html"
                             className="text-center text-gray-700 hover:text-primary transition relative"
                         >
                             <div className="text-2xl">
                                 <i className="fa fa-shopping-bag"></i>
                             </div>
                             <div className="text-xs leading-3">Bookings</div>
-                        </a>
+                        </Link>
 
                         {/* Account */}
-                        <a
-                            href="account.html"
+                        <Link
+                            to="account.html"
                             className="text-center text-gray-700 hover:text-primary transition relative"
                         >
                             <div className="text-2xl">
                                 <i className="fa fa-user"></i>
                             </div>
                             <div className="text-xs leading-3">Account</div>
-                        </a>
+                        </Link>
                     </div>
                 </div>
             </header>
@@ -77,37 +79,37 @@ const Navbar = () => {
                     {/* Links for Navbar */}
                     <div className="flex items-center justify-between flex-grow pl-12">
                         <div className="flex items-center space-x-6 capitalize">
-                            <a
-                                href="index.html"
+                            <Link
+                                to="/homepage"
                                 className="text-gray-200 hover:text-white transition"
                             >
                                 Home
-                            </a>
-                            <a
-                                href="shop.html"
+                            </Link>
+                            <Link
+                                to="/spots"
                                 className="text-gray-200 hover:text-white transition"
                             >
                                 Spots
-                            </a>
-                            <a
-                                href="#"
+                            </Link>
+                            <Link
+                                to="#"
                                 className="text-gray-200 hover:text-white transition"
                             >
                                 About
-                            </a>
-                            <a
-                                href="#"
+                            </Link>
+                            <Link
+                                to="#"
                                 className="text-gray-200 hover:text-white transition"
                             >
                                 Contact Us
-                            </a>
+                            </Link>
                         </div>
-                        <a
-                            href="login.html"
+                        <Link
+                            to="login.html"
                             className="text-gray-200 hover:text-white transition"
                         >
                             Login/Register
-                        </a>
+                        </Link>
                     </div>
                 </div>
             </nav>

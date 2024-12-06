@@ -5,6 +5,7 @@ import SignUp from './Components/SignUp';
 import LoginPage from './Components/LoginPage';
 import HomePage from './Components/HomePage';
 import Navbar from './Components/Navbar';
+import Spots from './Components/Spots';
 
 function AppContent() {
   const location = useLocation();
@@ -22,6 +23,7 @@ function AppContent() {
           <Route exact path="/" element={<LoginPage />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/homepage" element={<HomePage />} />
+          <Route path="/spots" element={<Spots />} />
         </Routes>
       </div>
     </div>
