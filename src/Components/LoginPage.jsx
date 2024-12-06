@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import loginBg from './Assets/login_bg.png';
 import loginBg1 from './Assets/login_bg.jpg';
 import loginBg2 from './Assets/login_bg2.jpg';
 import {
