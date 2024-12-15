@@ -10,7 +10,6 @@ const SECRET_KEY = process.env.SECRET_KEY;
 // Sign Up
 router.post('/signup', async (req, res) => {
     const { first_name, last_name, phone, email, password, cpassword } = req.body;
-    console.log(req.body);
     if (password !== cpassword) {
         return res.status(400).json({ error: 'Passwords do not match!' });
       }
@@ -20,6 +19,7 @@ router.post('/signup', async (req, res) => {
             'INSERT INTO users (first_name, last_name, phone, email, password) VALUES ($1, $2, $3, $4, $5)',
             [first_name, last_name, phone, email, hashedPassword]
         );
+        console.log("\nNew User signed up -->",req.body);
         res.status(201).send('User registered successfully');
     } catch (err) {
         res.status(500).send('Error registering user');
@@ -29,9 +29,9 @@ router.post('/signup', async (req, res) => {
 // Login
 router.post('/login', async (req, res) => {
     const { email, password } = req.body;
-    console.log(req.body)
     try {
         const user = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
+        console.log("\nUser logging in -->",req.body);
         if (user.rows.length === 0) return res.status(404).send('User not found');
 
         const validPassword = await bcrypt.compare(password, user.rows[0].password);
