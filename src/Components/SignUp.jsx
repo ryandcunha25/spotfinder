@@ -28,7 +28,6 @@ const SignUp = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            console.log(formData.password)
             await axios.post('http://localhost:5000/authentication/signup', formData);
             alert('User registered successfully');
         } catch (err) {
