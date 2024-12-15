@@ -9,7 +9,7 @@ const Spots = () => {
         // Fetch venue data from the backend
         const fetchVenues = async () => {
             try {
-                const response = await fetch("http://localhost:5000/venues"); 
+                const response = await fetch("http://localhost:5000/venues");
                 const data = await response.json();
                 console.log(data)
                 setVenues(data);
@@ -98,24 +98,20 @@ const Spots = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
                 {venues.map((venue) => (
                     <div
-                        key={venue.id}
+                        key={venue.venue_id}
                         className="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700"
                     >
                         {/* Venue Image */}
-                        <Link to={`/venues/${venue.id}`}>
                             <img
                                 className="rounded-t-lg"
                                 src={require(`./Assets/${venue.image_url}`)}
-                                alt={venue.image_url}
-                            />  
-                        </Link>
+                                alt={venue.venue_id}
+                            />
                         <div className="p-5">
                             {/* Venue Name */}
-                            <Link to={`/venues/${venue.id}`}>
                                 <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
                                     {venue.name}
                                 </h5>
-                            </Link>
                             {/* Venue Location */}
                             <p className="mb-2 font-normal text-gray-700 dark:text-gray-400">
                                 <strong>Location:</strong> {venue.location}
@@ -130,7 +126,7 @@ const Spots = () => {
                             </p>
                             {/* Call-to-Action Button */}
                             <Link
-                                to={`/venues/${venue.id}`}
+                                to={`/venues/${venue.venue_id}`} 
                                 className="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                             >
                                 View Details
@@ -153,7 +149,7 @@ const Spots = () => {
                         </div>
                     </div>
                 ))}
-            </div>
+            </div>;
             {/*<div className="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
                 <Link to="#">
                     <img
