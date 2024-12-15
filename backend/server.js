@@ -17,5 +17,5 @@ app.use('/authentication', authRoutes);
 app.use("/venues", venueRoutes);
 
 app.listen(5000, () => {
-  console.log('\nServer is running on http://localhost:3000');
+  console.log('\nServer is running on http://localhost:5000');
 });
