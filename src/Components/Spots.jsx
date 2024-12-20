@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import venueimg from './Assets/venue1webp.webp';
 
 const Spots = () => {
     const [venues, setVenues] = useState([]);
@@ -102,16 +101,17 @@ const Spots = () => {
                         className="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700"
                     >
                         {/* Venue Image */}
-                            <img
-                                className="rounded-t-lg"
-                                src={require(`./Assets/${venue.image_url}`)}
-                                alt={venue.venue_id}
-                            />
+                        <img
+                            className="rounded-t-lg"
+                            // src={require(`./Assets/${venue.image_url}`)}
+                            src={require(`./Assets/${venue.image[0]}`)}
+                            alt={venue.venue_id}
+                        />
                         <div className="p-5">
                             {/* Venue Name */}
-                                <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-                                    {venue.name}
-                                </h5>
+                            <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+                                {venue.name}
+                            </h5>
                             {/* Venue Location */}
                             <p className="mb-2 font-normal text-gray-700 dark:text-gray-400">
                                 <strong>Location:</strong> {venue.location}
@@ -126,7 +126,7 @@ const Spots = () => {
                             </p>
                             {/* Call-to-Action Button */}
                             <Link
-                                to={`/venues/${venue.venue_id}`} 
+                                to={`/venues/${venue.venue_id}`}
                                 className="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                             >
                                 View Details
