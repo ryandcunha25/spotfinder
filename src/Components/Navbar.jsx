@@ -54,7 +54,7 @@ const Navbar = () => {
 
                         {/* Account */}
                         <Link
-                            to="account.html"
+                            to="/profile"
                             className="text-center text-gray-700 hover:text-primary transition relative"
                         >
                             <div className="text-2xl">
