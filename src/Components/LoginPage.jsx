@@ -14,6 +14,28 @@ import {
 
 const LoginPage = () => {
     const navigate = useNavigate();
+    const [user, setUser] = useState(null);
+
+    // useEffect(() => {
+    //     const fetchUserDetails = async () => {
+    //       const token = localStorage.getItem('authToken');
+
+    //       if (!token) return;
+
+    //       try {
+    //         const response = await axios.get('http://localhost:3000/authentication/user-details', {
+    //           headers: {
+    //             Authorization: token,
+    //           },
+    //         });
+    //         setUser(response.data);
+    //       } catch (error) {
+    //         console.error('Error fetching user details:', error);
+    //       }
+    //     };
+
+    //     fetchUserDetails();
+    //   }, []);
 
     const [formData, setFormData] = useState({
         email: '',
@@ -27,7 +49,11 @@ const LoginPage = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await axios.post('http://localhost:5000/authentication/login', formData);
+            const response = await axios.post('http://localhost:5000/authentication/login', formData);
+            const token = response.data.token;
+            localStorage.setItem('token', token);
+            console.log('User:', response.data);
+            setUser(user); // Store user details
             alert('User Logged in Successfully!');
             navigate('/homepage')
         } catch (err) {
@@ -35,7 +61,7 @@ const LoginPage = () => {
         }
     };
     return (
-        <div className="w-full bg-cover bg-blend-darken" style={{ backgroundImage: `url(${loginBg1})`,  }}>
+        <div className="w-full bg-cover bg-blend-darken" style={{ backgroundImage: `url(${loginBg1})`, }}>
             <section className="flex justify-center items-center min-h-screen w-full bg-center bg-cover"  >
                 <div className="relative filter-none z-10 backdrop-blur-lg w-[400px] h-[450px] bg-transparent border-2 border-white/50 rounded-2xl backdrop-blur-lg flex justify-center items-center">
                     <div className="w-full">
