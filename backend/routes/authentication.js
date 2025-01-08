@@ -5,9 +5,6 @@ const pool = require('../db');
 const router = express.Router();
 require('dotenv').config();
 
-
-const SECRET_KEY = process.env.SECRET_KEY;
-
 // Sign Up
 router.post('/signup', async (req, res) => {
     const { first_name, last_name, phone, email, password, cpassword } = req.body;
