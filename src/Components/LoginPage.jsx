@@ -52,6 +52,8 @@ const LoginPage = () => {
             const response = await axios.post('http://localhost:5000/authentication/login', formData);
             const token = response.data.token;
             localStorage.setItem('token', token);
+            localStorage.setItem('userId', response.data.userdetails.id);
+            console.log('userId', response.data.userdetails.id);
             console.log('User:', response.data);
             setUser(user); // Store user details
             alert('User Logged in Successfully!');
