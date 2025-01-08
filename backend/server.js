@@ -5,6 +5,7 @@ const pool = require("./db")
 const authRoutes = require('./routes/authentication');
 const venueRoutes = require("./routes/venues"); 
 const token = require("./routes/token"); 
+const favourites = require("./routes/wishlist"); 
 
 pool.connect();
 
@@ -18,6 +19,8 @@ app.use('/authentication', authRoutes);
 app.use("/venues", venueRoutes);
 
 app.use("/token", token);
+
+app.use("/favourites", favourites);
 
 app.listen(5000, () => {
   console.log('\nServer is running on http://localhost:5000');

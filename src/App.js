@@ -8,6 +8,7 @@ import Navbar from './Components/Navbar';
 import Spots from './Components/Spots';
 import VenueDetails from './Components/VenueDetails';
 import Accounts from './Components/Accounts';
+import Wishlist from './Components/Wishlist';
 
 function AppContent() {
   const location = useLocation();
@@ -28,6 +29,7 @@ function AppContent() {
           <Route path="/spots" element={<Spots />} />
           <Route path="/venues/:venueId" element={<VenueDetails />} />
           <Route path="/profile" element={<Accounts />} />
+          <Route path="/wishlist" element={<Wishlist />} />
         </Routes>
       </div>
     </div>

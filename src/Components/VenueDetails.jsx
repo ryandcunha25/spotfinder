@@ -40,6 +40,37 @@ const VenueDetails = () => {
         fetchVenueDetails();
     }, [venueId]);
 
+    const AddToWishlist = async () => {
+        const token = localStorage.getItem('token'); // Retrieve token from localStorage
+    
+        if (!token) {
+          alert('You need to log in to add venues to your wishlist.');
+          return;
+        }
+    
+        try {
+          const response = await fetch('http://localhost:5000/favourites/add-to-wishlist', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({ venue_id: venueId }),
+          });
+    
+          const data = await response.json();
+          
+          if (response.ok) {
+            alert('Venue added to wishlist!');
+          } else {
+            alert(data.message || 'Failed to add venue to wishlist');
+          }
+        } catch (error) {
+          console.error('Error adding to wishlist:', error);
+          alert('An error occurred. Please try again later.');
+        }
+      };
+    
 
     // Handlers for carousel navigation
     const handleNext = () => {
@@ -191,6 +222,7 @@ const VenueDetails = () => {
                         <i className="fa fa-calendar-check"></i>Book Now
                     </button>
                     <button
+                        onClick={AddToWishlist}
                         className="bg-primary border border-primary text-white px-8 py-2 font-medium uppercase gap-2 flex items-center rounded-b hover:bg-transparent hover:text-primary transition"
                     >
                         <i className="fa fa-heart"></i>Add to Wishlist

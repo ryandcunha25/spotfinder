@@ -32,7 +32,7 @@ const Navbar = () => {
                     <div className="flex items-center space-x-4">
                         {/* Wishlist */}
                         <Link
-                            to="wishlist.html"
+                            to="/wishlist"
                             className="text-center text-gray-700 hover:text-primary transition relative"
                         >
                             <div className="text-2xl">
