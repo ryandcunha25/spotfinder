@@ -92,13 +92,13 @@ const Navbar = () => {
                                 Spots
                             </Link>
                             <Link
-                                to="#"
+                                to="/about"
                                 className="text-gray-200 hover:text-white transition"
                             >
                                 About
                             </Link>
                             <Link
-                                to="#"
+                                to="/contact"
                                 className="text-gray-200 hover:text-white transition"
                             >
                                 Contact Us
