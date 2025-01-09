@@ -9,6 +9,10 @@ import Spots from './Components/Spots';
 import VenueDetails from './Components/VenueDetails';
 import Accounts from './Components/Accounts';
 import Wishlist from './Components/Wishlist';
+import AboutUs from './Components/AboutUs';
+import ContactUs from './Components/ContactUs';
+import TermsAndConditions from './Components/TermsAndConditions';
+import PrivacyPolicy from './Components/PrivacyPolicy';
 
 function AppContent() {
   const location = useLocation();
@@ -30,6 +34,10 @@ function AppContent() {
           <Route path="/venues/:venueId" element={<VenueDetails />} />
           <Route path="/profile" element={<Accounts />} />
           <Route path="/wishlist" element={<Wishlist />} />
+          <Route path="/about" element={<AboutUs />} />
+          <Route path="/contact" element={<ContactUs />} />
+          <Route path="/terms-condition" element={<TermsAndConditions />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         </Routes>
       </div>
     </div>
