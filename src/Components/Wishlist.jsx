@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const Wishlist = () => {
     const [wishlist, setWishlist] = useState([]);
+    const navigate = useNavigate(); // For navigation
+
 
     useEffect(() => {
         const fetchWishlist = async () => {
@@ -62,6 +65,11 @@ const Wishlist = () => {
         }
     };
 
+
+    const handleViewDetails = (venueId) => {
+        navigate(`/venues/${venueId}`); // Navigate to venue details page
+    }
+
     return (
         <div className="p-12">
             <h2 className="text-center text-3xl font-bold border-b-2 border-gray-300 pb-2">My Wishlist</h2>
@@ -73,13 +81,19 @@ const Wishlist = () => {
                             alt={venue.name}
                             className="w-full h-48 object-cover rounded"
                         />
-                        <h3 className="text-xl font-bold mt-2">{venue.name}</h3>
+                        <h3 className="text-xl font-bold mt-2">{venue.name} <i>(${venue.price})</i></h3>
                         <p className="text-gray-600">{venue.description}</p>
-                        <p className="text-gray-800 font-semibold mt-1 flex items-center justify-between">
-                            ${venue.price}
+                        <p className="text-gray-800 font-semibold mt-3 gap-2 flex items-center justify-between">
+                            
+                        <button
+                                className="bg-green-500 text-white w-2/4 px-4 py-2 rounded-md hover:bg-green-600"
+                                onClick={() => handleViewDetails(venue.venue_id)}
+                            >
+                                View Details
+                            </button>
                             <button
                                 onClick={() => handleRemove(venue.venue_id)}
-                                className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600"
+                                className="bg-red-500 text-white w-2/4 px-4 py-2 rounded-md hover:bg-red-600"
                             >
                                 Remove
                             </button>
