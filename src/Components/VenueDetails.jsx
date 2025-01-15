@@ -1,8 +1,6 @@
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import VenueMap from './VenueMap'; // Adjust the import path as needed
-
-
 
 const VenueDetails = () => {
     let { venueId } = useParams(); // Capture venueId from URL
@@ -13,8 +11,10 @@ const VenueDetails = () => {
     const [amenities, setAmenities] = useState([]);
     const [address, setAddress] = useState('');
 
+    const navigate = useNavigate();
+
     const handleAddressChange = (e) => {
-      setAddress(e.target.value);
+        setAddress(e.target.value);
     };
 
     useEffect(() => {
@@ -42,35 +42,35 @@ const VenueDetails = () => {
 
     const AddToWishlist = async () => {
         const token = localStorage.getItem('token'); // Retrieve token from localStorage
-    
+
         if (!token) {
-          alert('You need to log in to add venues to your wishlist.');
-          return;
+            alert('You need to log in to add venues to your wishlist.');
+            return;
         }
-    
+
         try {
-          const response = await fetch('http://localhost:5000/favourites/add-to-wishlist', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify({ venue_id: venueId }),
-          });
-    
-          const data = await response.json();
-          
-          if (response.ok) {
-            alert('Venue added to wishlist!');
-          } else {
-            alert(data.message || 'Failed to add venue to wishlist');
-          }
+            const response = await fetch('http://localhost:5000/favourites/add-to-wishlist', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({ venue_id: venueId }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                alert('Venue added to wishlist!');
+            } else {
+                alert(data.message || 'Failed to add venue to wishlist');
+            }
         } catch (error) {
-          console.error('Error adding to wishlist:', error);
-          alert('An error occurred. Please try again later.');
+            console.error('Error adding to wishlist:', error);
+            alert('An error occurred. Please try again later.');
         }
-      };
-    
+    };
+
 
     // Handlers for carousel navigation
     const handleNext = () => {
@@ -83,8 +83,11 @@ const VenueDetails = () => {
 
 
     const bookVenue = () => {
+        // window.location.href = 'http://localhost:3000/venues/:venueId/book-venue';
         console.log(`Venue "${venue.name}" booked successfully.`);
-        // Add booking logic here
+        navigate(`/venues/${venueId}/book-venue`, {
+            state: { price: venue.price },
+        });
     };
 
 
@@ -206,12 +209,12 @@ const VenueDetails = () => {
                             <p>Loading facilities...</p>
                         )}
                     </ul>
-                    
+
                     <p className="text-primary text-lg font-semibold">
                         For more details, contact
                         Venue Owner: <span className="text-gray-600">{venue.owner}&nbsp;({venue.contact})</span>
                     </p>
-        
+
 
                 </div>
                 <div className="flex gap-3 border-b border-gray-300 pb-5 mt-6">
