@@ -105,7 +105,7 @@ const Navbar = () => {
                             </Link>
                         </div>
                         <Link
-                            to="login.html"
+                            to="/"
                             className="text-gray-200 hover:text-white transition"
                         >
                             Login/Register
