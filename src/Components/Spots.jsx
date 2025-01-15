@@ -21,9 +21,9 @@ const Spots = () => {
     }, []);
 
     return (
-        <div className="container w-full gap-6 pt-8 pb-16 pl-10 flex">
+        <div className="container w-full gap-8 m-10 pl-10 flex">
             {/* Sidebar */}
-            <div className="h-fit bg-white px-4 pt-4 pb-6 shadow rounded overflow-hidden">
+            <div className="h-fit bg-white px-8 pt-4 pb-6 shadow rounded overflow-hidden">
                 <div className="divide-y divide-gray-200 space-y-5 px-6">
                     {/* Category Filter */}
                     <div>
@@ -149,7 +149,7 @@ const Spots = () => {
                         </div>
                     </div>
                 ))}
-            </div>;
+            </div>
             {/*<div className="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
                 <Link to="#">
                     <img
