@@ -81,7 +81,7 @@ const Wishlist = () => {
                             alt={venue.name}
                             className="w-full h-48 object-cover rounded"
                         />
-                        <h3 className="text-xl font-bold mt-2">{venue.name} <i>(${venue.price})</i></h3>
+                        <h3 className="text-xl font-bold mt-2">{venue.name} <i>(&#8377;{venue.price})</i></h3>
                         <p className="text-gray-600">{venue.description}</p>
                         <p className="text-gray-800 font-semibold mt-3 gap-2 flex items-center justify-between">
                             
