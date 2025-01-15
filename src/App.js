@@ -13,6 +13,9 @@ import AboutUs from './Components/AboutUs';
 import ContactUs from './Components/ContactUs';
 import TermsAndConditions from './Components/TermsAndConditions';
 import PrivacyPolicy from './Components/PrivacyPolicy';
+import BookVenue from './Components/BookVenue';
+import PaymentPage from './Components/PaymentPage';
+import PaymentConfirmation from './Components/PaymentConfirmation';
 
 function AppContent() {
   const location = useLocation();
@@ -24,7 +27,7 @@ function AppContent() {
     <div>
       {/* Conditionally render Navbar */}
       {!noNavbarRoutes.includes(location.pathname) && <Navbar />}
-      
+
       <div>
         <Routes>
           <Route exact path="/" element={<LoginPage />} />
@@ -38,6 +41,9 @@ function AppContent() {
           <Route path="/contact" element={<ContactUs />} />
           <Route path="/terms-condition" element={<TermsAndConditions />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+          <Route path="/venues/:venueId/book-venue" element={<BookVenue />} />
+          <Route path="/payment" element={<PaymentPage />} />
+          <Route path="/payment-confirmation" element={<PaymentConfirmation />} />
         </Routes>
       </div>
     </div>
