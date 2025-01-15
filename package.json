@@ -14,10 +14,12 @@
     "express": "^4.21.1",
     "jsonwebtoken": "^9.0.2",
     "leaflet": "^1.9.4",
+    "package_name": "^1.0.2",
     "pg": "^8.13.1",
+    "razorpay": "^2.9.5",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-leaflet": "^5.0.0",
+    "react-leaflet": "^4.2.1",
     "react-router-dom": "^7.0.1",
     "react-scripts": "5.0.1",
     "web-vitals": "^2.1.4"
