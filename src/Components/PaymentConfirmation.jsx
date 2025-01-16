@@ -1,9 +1,41 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useLocation, Link } from 'react-router-dom';
+import axios from 'axios' ;
 
 const PaymentConfirmation = () => {
+
   const location = useLocation();
-  const { bookingDetails } = location.state;
+  const { book_id, eventName } = location.state;
+
+  const [bookedVenue, setBookedVenue] = useState([]);
+  const [error, setError] = useState(null);
+  // const book_id = bookedVenue.bookingId;
+  console.log(eventName)
+
+  useEffect(() => {
+    const fetchBookings = async () => {
+      try {
+        const response = await axios.get(`http://localhost:5000/bookings/confirmed-booking?book_id=${book_id}`);
+        console.log(response.data)
+        setBookedVenue(response.data);
+        console.log(bookedVenue)
+      } catch (err) {
+        console.error('Error fetching bookings:', err);
+        setError('Unable to fetch bookings');
+      }
+    };
+
+    fetchBookings();
+  }, []);
+
+  if (error) {
+    return <div className="text-red-500">{error}</div>;
+  }
+
+  if (bookedVenue.length === 0) {
+    return <div>Loading your venue booking reciept...</div>;
+  }
+
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
@@ -12,64 +44,64 @@ const PaymentConfirmation = () => {
         
         <div className=" grid grid-cols-3 border-b border-gray-300 pb-4 mb-6">
           <p className="text-gray-600 text-sm">Reference ID:
-          <span className="text-gray-800 font-medium"> {Date.now()}</span>
+          <span className="text-gray-800 font-medium">{bookedVenue.booking_id} </span>
           </p>
           <p className="text-gray-600 text-sm">User:
-          <span className="text-gray-800 font-medium"> {bookingDetails.name}</span>
+          <span className="text-gray-800 font-medium"> {bookedVenue.first_name} {bookedVenue.last_name}</span>
           </p>
           <p className="text-gray-600 text-sm">Email:
-          <span className="text-gray-800 font-medium"> {bookingDetails.email}</span>
+          <span className="text-gray-800 font-medium"> {bookedVenue.email}</span>
           </p>
         </div>
         
-        <div className="grid grid-cols-2 gap-4 pl-[15%]">
+        <div className="grid grid-cols-2 gap-4 pl-[20%]">
           <div>
             <p className="text-gray-600 text-sm">Venue:</p>
-            <p className="text-gray-800 font-medium">{bookingDetails.name}</p>
+            <p className="text-gray-800 font-medium">{bookedVenue.name}</p>
           </div>
           <div>
             <p className="text-gray-600 text-sm">Capacity:</p>
-            <p className="text-gray-800 font-medium">{bookingDetails.capacity} Guests</p>
+            <p className="text-gray-800 font-medium">{bookedVenue.capacity} Guests</p>
           </div>
           <div>
             <p className="text-gray-600 text-sm">Price:</p>
-            <p className="text-gray-800 font-medium">${bookingDetails.price}</p>
+            <p className="text-gray-800 font-medium">${bookedVenue.price}</p>
           </div>
           <div>
             <p className="text-gray-600 text-sm">Ratings:</p>
-            <p className="text-gray-800 font-medium">{bookingDetails.ratings} Stars</p>
+            <p className="text-gray-800 font-medium">{bookedVenue.ratings} Stars</p>
           </div>
           <div>
             <p className="text-gray-600 text-sm">Date:</p>
-            <p className="text-gray-800 font-medium">{bookingDetails.date}</p>
+            <p className="text-gray-800 font-medium">{bookedVenue.booking_date}</p>
           </div>
           <div>
             <p className="text-gray-600 text-sm">Time:</p>
-            <p className="text-gray-800 font-medium">{bookingDetails.time}</p>
+            <p className="text-gray-800 font-medium">{bookedVenue.start_time} -{bookedVenue.end_time}  </p>
           </div>
           <div>
             <p className="text-gray-600 text-sm">Event Name:</p>
-            <p className="text-gray-800 font-medium">{bookingDetails.eventName}</p>
+            <p className="text-gray-800 font-medium">{eventName}</p>
           </div>
           <div>
             <p className="text-gray-600 text-sm">Event Type:</p>
-            <p className="text-gray-800 font-medium">{bookingDetails.eventType}</p>
+            <p className="text-gray-800 font-medium">{bookedVenue.category}</p>
           </div>
           <div>
             <p className="text-gray-600 text-sm">Guest Count:</p>
-            <p className="text-gray-800 font-medium">{bookingDetails.guestCount}</p>
+            <p className="text-gray-800 font-medium">{bookedVenue.capacity}</p>
           </div>
           <div>
             <p className="text-gray-600 text-sm">Catering:</p>
-            <p className="text-gray-800 font-medium">{bookingDetails.catering ? "Included" : "Not Included"}</p>
+            <p className="text-gray-800 font-medium">{bookedVenue.catering ? "Included" : "Not Included"}</p>
           </div>
           <div>
             <p className="text-gray-600 text-sm">A/V Equipment:</p>
-            <p className="text-gray-800 font-medium">{bookingDetails.avEquipment ? "Included" : "Not Included"}</p>
+            <p className="text-gray-800 font-medium">{bookedVenue.avEquipment ? "Included" : "Not Included"}</p>
           </div>
           <div>
             <p className="text-gray-600 text-sm">Special Requests:</p>
-            <p className="text-gray-800 font-medium">{bookingDetails.specialRequests || "None"}</p>
+            <p className="text-gray-800 font-medium">{bookedVenue.specialRequests || "None"}</p>
           </div>
         </div>
 
@@ -94,91 +126,3 @@ const PaymentConfirmation = () => {
 };
 
 export default PaymentConfirmation;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

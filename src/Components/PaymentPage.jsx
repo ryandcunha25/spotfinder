@@ -8,6 +8,7 @@ const PaymentPage = () => {
     console.log(bookingDetails)
 
     const handlePayment = async () => {
+        console.log(typeof (window.Razorpay))
         try {
             const response = await fetch('http://localhost:5000/razorpay/create-booking', {
                 method: 'POST',
@@ -40,12 +41,33 @@ const PaymentPage = () => {
                     }); {
 
                     }
-
+                    
                     const result = await verifyResponse.json();
                     console.log(result)
                     if (result.paymentDetails.payment_status === "Success") {
-                        alert(result.message)
-                        navigate('/payment-confirmation', { state: { bookingDetails: bookingDetails } });
+                        try {
+                            const response = await fetch('http://localhost:5000/bookings/update-booking-status', {
+                              method: 'POST',
+                              headers: {
+                                'Content-Type': 'application/json',
+                              },
+                              body: JSON.stringify({bookingId:bookingDetails.bookingId }),
+                            });
+                            
+                            const data = await response.json();
+                            if (response.ok) {
+                              console.log('Booking status updated:', data.booking);
+                              alert('Payment successful! Booking status updated.');
+                              navigate('/payment-confirmation', { state: { book_id: data.booking.booking_id, eventName:bookingDetails.eventName} });
+                            } else {
+                              console.error('Failed to update booking status:', data.error);
+                              alert('Payment successful, but failed to update booking status.');
+                            }
+                          } catch (error) {
+                            console.error('Error handling payment success:', error);
+                            alert('An error occurred while updating booking status.');
+                          }
+                        
                     } else {
                         alert('Payment verification failed');
                     }
@@ -89,7 +111,7 @@ const PaymentPage = () => {
                     </h5>
                 </a>
                 <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
-                    Date: {bookingDetails.date}     |    Time: {bookingDetails.startTime} - {bookingDetails.endTime}
+                    Date: {bookingDetails.eventDate}     |    Time: {bookingDetails.startTime} - {bookingDetails.endTime}
                 </p>
                 <div className="flex items-center mt-2.5 mb-5">
                     <div className="flex items-center space-x-1">
