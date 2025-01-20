@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, Link } from 'react-router-dom';
-import axios from 'axios' ;
+import axios from 'axios';
 
 const PaymentConfirmation = () => {
 
   const location = useLocation();
-  const { book_id, eventName } = location.state;
+  const { book_id, eventName, eventType } = location.state;
 
   const [bookedVenue, setBookedVenue] = useState([]);
   const [error, setError] = useState(null);
@@ -41,19 +41,19 @@ const PaymentConfirmation = () => {
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="bg-white shadow-lg rounded-lg w-1/2 p-6">
         <h1 className="text-2xl font-semibold text-gray-800 text-center mb-6">Payment Receipt</h1>
-        
+
         <div className=" grid grid-cols-3 border-b border-gray-300 pb-4 mb-6">
           <p className="text-gray-600 text-sm">Reference ID:
-          <span className="text-gray-800 font-medium">{bookedVenue.booking_id} </span>
+            <span className="text-gray-800 font-medium">{bookedVenue.booking_id} </span>
           </p>
           <p className="text-gray-600 text-sm">User:
-          <span className="text-gray-800 font-medium"> {bookedVenue.first_name} {bookedVenue.last_name}</span>
+            <span className="text-gray-800 font-medium"> {bookedVenue.first_name} {bookedVenue.last_name}</span>
           </p>
           <p className="text-gray-600 text-sm">Email:
-          <span className="text-gray-800 font-medium"> {bookedVenue.email}</span>
+            <span className="text-gray-800 font-medium"> {bookedVenue.email}</span>
           </p>
         </div>
-        
+
         <div className="grid grid-cols-2 gap-4 pl-[20%]">
           <div>
             <p className="text-gray-600 text-sm">Venue:</p>
@@ -73,7 +73,15 @@ const PaymentConfirmation = () => {
           </div>
           <div>
             <p className="text-gray-600 text-sm">Date:</p>
-            <p className="text-gray-800 font-medium">{bookedVenue.booking_date}</p>
+            <p className="text-gray-800 font-medium">
+              {(() => {
+                const date = new Date(bookedVenue.booking_date);
+                const day = date.getDate().toString().padStart(2, '0');
+                const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Months are 0-indexed
+                const year = date.getFullYear();
+                return `${day}/${month}/${year}`;
+              })()}
+            </p>
           </div>
           <div>
             <p className="text-gray-600 text-sm">Time:</p>
@@ -81,11 +89,11 @@ const PaymentConfirmation = () => {
           </div>
           <div>
             <p className="text-gray-600 text-sm">Event Name:</p>
-            <p className="text-gray-800 font-medium">{eventName}</p>
+            <p className="text-gray-800 font-medium">{bookedVenue.event_name}</p>
           </div>
           <div>
             <p className="text-gray-600 text-sm">Event Type:</p>
-            <p className="text-gray-800 font-medium">{bookedVenue.category}</p>
+            <p className="text-gray-800 font-medium">{bookedVenue.event_type}</p>
           </div>
           <div>
             <p className="text-gray-600 text-sm">Guest Count:</p>

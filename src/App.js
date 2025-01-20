@@ -16,6 +16,7 @@ import PrivacyPolicy from './Components/PrivacyPolicy';
 import BookVenue from './Components/BookVenue';
 import PaymentPage from './Components/PaymentPage';
 import PaymentConfirmation from './Components/PaymentConfirmation';
+import UserBookings from './Components/UserBookings';
 
 function AppContent() {
   const location = useLocation();
@@ -44,6 +45,7 @@ function AppContent() {
           <Route path="/venues/:venueId/book-venue" element={<BookVenue />} />
           <Route path="/payment" element={<PaymentPage />} />
           <Route path="/payment-confirmation" element={<PaymentConfirmation />} />
+          <Route path="/bookings" element={<UserBookings />} />
         </Routes>
       </div>
     </div>

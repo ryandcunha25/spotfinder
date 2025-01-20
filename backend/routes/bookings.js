@@ -2,6 +2,8 @@
 const express = require('express');
 const pool = require('../db'); // PostgreSQL connection pool
 const router = express.Router();
+const authenticateToken = require('../middleware/authToken'); // To verify user token
+
 
 router.post('/book', async (req, res) => {
     const {
@@ -25,9 +27,9 @@ router.post('/book', async (req, res) => {
     try {
         const insertQuery = `
       INSERT INTO bookings (
-        booking_id, user_id, venue_id, booking_date, start_time, end_time, 
+        booking_id, event_name, event_type, user_id, venue_id, booking_date, start_time, end_time, 
         total_price, status, created_at
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7, 'Pending', CURRENT_TIMESTAMP)
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, 'Pending', CURRENT_TIMESTAMP)
       RETURNING booking_id;
     `;
 
@@ -35,12 +37,14 @@ router.post('/book', async (req, res) => {
 
         const result = await pool.query(insertQuery, [
             bookingId,
+            eventName,
+            eventType,
             userId,
             venueId,
             eventDate,
             startTime,
             endTime,
-            totalPrice,
+            price,
         ]);
 
         res.status(201).json({
@@ -102,4 +106,24 @@ router.get('/confirmed-booking', async (req, res) => {
     }
 });
 
+router.get('/show-bookings', authenticateToken, async (req, res) => {
+    try {
+        const userId = req.user.id; // Get the userId from the token
+        console.log(`Fetching bookings for user ID: ${userId}`);
+
+        const result = await pool.query(
+            `SELECT b.*, u.*, v.* FROM bookings b
+            JOIN users u ON b.user_id = u.id
+            JOIN venues v ON b.venue_id = v.venue_id
+            WHERE b.user_id = $1 AND b.status = $2;
+            `,
+            [userId, 'Success']
+        );
+
+        res.status(200).json(result.rows);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
+    }
+});
 module.exports = router;
