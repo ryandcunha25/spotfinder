@@ -43,7 +43,7 @@ const Navbar = () => {
 
                         {/* Cart */}
                         <Link
-                            to="cart.html"
+                            to="/bookings"
                             className="text-center text-gray-700 hover:text-primary transition relative"
                         >
                             <div className="text-2xl">
