@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Link } from "react-router-dom";
+import { SearchContext } from "./SearchContext";
 
 const Spots = () => {
     const [venues, setVenues] = useState([]);
@@ -17,13 +18,15 @@ const Spots = () => {
         { label: "Above 500", range: [501, Infinity] },
     ];
 
+    // Context for search query
+    const { searchQuery } = useContext(SearchContext);
+
     useEffect(() => {
         // Fetch venue data from the backend
         const fetchVenues = async () => {
             try {
                 const response = await fetch("http://localhost:5000/venues");
                 const data = await response.json();
-                console.log(data)
                 setVenues(data);
             } catch (error) {
                 console.error("Error fetching venue data:", error);
@@ -32,34 +35,30 @@ const Spots = () => {
 
         fetchVenues();
     }, []);
-    
 
-    // Filter the venues based on selected filters
+    // Filter venues based on search query and other selected filters
     const filteredVenues = venues.filter((venue) => {
-        const matchesEventType = () => {
-            if (selectedEventTypes.length === 0) {
-                return true;
-            }
-            return selectedEventTypes.some((type) => type == venue.category);
-        };
+        const matchesSearch = venue.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+        venue.location.toLowerCase().includes(searchQuery.toLowerCase());
 
-        // console.log(matchesEventType)
+        const matchesEventType = selectedEventTypes.length === 0
+            ? true
+            : selectedEventTypes.some((type) => type == venue.category);
 
-        const matchesCapacity = () => {
-            if (selectedCapacities.length === 0) {
-                console.log(2)
-                return true; // No capacity filter applied, include all venues
-            }
-            return selectedCapacities.some(
-                (range) => venue.capacity >= range[0] && venue.capacity <= range[1]
-            );
-        };
-        
+        const matchesCapacity = selectedCapacities.length === 0
+            ? true
+            : selectedCapacities.some(
+                  (range) =>
+                      venue.capacity >= range[0] && venue.capacity <= range[1]
+              );
+
         const matchesPrice =
             (!priceRange.min || venue.price >= parseInt(priceRange.min)) &&
             (!priceRange.max || venue.price <= parseInt(priceRange.max));
 
-        return matchesEventType() && matchesCapacity() && matchesPrice;
+        return (
+            matchesSearch && matchesEventType && matchesCapacity && matchesPrice
+        );
     });
 
     // Toggle event type filter
@@ -67,24 +66,18 @@ const Spots = () => {
         const { value, checked } = event.target;
 
         setSelectedEventTypes((prev) => {
-            // Create a new copy of the previous state
             const updatedTypes = [...prev];
-
             if (checked) {
-                // Add the value if the checkbox is checked
                 updatedTypes.push(value);
             } else {
-                // Remove the value if the checkbox is unchecked
                 const index = updatedTypes.indexOf(value);
                 if (index > -1) {
                     updatedTypes.splice(index, 1);
                 }
             }
-
-            return updatedTypes; // Return the updated array
+            return updatedTypes;
         });
     };
-
 
     // Toggle capacity filter
     const handleCapacityChange = (event) => {
@@ -92,25 +85,21 @@ const Spots = () => {
         const selectedRange = capacityOptions.find(
             (option) => option.label === value
         ).range;
-    
+
         setSelectedCapacities((prev) => {
             if (checked) {
-                // Add the range only if it's not already present
                 return prev.some(
                     (range) => range[0] === selectedRange[0] && range[1] === selectedRange[1]
                 )
                     ? prev
                     : [...prev, selectedRange];
             } else {
-                // Remove the range by filtering based on value comparison
                 return prev.filter(
                     (range) => !(range[0] === selectedRange[0] && range[1] === selectedRange[1])
                 );
             }
         });
     };
-    
-    console.log(filteredVenues)
 
     return (
         <div className="container w-full gap-12 m-10 pl-12 flex">
@@ -142,7 +131,6 @@ const Spots = () => {
                             ))}
                         </div>
                     </div>
-
 
                     {/* Venue Capacity Filter */}
                     <div className="pt-4">
@@ -208,30 +196,24 @@ const Spots = () => {
                             key={venue.venue_id}
                             className="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700"
                         >
-                            {/* Venue Image */}
                             <img
                                 className="rounded-t-lg w-full"
                                 src={require(`./Assets/${venue.image[0]}`)}
                                 alt={venue.venue_id}
                             />
                             <div className="p-5">
-                                {/* Venue Name */}
                                 <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
                                     {venue.name}
                                 </h5>
-                                {/* Venue Location */}
                                 <p className="mb-2 font-normal text-gray-700 dark:text-gray-400">
                                     <strong>Location:</strong> {venue.location}
                                 </p>
-                                {/* Venue Price */}
                                 <p className="mb-2 font-normal text-gray-700 dark:text-gray-400">
                                     <strong>Price:</strong> ₹{venue.price} per day
                                 </p>
-                                {/* Venue Capacity */}
                                 <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">
                                     <strong>Capacity:</strong> {venue.capacity} people
                                 </p>
-                                {/* Call-to-Action Button */}
                                 <Link
                                     to={`/venues/${venue.venue_id}`}
                                     className="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"

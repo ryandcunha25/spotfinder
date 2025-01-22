@@ -1,12 +1,19 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Link } from 'react-router-dom';
+import { SearchContext } from "./SearchContext";
 
 
 const Navbar = () => {
+    const { searchQuery, setSearchQuery } = useContext(SearchContext);
+
+    const handleSearchChange = (event) => {
+        setSearchQuery(event.target.value); // Update the search query
+    };
+
     return (
         <>
             {/* HEADER */}
-            <header className="py-4 shadow-sm bg-white">
+            <header className="py-4 shadow-sm">
                 <div className="container flex items-center justify-evenly relative">
                     {/* Logo */}
                     <Link to="#">
@@ -20,12 +27,12 @@ const Navbar = () => {
                         </span>
                         <input
                             type="text"
-                            className="w-full border border-primary border-r-0 pl-12 py-3 pr-3 rounded-l-md focus:outline-none"
-                            placeholder="Search"
+                            className="w-full border border-primary pl-12 py-3 pr-3 rounded-md focus:outline-none"
+                            placeholder="Search venues..."
+                            value={searchQuery}
+                            onChange={handleSearchChange}
                         />
-                        <button className="bg-red-500 border-primary text-white px-8 rounded-r-md hover:bg-transparent hover:text-primary transition">
-                            Search
-                        </button>
+
                     </div>
 
                     {/* Icons */}
