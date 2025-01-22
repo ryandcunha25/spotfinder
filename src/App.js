@@ -17,6 +17,8 @@ import BookVenue from './Components/BookVenue';
 import PaymentPage from './Components/PaymentPage';
 import PaymentConfirmation from './Components/PaymentConfirmation';
 import UserBookings from './Components/UserBookings';
+import { SearchProvider } from "./Components/SearchContext"; // Adjust the path
+
 
 function AppContent() {
   const location = useLocation();
@@ -25,11 +27,11 @@ function AppContent() {
   const noNavbarRoutes = ["/", "/signup"];
 
   return (
-    <div>
-      {/* Conditionally render Navbar */}
-      {!noNavbarRoutes.includes(location.pathname) && <Navbar />}
-
+    <SearchProvider>
       <div>
+        {/* Conditionally render Navbar */}
+        {!noNavbarRoutes.includes(location.pathname) && <Navbar />}
+
         <Routes>
           <Route exact path="/" element={<LoginPage />} />
           <Route path="/signup" element={<SignUp />} />
@@ -48,9 +50,10 @@ function AppContent() {
           <Route path="/bookings" element={<UserBookings />} />
         </Routes>
       </div>
-    </div>
+    </SearchProvider>
   );
 }
+
 
 function App() {
   return (
