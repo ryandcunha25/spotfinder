@@ -109,7 +109,7 @@ const PaymentConfirmation = () => {
           </div>
           <div>
             <p className="text-gray-600 text-sm">Special Requests:</p>
-            <p className="text-gray-800 font-medium">{bookedVenue.specialRequests || "None"}</p>
+            <p className="text-gray-800 font-medium">{bookedVenue.special_requests || "None"}</p>
           </div>
         </div>
 

@@ -8,8 +8,7 @@ const PaymentPage = () => {
     console.log(bookingDetails)
 
     const handlePayment = async () => {
-        console.log(typeof (window.Razorpay))
-        
+        console.log(typeof window.Razorpay);
         try {
             const response = await fetch('http://localhost:5000/razorpay/create-booking', {
                 method: 'POST',
@@ -18,7 +17,7 @@ const PaymentPage = () => {
                 },
                 body: JSON.stringify({ amount: bookingDetails.price, currency: 'INR' }),
             });
-
+    
             const order = await response.json();
             const options = {
                 key: process.env.REACT_APP_RAZORPAY_KEY_ID,
@@ -28,6 +27,7 @@ const PaymentPage = () => {
                 description: 'Payment for venue booking',
                 order_id: order.id,
                 handler: async (response) => {
+                    // Call the backend to verify the payment
                     const verifyResponse = await fetch('http://localhost:5000/razorpay/verify-payment', {
                         method: 'POST',
                         headers: {
@@ -38,50 +38,54 @@ const PaymentPage = () => {
                             razorpay_payment_id: response.razorpay_payment_id,
                             razorpay_signature: response.razorpay_signature,
                             bookingDetails: bookingDetails,
-                           
                         }),
-                    }); {
-
-                    }
-                    
+                    });
+    
                     const result = await verifyResponse.json();
-                    console.log(result)
-                    if (result.paymentDetails.payment_status === "Success") {
+                    console.log(result);
+    
+                    if (result.paymentDetails.payment_status === 'Success') {
+                        // Fetch and log the payment method from the result
                         const paymentMethod = result.paymentDetails.payment_method;
                         console.log('Payment Method:', paymentMethod);
+    
+                        // Send the bookingId, paymentMethod, and status to the backend
                         try {
-                            const response = await fetch('http://localhost:5000/bookings/update-booking-status', {
-                              method: 'POST',
-                              headers: {
-                                'Content-Type': 'application/json',
-                              },
-                              body: JSON.stringify({bookingId:bookingDetails.bookingId,  paymentMethod: paymentMethod, }),
-                            });
-                            
-                            const data = await response.json();
-                            if (response.ok) {
-                              console.log('Booking status updated:', data.booking);
-                              alert('Payment successful! Booking status updated.');
-                              navigate('/payment-confirmation', { state: { book_id: data.booking.booking_id, eventName:bookingDetails.eventName} });
+                            const updateResponse = await fetch(
+                                'http://localhost:5000/bookings/update-booking-status',
+                                {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                    },
+                                    body: JSON.stringify({
+                                        bookingId: bookingDetails.bookingId,
+                                        paymentMethod: paymentMethod, // Include the payment method
+                                        status: 'Success',
+                                    }),
+                                }
+                            );
+    
+                            const updateData = await updateResponse.json();
+                            if (updateResponse.ok) {
+                                console.log('Booking status updated:', updateData.booking);
+                                alert('Payment successful! Booking status updated.');
+                                navigate('/payment-confirmation', {
+                                    state: { book_id: updateData.booking.booking_id, eventName: bookingDetails.eventName },
+                                });
                             } else {
-                              console.error('Failed to update booking status:', data.error);
-                              alert('Payment successful, but failed to update booking status.');
+                                console.error('Failed to update booking status:', updateData.error);
+                                alert('Payment successful, but failed to update booking status.');
                             }
-                          } catch (error) {
+                        } catch (error) {
                             console.error('Error handling payment success:', error);
                             alert('An error occurred while updating booking status.');
-                          }
-                        
+                        }
                     } else {
                         alert('Payment verification failed');
                     }
                 },
                 prefill: {
-                    // Complete the payment using Razorpay’s test cards:
-                    // Card Number: 4111 1111 1111 1111
-                    // Expiry: Any future date
-                    // CVV: 123
-                    // OTP: Any 6 digits.  
                     name: 'User Name',
                     email: 'user@example.com',
                     contact: '1234567890',
@@ -90,15 +94,16 @@ const PaymentPage = () => {
                     color: '#3399cc',
                 },
             };
-
+    
             const razorpay = new window.Razorpay(options);
             razorpay.open();
         } catch (error) {
-            console.log(error)
+            console.log(error);
         }
     };
-
-
+    
+    
+    
     return (
         <div className="w-full max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 mx-auto mt-10">
             <a href="#">

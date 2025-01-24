@@ -36,21 +36,22 @@ router.post('/verify-payment', async (req, res) => {
         razorpay_payment_id,
         razorpay_signature,
         bookingDetails, // Contains booking details like booking_id, user_id, and amount
-        paymentMethod,
     } = req.body;
     console.log("Booking Details: "+bookingDetails)
-    console.log(paymentMethod)
-
+    
     try {
-        // Verify Razorpay signature
-        const generatedSignature = crypto
+      // Verify Razorpay signature
+      const generatedSignature = crypto
             .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)
             .update(`${razorpay_order_id}|${razorpay_payment_id}`)
             .digest('hex');
 
         if (generatedSignature !== razorpay_signature) {
             return res.status(400).json({ error: 'Payment verification failed' });
-        }
+          }
+          
+          const paymentDetails = await razorpay.payments.fetch(razorpay_payment_id);
+          const paymentMethod = paymentDetails.method; 
 
         // Insert payment details into the payments table
         const query = `
@@ -70,9 +71,12 @@ router.post('/verify-payment', async (req, res) => {
 
         // Send success response
         res.status(200).json({
-            message: 'Payment verified and stored successfully',
-            paymentDetails: result.rows[0],
-        });
+          message: 'Payment verified and saved successfully',
+          paymentDetails: {
+              payment_status: 'Success',
+              payment_method: paymentMethod,
+          },
+      });
     } catch (error) {
         console.error('Error storing payment details:', error);
         res.status(500).json({ error: 'Internal server error' });

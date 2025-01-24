@@ -23,13 +23,14 @@ router.post('/book', async (req, res) => {
         guestCount,
         catering,
         avEquipment,
+        specialRequests
     } = req.body;
     try {
         const insertQuery = `
       INSERT INTO bookings (
         booking_id, event_name, event_type, user_id, venue_id, booking_date, start_time, end_time, 
-        total_price, status, created_at
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, 'Pending', CURRENT_TIMESTAMP)
+        total_price, special_requests, status, created_at
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10,'Pending', CURRENT_TIMESTAMP)
       RETURNING booking_id;
     `;
 
@@ -45,6 +46,7 @@ router.post('/book', async (req, res) => {
             startTime,
             endTime,
             price,
+            specialRequests
         ]);
 
         res.status(201).json({
@@ -60,17 +62,17 @@ router.post('/book', async (req, res) => {
 
 // Endpoint to update booking status on successful payment
 router.post('/update-booking-status', async (req, res) => {
-    const { bookingId } = req.body; // Receive paymentId and bookingId from the frontend
+    const { bookingId, paymentMethod } = req.body; // Receive paymentId and bookingId from the frontend
 
     try {
         // Update the booking status to "Success"
-        const updateQuery = `
+        const query = `
         UPDATE bookings
-        SET status = 'Success'
-        WHERE booking_id = $1
+        SET status = $1, payment_method = $2
+        WHERE booking_id = $3
         RETURNING *;
-      `;
-        const result = await pool.query(updateQuery, [bookingId]);
+    `;
+    const result = await pool.query(query, ['Success', paymentMethod, bookingId]);
 
         if (result.rowCount === 0) {
             return res.status(404).json({ error: 'Booking not found' });
