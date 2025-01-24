@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import { Link } from "react-router-dom";
-import { SearchContext } from "./SearchContext";
+import { SearchContext } from "../SearchContext";
 
 const Spots = () => {
     const [venues, setVenues] = useState([]);
@@ -41,9 +41,19 @@ const Spots = () => {
         const matchesSearch = venue.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
         venue.location.toLowerCase().includes(searchQuery.toLowerCase());
 
-        const matchesEventType = selectedEventTypes.length === 0
-            ? true
-            : selectedEventTypes.some((type) => type == venue.category);
+        const matchesEventType = () => {
+            if (selectedEventTypes.length === 0) {
+                return true; // No event type filter applied
+            }
+    
+            if (Array.isArray(venue.category)) {
+                // Check if any of the selected types exist in the venue's category array
+                return selectedEventTypes.some((type) => venue.category.includes(type));
+            } else {
+                // If the category is not an array (fallback), treat it as a single value
+                return selectedEventTypes.includes(venue.category);
+            }
+        };
 
         const matchesCapacity = selectedCapacities.length === 0
             ? true
@@ -57,7 +67,7 @@ const Spots = () => {
             (!priceRange.max || venue.price <= parseInt(priceRange.max));
 
         return (
-            matchesSearch && matchesEventType && matchesCapacity && matchesPrice
+            matchesSearch && matchesEventType() && matchesCapacity && matchesPrice
         );
     });
 
@@ -198,7 +208,7 @@ const Spots = () => {
                         >
                             <img
                                 className="rounded-t-lg w-full"
-                                src={require(`./Assets/${venue.image[0]}`)}
+                                src={require(`./../Assets/${venue.image[0]}`)}
                                 alt={venue.venue_id}
                             />
                             <div className="p-5">

@@ -106,7 +106,7 @@ const VenueDetails = () => {
                                     }`}
                             >
                                 <img
-                                    src={require(`./Assets/${image}`)}
+                                    src={require(`../Assets/${image}`)}
                                     alt={`Carousel Item ${index + 1}`}
                                     className="absolute w-full h-full object-cover"
                                 />

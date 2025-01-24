@@ -9,6 +9,7 @@ const PaymentPage = () => {
 
     const handlePayment = async () => {
         console.log(typeof (window.Razorpay))
+        
         try {
             const response = await fetch('http://localhost:5000/razorpay/create-booking', {
                 method: 'POST',
@@ -37,6 +38,7 @@ const PaymentPage = () => {
                             razorpay_payment_id: response.razorpay_payment_id,
                             razorpay_signature: response.razorpay_signature,
                             bookingDetails: bookingDetails,
+                           
                         }),
                     }); {
 
@@ -45,13 +47,15 @@ const PaymentPage = () => {
                     const result = await verifyResponse.json();
                     console.log(result)
                     if (result.paymentDetails.payment_status === "Success") {
+                        const paymentMethod = result.paymentDetails.payment_method;
+                        console.log('Payment Method:', paymentMethod);
                         try {
                             const response = await fetch('http://localhost:5000/bookings/update-booking-status', {
                               method: 'POST',
                               headers: {
                                 'Content-Type': 'application/json',
                               },
-                              body: JSON.stringify({bookingId:bookingDetails.bookingId }),
+                              body: JSON.stringify({bookingId:bookingDetails.bookingId,  paymentMethod: paymentMethod, }),
                             });
                             
                             const data = await response.json();
@@ -100,7 +104,7 @@ const PaymentPage = () => {
             <a href="#">
                 <img
                     className="p-8 rounded-t-lg"
-                    src={require(`./Assets/${bookingDetails.image[0]}`)}
+                    src={require(`./../Assets/${bookingDetails.image[0]}`)}
                     alt={bookingDetails.name}
                 />
             </a>

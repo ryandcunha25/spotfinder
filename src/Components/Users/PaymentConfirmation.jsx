@@ -5,7 +5,7 @@ import axios from 'axios';
 const PaymentConfirmation = () => {
 
   const location = useLocation();
-  const { book_id, eventName, eventType } = location.state;
+  const { book_id, eventName, specialRequests } = location.state;
 
   const [bookedVenue, setBookedVenue] = useState([]);
   const [error, setError] = useState(null);

@@ -51,7 +51,7 @@ const BookingsList = () => {
         >
           <img
             className="object-cover w-40 h-40 rounded-xl md:rounded-none md:rounded-lg"
-            src={require(`./Assets/${booking.image[0]}`)}
+            src={require(`./../Assets/${booking.image[0]}`)}
             alt={booking.venue_name}
           />
           <div className="flex flex-col justify-between pl-10 py-4 leading-normal">

@@ -3,20 +3,20 @@ import { BrowserRouter as Router, Routes, Route, useLocation } from "react-route
 import "./Components/css/output.css";
 import SignUp from './Components/SignUp';
 import LoginPage from './Components/LoginPage';
-import HomePage from './Components/HomePage';
+import HomePage from './Components/Users/HomePage';
 import Navbar from './Components/Navbar';
-import Spots from './Components/Spots';
-import VenueDetails from './Components/VenueDetails';
-import Accounts from './Components/Accounts';
-import Wishlist from './Components/Wishlist';
-import AboutUs from './Components/AboutUs';
-import ContactUs from './Components/ContactUs';
-import TermsAndConditions from './Components/TermsAndConditions';
-import PrivacyPolicy from './Components/PrivacyPolicy';
-import BookVenue from './Components/BookVenue';
-import PaymentPage from './Components/PaymentPage';
-import PaymentConfirmation from './Components/PaymentConfirmation';
-import UserBookings from './Components/UserBookings';
+import Spots from './Components/Users/Spots';
+import VenueDetails from './Components/Users/VenueDetails';
+import Accounts from './Components/Users/Accounts';
+import Wishlist from './Components/Users/Wishlist';
+import AboutUs from './Components/Users/AboutUs';
+import ContactUs from './Components/Users/ContactUs';
+import TermsAndConditions from './Components/Users/TermsAndConditions';
+import PrivacyPolicy from './Components/Users/PrivacyPolicy';
+import BookVenue from './Components/Users/BookVenue';
+import PaymentPage from './Components/Users/PaymentPage';
+import PaymentConfirmation from './Components/Users/PaymentConfirmation';
+import UserBookings from './Components/Users/UserBookings';
 import { SearchProvider } from "./Components/SearchContext"; // Adjust the path
 
 

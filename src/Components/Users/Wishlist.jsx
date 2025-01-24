@@ -77,7 +77,7 @@ const Wishlist = () => {
                 {wishlist.map((venue) => (
                     <div key={venue.id} className="p-4 border rounded shadow-md">
                         <img
-                            src={require(`./Assets/${venue.image[0]}`)}
+                            src={require(`./../Assets/${venue.image[0]}`)}
                             alt={venue.name}
                             className="w-full h-48 object-cover rounded"
                         />
