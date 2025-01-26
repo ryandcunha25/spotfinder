@@ -18,13 +18,14 @@ import PaymentPage from './Components/Users/PaymentPage';
 import PaymentConfirmation from './Components/Users/PaymentConfirmation';
 import UserBookings from './Components/Users/UserBookings';
 import { SearchProvider } from "./Components/SearchContext"; // Adjust the path
+import Dashboard from './Components/VenueOwners/Dashboard';
 
 
 function AppContent() {
   const location = useLocation();
 
   // Define routes where the Navbar should not be displayed
-  const noNavbarRoutes = ["/", "/signup"];
+  const noNavbarRoutes = ["/", "/signup", "/dashboard"];
 
   return (
     <SearchProvider>
@@ -48,6 +49,9 @@ function AppContent() {
           <Route path="/payment" element={<PaymentPage />} />
           <Route path="/payment-confirmation" element={<PaymentConfirmation />} />
           <Route path="/bookings" element={<UserBookings />} />
+
+          <Route path="/dashboard" element={<Dashboard />} />
+          
         </Routes>
       </div>
     </SearchProvider>
