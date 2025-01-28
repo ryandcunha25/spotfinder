@@ -8,6 +8,8 @@ const token = require("./routes/token");
 const favourites = require("./routes/wishlist"); 
 const razorpayRoutes = require('./routes/razorpay');
 const bookings = require('./routes/bookings');
+const owner_authentication = require('./routes/owner_authentication');
+
 
 pool.connect();
 
@@ -27,6 +29,8 @@ app.use("/favourites", favourites);
 app.use('/razorpay', razorpayRoutes);
 
 app.use('/bookings', bookings);
+
+app.use('/owner_authentication', owner_authentication);
 
 app.listen(5000, () => {
   console.log('\nServer is running on http://localhost:5000');
