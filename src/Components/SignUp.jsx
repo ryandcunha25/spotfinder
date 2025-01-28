@@ -85,8 +85,9 @@ const SignUp = () => {
                         </div>
 
                         {/* Login Redirect */}
-                        <div className="text-center text-white text-sm mt-6">
+                        <div className="text-center text-white text-md mt-6">
                             <p>Already have an account? <Link to="/" className="font-semibold hover:underline">Login</Link></p>
+                            <p>Are you a venue owner? <Link to="/venueownersregistration" className="font-semibold hover:underline">Sign up as one!</Link></p>
                         </div>
                     </form>
                 </div>
