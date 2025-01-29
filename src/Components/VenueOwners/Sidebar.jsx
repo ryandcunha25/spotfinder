@@ -24,40 +24,58 @@ const Sidebar = () => {
             <nav className="flex-grow px-4 py-6">
                 <ul className="space-y-4">
                     <li className="flex items-center space-x-3 hover:bg-gray-700 p-2 rounded-lg">
-                        <i className="bx bx-home w-5 h-5"></i>
-                        <span>Dashboard</span>
+                        <Link to="/dashboard">
+                            <i className="bx bx-home w-5 h-5"></i>
+                            <span>Dashboard</span>
+                        </Link>
                     </li>
                     <li className="flex items-center space-x-3 hover:bg-gray-700 p-2 rounded-lg">
-                        <i className="bx bx-building w-5 h-5"></i>
-                        <span>My Venues</span>
+                        <Link to="/myvenues">
+                            <i className="bx bx-building w-5 h-5"></i>
+                            <span>My Venues</span>
+                        </Link>
                     </li>
                     <li className="flex items-center space-x-3 hover:bg-gray-700 p-2 rounded-lg">
-                        <i className="bx bx-calendar w-5 h-5"></i>
-                        <span>Bookings</span>
+                        <Link to="/">
+                            <i className="bx bx-calendar w-5 h-5"></i>
+                            <span>Bookings</span>
+                        </Link>
                     </li>
                     <li className="flex items-center space-x-3 hover:bg-gray-700 p-2 rounded-lg">
-                        <i className="bx bx-dollar-circle w-5 h-5"></i>
-                        <span>Payments</span>
+                        <Link to="/">
+                            <i className="bx bx-dollar-circle w-5 h-5"></i>
+                            <span>Payments</span>
+                        </Link>
                     </li>
                     <li className="flex items-center space-x-3 hover:bg-gray-700 p-2 rounded-lg">
-                        <i className="bx bx-star w-5 h-5"></i>
-                        <span>Reviews & Ratings</span>
+                        <Link to="/">
+                            <i className="bx bx-star w-5 h-5"></i>
+                            <span>Reviews & Ratings</span>
+                        </Link>
                     </li>
                     <li className="flex items-center space-x-3 hover:bg-gray-700 p-2 rounded-lg">
-                        <i className="bx bx-bar-chart w-5 h-5"></i>
-                        <span>Analytics</span>
+                        <Link to="/">
+                            <i className="bx bx-bar-chart w-5 h-5"></i>
+                            <span>Analytics</span>
+                        </Link>
                     </li>
                     <li className="flex items-center space-x-3 hover:bg-gray-700 p-2 rounded-lg">
-                        <i className="bx bx-tag w-5 h-5"></i>
-                        <span>Promotions</span>
+                        <Link to="/">
+                            <i className="bx bx-tag w-5 h-5"></i>
+                            <span>Promotions</span>
+                        </Link>
                     </li>
                     <li className="flex items-center space-x-3 hover:bg-gray-700 p-2 rounded-lg">
-                        <i className="bx bx-envelope w-5 h-5"></i>
-                        <span>Messages/Support</span>
+                        <Link to="/">
+                            <i className="bx bx-envelope w-5 h-5"></i>
+                            <span>Messages/Support</span>
+                        </Link>
                     </li>
                     <li className="flex items-center space-x-3 hover:bg-gray-700 p-2 rounded-lg">
-                        <i className="bx bx-cog w-5 h-5"></i>
-                        <span>Settings</span>
+                        <Link to="/">
+                            <i className="bx bx-cog w-5 h-5"></i>
+                            <span>Settings</span>
+                        </Link>
                     </li>
                 </ul>
             </nav>
