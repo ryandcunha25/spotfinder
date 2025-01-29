@@ -17,9 +17,9 @@ const MyVenues = () => {
     });
 
     const [editingVenue, setEditingVenue] = useState(null); // Stores the venue being edited
-
+    let fetchVenues;
     useEffect(() => {
-        const fetchVenues = async () => {
+        fetchVenues = async () => {
             try {
                 const token = localStorage.getItem("token"); // Fetch token from local storage
                 const ownerId = localStorage.getItem("ownerId"); // Fetch ownerId from local storage
@@ -75,7 +75,7 @@ const MyVenues = () => {
             const token = localStorage.getItem("token");
             const ownerId = localStorage.getItem("ownerId");
             const newVenueData = {
-                ownerId,  
+                ownerId,
                 name: newVenue.name,
                 location: newVenue.location,
                 capacity: newVenue.capacity,
@@ -84,12 +84,12 @@ const MyVenues = () => {
                 category: newVenue.category.split(",").map((cat) => cat.trim()), // Convert to array
                 description: newVenue.description,
                 amenities: newVenue.amenities.split(",").map((amenity) => amenity.trim()), // Convert to array
-                images: newVenue.images, 
-              };
-              console.log(newVenueData.images)
-              console.log(newVenue.images)
+                images: newVenue.images,
+            };
+            console.log(newVenueData.images)
+            console.log(newVenue.images)
 
-          
+
             const response = await fetch("http://localhost:5000/venues/add-venue", {
                 method: "POST",
                 headers: {
@@ -111,6 +111,7 @@ const MyVenues = () => {
                 amenities: [],     // Amenities (array format)
                 images: [],         // Stores only the images file name
             });
+            window.location.reload()
         } catch (error) {
             console.error("Error adding venue:", error);
         }
@@ -119,9 +120,10 @@ const MyVenues = () => {
     // Edit a venue
     const handleEditVenue = async () => {
         console.log("Editing a venue...")
+        console.log(editingVenue)
         try {
             const token = localStorage.getItem("token");
-            await fetch(`http://localhost:5000/venues/${editingVenue.id}`, {
+            await fetch(`http://localhost:5000/venues/edit-venue/${editingVenue.venue_id}`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
@@ -137,29 +139,36 @@ const MyVenues = () => {
                 )
             );
             setEditingVenue(null); // Clear editing state
+            window.location.reload()
         } catch (error) {
             console.error("Error editing venue:", error);
         }
     };
 
     // Delete a venue
-    const handleDeleteVenue = async (id) => {
-        try {
-            const token = localStorage.getItem("token");
-            await fetch(`http://localhost:5000/venues/${id}`, {
-                method: "DELETE",
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
-
-            // Update venue list
-            setVenues((prev) => prev.filter((venue) => venue.id !== id));
-        } catch (error) {
-            console.error("Error deleting venue:", error);
+    const handleDeleteVenue = async (venueId) => {
+        if (!window.confirm("Are you sure you want to delete this venue?")) {
+          return;
         }
-    };
-
+      
+        try {
+          const response = await fetch(`http://localhost:5000/venues/delete-venue/${venueId}`, {
+            method: "DELETE",
+          });
+      
+          const data = await response.json();
+          if (response.ok) {
+            alert("Venue deleted successfully!");
+            console.log(data.message);
+            window.location.reload(); // Reload page to reflect changes
+          } else {
+            alert(data.error || "Failed to delete venue");
+          }
+        } catch (error) {
+          console.error("Error deleting venue:", error);
+        }
+      };
+      
     return (
         <div className="flex min-h-screen bg-gray-100">
             {/* Sidebar */}
@@ -193,7 +202,7 @@ const MyVenues = () => {
                                     </button>
                                     <button
                                         className="bg-red-500 text-white px-4 py-2 rounded"
-                                        onClick={() => handleDeleteVenue(venue.id)}
+                                        onClick={() => handleDeleteVenue(venue.venue_id)}
                                     >
                                         Delete
                                     </button>

@@ -105,5 +105,78 @@ router.post("/add-venue", async (req, res) => {
 });
 
 
+router.put("/edit-venue/:venueId", async (req, res) => {
+  try {
+    const { venueId } = req.params; // Extract venue ID from URL
+    const {
+      name,
+      location,
+      capacity,
+      price,
+      contact,
+      category,
+      description,
+      amenities,
+      image
+    } = req.body;
+
+    if (!venueId) {
+      return res.status(400).json({ error: "Venue ID is required" });
+    }
+
+    // Ensure categories and amenities are stored as arrays
+    const formattedCategory = Array.isArray(category) ? category : category.split(",").map(cat => cat.trim());
+    const formattedAmenities = Array.isArray(amenities) ? amenities : amenities.split(",").map(amenity => amenity.trim());
+
+    // Update query
+    const query = `
+      UPDATE venues 
+      SET name = $1, location = $2, capacity = $3, price = $4, contact = $5, 
+          category = $6, description = $7, amenities = $8, image = $9
+      WHERE venue_id = $10 
+      RETURNING *;
+    `;
+
+    const values = [name, location, capacity, price, contact, formattedCategory, description, formattedAmenities, image, venueId];
+
+    const result = await pool.query(query, values);
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "Venue not found" });
+    }
+
+    res.json({ message: "Venue updated successfully", updatedVenue: result.rows[0] });
+
+  } catch (error) {
+    console.error("Error updating venue:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+router.delete("/delete-venue/:venueId", async (req, res) => {
+  try {
+    const { venueId } = req.params; // Extract venue ID from URL
+
+    if (!venueId) {
+      return res.status(400).json({ error: "Venue ID is required" });
+    }
+
+    // Check if venue exists
+    const checkVenue = await pool.query("SELECT * FROM venues WHERE venue_id = $1", [venueId]);
+    if (checkVenue.rows.length === 0) {
+      return res.status(404).json({ error: "Venue not found" });
+    }
+
+    // Delete the venue
+    await pool.query("DELETE FROM venues WHERE venue_id = $1", [venueId]);
+
+    res.json({ message: "Venue deleted successfully" });
+
+  } catch (error) {
+    console.error("Error deleting venue:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 module.exports = router;
 
