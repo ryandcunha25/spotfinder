@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import loginBg1 from './Assets/login_bg.jpg';
-import { BrowserRouter as Router, Link } from "react-router-dom";
+import { BrowserRouter as Router, Link, useNavigate } from "react-router-dom";
 import axios from 'axios';
 
 const SignUp = () => {
@@ -38,7 +38,6 @@ const SignUp = () => {
                 setIsVerified(true);
                 setIsOtpSent(false); // Hide OTP input field
                 alert('OTP verified successfully');
-                navigate('/homepage');
             } else {
                 alert('Invalid OTP');
             }
@@ -50,6 +49,10 @@ const SignUp = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+        if (formData.phone.length !== 10) {
+            alert('Phone number must be exactly 10 digits');
+            return;
+        }
         // Password length validation
         if (formData.password.length < 8) {
             alert('Password must be at least 8 characters long');
@@ -58,6 +61,8 @@ const SignUp = () => {
         try {
             await axios.post('http://localhost:5000/authentication/signup', formData);
             alert('User registered successfully');
+            navigate('/homepage');
+
         } catch (err) {
             alert('Error registering user: ' + err);
         }
@@ -90,7 +95,10 @@ const SignUp = () => {
                             </div>
                             <div>
                                 <label className="text-sm text-black block mb-2">Phone Number</label>
-                                <input type="number" required onChange={handleChange} name="phone" placeholder="Enter phone number" className="w-full h-[50px] bg-transparent border-b-2 border-gray-200 outline-none placeholder-white text-black text-lg px-2 focus:ring-0 peer" />
+                                <input type="number" required onChange={handleChange} name="phone" placeholder="Enter phone number" className="w-full h-[50px] bg-transparent border-b-2 border-gray-200 outline-none placeholder-white text-black text-lg px-2 focus:ring-0 peer"
+                                    pattern="[0-9]*" // Allows only numbers
+                                    inputMode="numeric" // Helps mobile keyboards show number keypad
+                                    maxLength="10" />
                             </div>
                         </div>
 
