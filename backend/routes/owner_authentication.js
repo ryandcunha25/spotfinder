@@ -52,87 +52,58 @@ router.post("/login", async (req, res) => {
 });
 
 
-// Register a new venue owner
+// Venue Owner Signup
 router.post('/register', async (req, res) => {
-  const client = await pool.connect();
+    const client = await pool.connect();
 
-  try {
-    const {
-      fullName,
-      email,
-      phone,
-      password,
-      venueName,
-      venueDescription,
-      location,
-      capacity,
-      price,
-      amenities,
-      contact,
-      category,
-      images
-    } = req.body;
+    try {
+        const {
+            fullName, email, phone, password, venueName,
+            venueDescription, location, capacity, price,
+            amenities, contact, category, images
+        } = req.body;
 
-    // Generate a unique 6-digit owner ID
-    let ownerId;
-    let isUnique = false;
+      
 
-    while (!isUnique) {
-      ownerId = Math.floor(100000 + Math.random() * 900000); // Generate 6-digit number
+        let ownerId;
+        let isUnique = false;
 
-      // Check if the generated ID already exists in the database
-      const idCheck = await client.query('SELECT owner_id FROM venue_owners WHERE owner_id = $1', [ownerId]);
-      if (idCheck.rowCount === 0) {
-        isUnique = true; // ID is unique
-      }
+        while (!isUnique) {
+            ownerId = Math.floor(100000 + Math.random() * 900000);
+            const idCheck = await client.query('SELECT owner_id FROM venue_owners WHERE owner_id = $1', [ownerId]);
+            if (idCheck.rowCount === 0) isUnique = true;
+        }
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        const ownerQuery = `
+            INSERT INTO venue_owners (owner_id, full_name, email, phone, password)
+            VALUES ($1, $2, $3, $4, $5) RETURNING owner_id;
+        `;
+        await client.query(ownerQuery, [ownerId, fullName, email, phone, hashedPassword]);
+
+        const formattedCategory = `{${category.join(',')}}`;
+        const formattedImages = `{${images.join(',')}}`;
+
+        const venueQuery = `
+            INSERT INTO venues (name, location, capacity, price, description, amenities, contact, category, image, owner_id)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+        `;
+        await pool.query(venueQuery, [
+            venueName, location, capacity, price, venueDescription,
+            amenities, contact, formattedCategory, formattedImages, ownerId,
+        ]);
+
+        res.status(201).json({ message: 'Venue owner and venue registered successfully!' });
+    } catch (error) {
+        console.error('Error registering venue owner:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    } finally {
+        client.release();
     }
-
-    // Encrypt the password using bcrypt
-    const saltRounds = 10;
-    const hashedPassword = await bcrypt.hash(password, saltRounds);
-
-    // Insert into venue_owners table
-    const ownerQuery = `
-      INSERT INTO venue_owners (owner_id, full_name, email, phone, password)
-      VALUES ($1, $2, $3, $4, $5) RETURNING owner_id;
-    `;
-    const ownerResult = await client.query(ownerQuery, [ownerId, fullName, email, phone, hashedPassword]);
-    console.log("Stored the details of the venue owner successfully!");
-
-    const formattedCategory = `{${category.join(',')}}`; // Convert the array to PostgreSQL array format
-    const formattedImages = `{${images.join(',')}}`; // Handle images similarly if needed
-
-    // Insert venue details into the venues table
-    const query = `
-      INSERT INTO venues (name, location, capacity, price, description, amenities, contact, category, image, owner_id)
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
-    `;
-    
-    const values = [
-      venueName,
-      location,
-      capacity,
-      price,
-      venueDescription,
-      amenities,
-      contact,
-      formattedCategory, // Use the formatted category
-      formattedImages,   // Use the formatted images
-      ownerId,
-    ];
-    
-    await pool.query(query, values);
-    
-    console.log("Venue details stored successfully!");
-
-    res.status(201).json({ message: 'Venue owner and venue registered successfully!' });
-  } catch (error) {
-    console.error('Error registering venue owner:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
-  } finally {
-    client.release();
-  }
 });
+
+
 
 
 // Export the router
