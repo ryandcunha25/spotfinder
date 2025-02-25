@@ -36,7 +36,7 @@ const Sidebar = () => {
                         </Link>
                     </li>
                     <li className="flex items-center space-x-3 hover:bg-gray-700 p-2 rounded-lg">
-                        <Link to="/">
+                        <Link to="/managebookings">
                             <i className="bx bx-calendar w-5 h-5"></i>
                             <span>Bookings</span>
                         </Link>
