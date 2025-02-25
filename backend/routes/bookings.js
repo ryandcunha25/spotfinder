@@ -61,25 +61,35 @@ router.post('/book', async (req, res) => {
 });
 
 // Endpoint to update booking status on successful payment
-router.post('/update-booking-status', async (req, res) => {
-    const { bookingId, paymentMethod } = req.body; // Receive paymentId and bookingId from the frontend
+router.put("/update-booking-status/:booking_id", async (req, res) => {
+    // const { bookingId, paymentMethod } = req.body; // Receive paymentId and bookingId from the frontend
+    const { booking_id } = req.params;
+    console.log(booking_id)
+    const { status } = req.body;
 
     try {
         // Update the booking status to "Success"
-        const query = `
-        UPDATE bookings
-        SET status = $1, payment_method = $2
-        WHERE booking_id = $3
-        RETURNING *;
-    `;
-    const result = await pool.query(query, ['Success', paymentMethod, bookingId]);
+        //     const query = `
+        //     UPDATE bookings
+        //     SET status = $1, payment_method = $2
+        //     WHERE booking_id = $3
+        //     RETURNING *;
+        // `;
+        //     const result = await pool.query(query, ['Success', paymentMethod, bookingId]);
+        const updateQuery = `
+            UPDATE bookings
+            SET status = $1
+            WHERE booking_id = $2
+            RETURNING *;
+        `;
+        const result = await pool.query(updateQuery, [status, booking_id]);
 
         if (result.rowCount === 0) {
             return res.status(404).json({ error: 'Booking not found' });
         }
 
         // Optionally, you can log the payment details or any other required data
-        console.log(`Booking status updated for booking id: ${bookingId}`);
+        console.log(`Booking status updated for booking id: ${booking_id}`);
 
         res.status(200).json({ message: 'Booking status updated successfully', booking: result.rows[0] });
     } catch (error) {
@@ -87,6 +97,8 @@ router.post('/update-booking-status', async (req, res) => {
         res.status(500).json({ error: 'Failed to update booking status' });
     }
 });
+
+
 
 
 router.get('/confirmed-booking', async (req, res) => {
@@ -110,16 +122,21 @@ router.get('/confirmed-booking', async (req, res) => {
 
 router.get('/show-bookings', authenticateToken, async (req, res) => {
     try {
-        const userId = req.user.id; // Get the userId from the token
-        console.log(`Fetching bookings for user ID: ${userId}`);
+        // const userId = req.user.id; // Get the userId from the token
+        const userId = req.user.id;
+        // const { userId } = req.body;
+        // console.log("Received userId:", userId, "Type:", typeof userId);
+
+
+        // const query = await pool.query(`Select * from bookings`)
 
         const result = await pool.query(
             `SELECT b.*, u.*, v.* FROM bookings b
             JOIN users u ON b.user_id = u.id
             JOIN venues v ON b.venue_id = v.venue_id
-            WHERE b.user_id = $1 AND b.status = $2;
+            WHERE b.user_id = $1;
             `,
-            [userId, 'Success']
+            [userId]
         );
 
         res.status(200).json(result.rows);
@@ -128,4 +145,29 @@ router.get('/show-bookings', authenticateToken, async (req, res) => {
         res.status(500).send('Server Error');
     }
 });
+
+// venue owners side
+
+// Fetch all bookings with user and venue details
+router.get("/showallbookings/:ownerId", async (req, res) => {
+    try {
+        const { ownerId } = req.params;
+        const query = `
+            SELECT v.*, b.*, u.*, p.*
+            FROM venues v
+            LEFT JOIN bookings b ON v.venue_id = b.venue_id
+            LEFT JOIN users u ON b.user_id = u.id
+            LEFT JOIN payments p ON b.booking_id = p.booking_id
+            WHERE v.owner_id = $1;
+        `;
+
+        const result = await pool.query(query, [ownerId]);
+        res.status(200).json(result.rows);
+    } catch (error) {
+        console.error("Error fetching bookings:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+});
+
+
 module.exports = router;
