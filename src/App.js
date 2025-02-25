@@ -1,4 +1,3 @@
-import React from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import "./Components/css/output.css";
 import SignUp from './Components/SignUp';
@@ -22,13 +21,14 @@ import Dashboard from './Components/VenueOwners/Dashboard';
 import VenueOwnerSignup from './Components/VenueOwners/VenueOwnerSignup';
 import VenueOwnerLogin from './Components/VenueOwners/VenueOwnerLogin';
 import MyVenues from './Components/VenueOwners/MyVenues';
+import ManageBookings from './Components/VenueOwners/ManageBookings';
 
 
 function AppContent() {
   const location = useLocation();
 
   // Define routes where the Navbar should not be displayed
-  const noNavbarRoutes = ["/", "/signup", "/venues/:venueId/book-venue", "/payment", "/payment-confirmation", "/dashboard", "/venueownersregistration","/venueownerslogin", "/myvenues"];
+  const noNavbarRoutes = ["/", "/signup", "/venues/:venueId/book-venue", "book-venue", "/payment", "/payment-confirmation", "/dashboard", "/venueownersregistration", "/venueownerslogin", "/myvenues", "/managebookings"];
 
   return (
     <SearchProvider>
@@ -56,7 +56,8 @@ function AppContent() {
           <Route path="/venueownersregistration" element={<VenueOwnerSignup />} />
           <Route path="/venueownerslogin" element={<VenueOwnerLogin />} />
           <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/myvenues" element={<MyVenues/>} />
+          <Route path="/myvenues" element={<MyVenues />} />
+          <Route path="/managebookings" element={<ManageBookings />} />
 
         </Routes>
       </div>
