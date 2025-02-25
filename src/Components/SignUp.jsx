@@ -218,8 +218,8 @@ const SignUp = () => {
                             </div>
                         )}
                         <div className="text-center text-white text-sm mt-4">
-                            <p>Don't have an account? 
-                                <Link to="/signup" className="font-semibold hover:underline"> Sign Up!</Link>
+                            <p>Already have have an account? 
+                                <Link to="/" className="font-semibold hover:underline"> Sign In !</Link>
                             </p>
                             <p>Wanna sign up as an venue owner? 
                                 <Link to="/venueownersregistration" className="font-semibold hover:underline"> Register</Link>
