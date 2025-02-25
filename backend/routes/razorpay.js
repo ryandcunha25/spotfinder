@@ -59,8 +59,8 @@ router.post('/verify-payment', async (req, res) => {
             VALUES ($1, $2, $3, $4, $5) RETURNING *;
         `;
         const values = [
-            bookingDetails.bookingId,
-            bookingDetails.userId,
+            bookingDetails.booking_id,
+            bookingDetails.user_id,
             bookingDetails.price,
             paymentMethod || 'Razorpay', // Default to "Razorpay" if no payment method is provided
             'Success',
