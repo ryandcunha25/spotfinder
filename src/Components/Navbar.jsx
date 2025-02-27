@@ -11,13 +11,14 @@ const Navbar = () => {
     };
 
     return (
-        <>
+        <div className="sticky top-0 bg-white z-50">
             {/* HEADER */}
-            <header className="py-4 shadow-sm">
+            <header className="py-4 shadow-sm ">
+
                 <div className="container flex items-center justify-evenly relative">
                     {/* Logo */}
                     <Link to="#">
-                        <img src="" alt="logo" className="w-32" />
+                        <img src={require(`./Assets/SpotFinder_logo.png`)} alt="logo" className="w-26 h-16" />
                     </Link>
 
                     {/* Searchbar */}
@@ -75,7 +76,7 @@ const Navbar = () => {
 
             {/* NAVIGATION BAR */}
             <nav className="bg-gray-800">
-                <div className="container flex">
+            <div className="container flex">
                     <div className="px-8 py-4 bg-primary flex items-center cursor-pointer">
                         <span className="text-white">
                             <i className="fa fa-bars"></i>
@@ -120,7 +121,7 @@ const Navbar = () => {
                     </div>
                 </div>
             </nav>
-        </>
+        </div>
     );
 };
 
