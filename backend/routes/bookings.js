@@ -64,18 +64,10 @@ router.post('/book', async (req, res) => {
 router.put("/update-booking-status/:booking_id", async (req, res) => {
     // const { bookingId, paymentMethod } = req.body; // Receive paymentId and bookingId from the frontend
     const { booking_id } = req.params;
-    console.log(booking_id)
+    console.log("Received booking id:", booking_id);
     const { status } = req.body;
 
     try {
-        // Update the booking status to "Success"
-        //     const query = `
-        //     UPDATE bookings
-        //     SET status = $1, payment_method = $2
-        //     WHERE booking_id = $3
-        //     RETURNING *;
-        // `;
-        //     const result = await pool.query(query, ['Success', paymentMethod, bookingId]);
         const updateQuery = `
             UPDATE bookings
             SET status = $1
@@ -87,20 +79,19 @@ router.put("/update-booking-status/:booking_id", async (req, res) => {
         if (result.rowCount === 0) {
             return res.status(404).json({ error: 'Booking not found' });
         }
-
         // Optionally, you can log the payment details or any other required data
         console.log(`Booking status updated for booking id: ${booking_id}`);
 
         res.status(200).json({ message: 'Booking status updated successfully', booking: result.rows[0] });
+
+
     } catch (error) {
         console.error('Error updating booking status:', error);
         res.status(500).json({ error: 'Failed to update booking status' });
     }
 });
 
-
-
-
+// Endpoint to fetch booking details for confirmation page
 router.get('/confirmed-booking', async (req, res) => {
     const { book_id } = req.query;
     console.log('Showing receipt of booked id:', book_id);
@@ -153,12 +144,12 @@ router.get("/showallbookings/:ownerId", async (req, res) => {
     try {
         const { ownerId } = req.params;
         const query = `
-            SELECT v.*, b.*, u.*, p.*
+            SELECT b.*, v.*, u.*
             FROM venues v
-            LEFT JOIN bookings b ON v.venue_id = b.venue_id
-            LEFT JOIN users u ON b.user_id = u.id
-            LEFT JOIN payments p ON b.booking_id = p.booking_id
+            JOIN bookings b ON v.venue_id = b.venue_id
+            JOIN users u ON b.user_id = u.id
             WHERE v.owner_id = $1;
+
         `;
 
         const result = await pool.query(query, [ownerId]);

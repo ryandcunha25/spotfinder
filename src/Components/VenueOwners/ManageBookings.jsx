@@ -7,6 +7,7 @@ const ManageBookings = () => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        console.log(Date.now())
         fetchBookings();
     }, []);
 
@@ -23,13 +24,32 @@ const ManageBookings = () => {
     };
 
     const handleStatusChange = async (booking_id, newStatus) => {
+        console.log("Processing status change for booking ID:", booking_id, "New status:", newStatus);
         try {
+            // If the status is "Cancelled", process the refund first
+            if (newStatus === "Cancelled") {
+                const refundResponse = await axios.get(`http://localhost:5000/razorpay/refund/${booking_id}`);
+                console.log(refundResponse);
+                if (refundResponse.status = 200) {
+                    alert("Refund processed successfully!");
+                    fetchBookings();    
+                } else {
+                    alert("Refund failed. Cannot cancel booking.");
+                    return; // Stop execution if refund fails
+                }
+            }
+    
+            // Update booking status after refund
             await axios.put(`http://localhost:5000/bookings/update-booking-status/${booking_id}`, { status: newStatus });
-            fetchBookings(); // Refresh bookings after update
+    
+            // Refresh bookings after update
+            fetchBookings();
         } catch (error) {
-            console.error("Error updating booking status:", error);
+            console.error("Error processing refund or updating booking status:", error);
+            alert("An error occurred. Please try again.");
         }
     };
+    
 
     if (loading) {
         return <div className="text-center text-xl mt-10">Loading bookings...</div>;
@@ -48,7 +68,7 @@ const ManageBookings = () => {
                             <th className="p-2 border">Venue</th>
                             <th className="p-2 border">Date & Time</th>
                             <th className="p-2 border">Status</th>
-                            <th className="p-2 border">Payment</th>
+                            {/* <th className="p-2 border">Payment</th> */}
                             <th className="p-2 border">Actions</th>
                         </tr>
                     </thead>
@@ -80,7 +100,7 @@ const ManageBookings = () => {
                                         {booking.status}
                                     </span>
                                 </td>
-                                <td className="p-2 border">{booking.payment_method}</td>
+                                {/* <td className="p-2 border">{booking.payment_method}</td> */}
                                 <td className="p-2 border">
                                     {booking.status === "Pending" && (
                                         <button
@@ -90,9 +110,10 @@ const ManageBookings = () => {
                                             Accept
                                         </button>
                                     )}
-                                    {booking.status !== "Cancelled" && (
+                                    {(booking.status !== "Cancelled" && booking.status !== "Canceled" && booking.status !== "Refunded") && (
+
                                         <button
-                                            className="bg-red-500 text-white px-3 py-1 mt-1 rounded"
+                                            className="bg-red-500 text-white px-3 py-1 mt-1 rounded align-center"
                                             onClick={() => handleStatusChange(booking.booking_id, "Cancelled")}
                                         >
                                             Cancel

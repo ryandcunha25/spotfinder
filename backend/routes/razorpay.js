@@ -55,19 +55,21 @@ router.post('/verify-payment', async (req, res) => {
 
         // Insert payment details into the payments table
         const query = `
-            INSERT INTO payments (booking_id, user_id, amount, payment_method, payment_status)
-            VALUES ($1, $2, $3, $4, $5) RETURNING *;
+            INSERT INTO payments (payment_id, booking_id, user_id, amount, payment_method, payment_status)
+            VALUES ($1, $2, $3, $4, $5, $6) RETURNING *;
         `;
         const values = [
+            razorpay_payment_id,
             bookingDetails.booking_id,
             bookingDetails.user_id,
             bookingDetails.price,
-            paymentMethod || 'Razorpay', // Default to "Razorpay" if no payment method is provided
+            paymentMethod, 
             'Success',
         ];
         console.log(values)
 
         const result = await pool.query(query, values);
+        
 
         // Send success response
         res.status(200).json({
@@ -81,6 +83,35 @@ router.post('/verify-payment', async (req, res) => {
         console.error('Error storing payment details:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
+});
+
+// Refund Payment API
+router.get("/refund/:booking_id", async (req, res) => {
+  const { booking_id } = req.params;
+
+
+  try {
+      // Fetch payment ID from the database
+      const result = await pool.query("SELECT payment_id FROM payments WHERE booking_id  = $1", [booking_id]);
+
+      if (result.rows.length === 0) {
+          return res.status(404).json({ error: "Booking not found" });
+      }
+
+      const paymentId = result.rows[0].payment_id;
+      console.log(paymentId)
+
+      // Request refund from Razorpay
+      const refund = razorpay.payments.refund(paymentId);
+
+      // Update booking status to "Refunded"
+      await pool.query("UPDATE bookings SET status = 'Refunded' WHERE booking_id = $1", [booking_id]);
+
+      res.json({ message: "Refund processed successfully", refund });
+  } catch (error) {
+      console.error("Refund Error:", error);
+      res.status(500).json({ error: "Failed to process refund" });
+  }
 });
   
 module.exports = router;

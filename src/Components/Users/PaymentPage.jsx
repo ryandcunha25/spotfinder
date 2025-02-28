@@ -5,6 +5,7 @@ const PaymentPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const bookingDetails = location.state?.bookingDetails;
+  console.log(bookingDetails.phone)
 
   if (!bookingDetails) {
     return <p className="text-center text-red-500 font-semibold mt-10">Error: No booking details found.</p>;
@@ -32,7 +33,7 @@ const PaymentPage = () => {
         key: process.env.REACT_APP_RAZORPAY_KEY_ID,
         amount: order.amount,
         currency: order.currency,
-        name: 'Venue Booking',
+        name: 'SpotFinder',
         description: 'Payment for venue reservation',
         order_id: order.id,
         handler: async (response) => {
