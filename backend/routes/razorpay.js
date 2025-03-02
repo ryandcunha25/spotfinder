@@ -86,32 +86,43 @@ router.post('/verify-payment', async (req, res) => {
 });
 
 // Refund Payment API
-router.get("/refund/:booking_id", async (req, res) => {
-  const { booking_id } = req.params;
-
+router.post("/refund/:payment_id", async (req, res) => {
+  const { payment_id } = req.params;
+  console.log(payment_id)
 
   try {
-      // Fetch payment ID from the database
-      const result = await pool.query("SELECT payment_id FROM payments WHERE booking_id  = $1", [booking_id]);
-
-      if (result.rows.length === 0) {
-          return res.status(404).json({ error: "Booking not found" });
-      }
-
-      const paymentId = result.rows[0].payment_id;
-      console.log(paymentId)
-
+  
       // Request refund from Razorpay
-      const refund = razorpay.payments.refund(paymentId);
+      const refund = razorpay.payments.refund(payment_id);
+      console.log(refund)
+      
 
-      // Update booking status to "Refunded"
-      await pool.query("UPDATE bookings SET status = 'Refunded' WHERE booking_id = $1", [booking_id]);
-
-      res.json({ message: "Refund processed successfully", refund });
+      res.status(200).json({ message: "Refund processed successfully", refund });
   } catch (error) {
       console.error("Refund Error:", error);
       res.status(500).json({ error: "Failed to process refund" });
   }
 });
   
+
+router.get("/show-payment-details/:booking_id", async (req, res) => {
+  const { booking_id } = req.params;
+  
+  try {
+      const paymentQuery = await pool.query(
+          "SELECT * FROM payments WHERE booking_id = $1", 
+          [booking_id]
+      );
+
+      if (paymentQuery.rows.length === 0) {
+          return res.status(404).json({ message: "No payment details found" });
+      }
+
+      res.json(paymentQuery.rows[0]);
+  } catch (error) {
+      console.error("Error fetching payment details:", error);
+      res.status(500).json({ message: "Server error" });
+  }
+});
+
 module.exports = router;

@@ -28,7 +28,7 @@ function AppContent() {
   const location = useLocation();
 
   // Define routes where the Navbar should not be displayed
-  const noNavbarRoutes = ["/", "/signup", "/venues/:venueId/book-venue", "book-venue", "/payment", "/payment-confirmation", "/dashboard", "/venueownersregistration", "/venueownerslogin", "/myvenues", "/managebookings"];
+  const noNavbarRoutes = ["/", "/signup", "/venues/:venueId/book-venue", "book-venue", "/payment", "/payment-confirmation", "/dashboard", "/venueownersregistration", "/venueownerslogin", "/myvenues", "/managebookings", "/managepayments"];
 
   return (
     <SearchProvider>

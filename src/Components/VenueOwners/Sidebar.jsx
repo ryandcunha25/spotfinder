@@ -43,12 +43,6 @@ const Sidebar = () => {
                     </li>
                     <li className="flex items-center space-x-3 hover:bg-gray-700 p-2 rounded-lg">
                         <Link to="/">
-                            <i className="bx bx-dollar-circle w-5 h-5"></i>
-                            <span>Payments</span>
-                        </Link>
-                    </li>
-                    <li className="flex items-center space-x-3 hover:bg-gray-700 p-2 rounded-lg">
-                        <Link to="/">
                             <i className="bx bx-star w-5 h-5"></i>
                             <span>Reviews & Ratings</span>
                         </Link>
