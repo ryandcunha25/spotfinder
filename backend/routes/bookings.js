@@ -148,7 +148,8 @@ router.get("/showallbookings/:ownerId", async (req, res) => {
             FROM venues v
             JOIN bookings b ON v.venue_id = b.venue_id
             JOIN users u ON b.user_id = u.id
-            WHERE v.owner_id = $1;
+            WHERE v.owner_id = $1
+            order by b.created_at desc;
 
         `;
 
