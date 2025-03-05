@@ -9,7 +9,7 @@ const Spots = () => {
     const [priceRange, setPriceRange] = useState({ min: "", max: "" });
 
     // Event type options
-    const eventTypes = ["Conference", "Weddings", "Birthdays", "Corporate"];
+    const eventTypes = ["Conference", "Weddings", "Birthdays", "Heritage"];
     const capacityOptions = [
         { label: "Less than 50", range: [0, 50] },
         { label: "50-100", range: [50, 100] },
@@ -38,14 +38,14 @@ const Spots = () => {
 
     // Filter venues based on search query and other selected filters
     const filteredVenues = venues.filter((venue) => {
-        const matchesSearch = venue.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-        venue.location.toLowerCase().includes(searchQuery.toLowerCase());
+        const matchesSearch = venue.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            venue.location.toLowerCase().includes(searchQuery.toLowerCase());
 
         const matchesEventType = () => {
             if (selectedEventTypes.length === 0) {
                 return true; // No event type filter applied
             }
-    
+
             if (Array.isArray(venue.category)) {
                 // Check if any of the selected types exist in the venue's category array
                 return selectedEventTypes.some((type) => venue.category.includes(type));
@@ -58,9 +58,9 @@ const Spots = () => {
         const matchesCapacity = selectedCapacities.length === 0
             ? true
             : selectedCapacities.some(
-                  (range) =>
-                      venue.capacity >= range[0] && venue.capacity <= range[1]
-              );
+                (range) =>
+                    venue.capacity >= range[0] && venue.capacity <= range[1]
+            );
 
         const matchesPrice =
             (!priceRange.min || venue.price >= parseInt(priceRange.min)) &&
@@ -112,121 +112,97 @@ const Spots = () => {
     };
 
     return (
-        <div className="container w-full gap-12 m-10 pl-12 flex">
-            {/* Sidebar */}
-            <div className="h-fit bg-white w-1/4 sticky pt-4 pb-6 shadow rounded overflow-hidden">
-                <div className="divide-y divide-gray-200 space-y-5 px-6">
-                    {/* Event Type Filter */}
-                    <div>
-                        <h3 className="text-xl text-gray-800 mb-3 uppercase font-medium">
-                            Event Type
-                        </h3>
-                        <div className="space-y-2">
-                            {eventTypes.map((event, index) => (
-                                <div className="flex items-center" key={index}>
-                                    <input
-                                        type="checkbox"
-                                        id={`event-${index}`}
-                                        value={event}
-                                        onChange={handleEventTypeChange}
-                                        className="text-primary focus:ring-0 rounded-sm cursor-pointer"
-                                    />
-                                    <label
-                                        htmlFor={`event-${index}`}
-                                        className="text-gray-600 ml-3 cursor-pointer"
-                                    >
-                                        {event}
-                                    </label>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
+        <div className="container mx-auto py-10 flex flex-col lg:flex-row gap-10">
+            {/* Sidebar Filters */}
+            <div className="bg-white h-fit w-1/2 lg:w-1/4 p-6 rounded-lg shadow-2xl">
+                <h2 className="text-2xl font-semibold text-gray-800 mb-4">Filters</h2>
 
-                    {/* Venue Capacity Filter */}
-                    <div className="pt-4">
-                        <h3 className="text-xl text-gray-800 mb-3 uppercase font-medium">
-                            Venue Capacity
-                        </h3>
-                        <div className="space-y-2">
-                            {capacityOptions.map((option, index) => (
-                                <div className="flex items-center" key={index}>
-                                    <input
-                                        type="checkbox"
-                                        id={`capacity-${index}`}
-                                        value={option.label}
-                                        onChange={handleCapacityChange}
-                                        className="text-primary focus:ring-0 rounded-sm cursor-pointer"
-                                    />
-                                    <label
-                                        htmlFor={`capacity-${index}`}
-                                        className="text-gray-600 ml-3 cursor-pointer"
-                                    >
-                                        {option.label}
-                                    </label>
-                                </div>
-                            ))}
-                        </div>
+                {/* Event Type Filter */}
+                <div className="mb-6">
+                    <h3 className="text-lg font-medium text-gray-700 mb-3">Event Type</h3>
+                    <div className="space-y-2">
+                        {eventTypes.map((event, index) => (
+                            <label key={index} className="flex items-center space-x-2 cursor-pointer">
+                                <input
+                                    type="checkbox"
+                                    value={event}
+                                    onChange={handleEventTypeChange}
+                                    className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                                />
+                                <span className="text-gray-600">{event}</span>
+                            </label>
+                        ))}
                     </div>
+                </div>
 
-                    {/* Price Filter */}
-                    <div className="pt-4">
-                        <h3 className="text-xl text-gray-800 mb-3 uppercase font-medium">
-                            Price
-                        </h3>
-                        <div className="mt-4 flex items-center">
-                            <input
-                                type="number"
-                                className="w-full border-gray-300 focus:border-primary focus:ring-0 px-3 py-1 text-gray-600 text-sm shadow-sm rounded"
-                                placeholder="Min"
-                                value={priceRange.min}
-                                onChange={(e) =>
-                                    setPriceRange({ ...priceRange, min: e.target.value })
-                                }
-                            />
-                            <span className="mx-3 text-gray-800">-</span>
-                            <input
-                                type="number"
-                                className="w-full border-gray-300 focus:border-primary focus:ring-0 px-3 py-1 text-gray-600 text-sm shadow-sm rounded"
-                                placeholder="Max"
-                                value={priceRange.max}
-                                onChange={(e) =>
-                                    setPriceRange({ ...priceRange, max: e.target.value })
-                                }
-                            />
-                        </div>
+                {/* Venue Capacity Filter */}
+                <div className="mb-6">
+                    <h3 className="text-lg font-medium text-gray-700 mb-3">Venue Capacity</h3>
+                    <div className="space-y-2">
+                        {capacityOptions.map((option, index) => (
+                            <label key={index} className="flex items-center space-x-2 cursor-pointer">
+                                <input
+                                    type="checkbox"
+                                    value={option.label}
+                                    onChange={handleCapacityChange}
+                                    className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                                />
+                                <span className="text-gray-600">{option.label}</span>
+                            </label>
+                        ))}
+                    </div>
+                </div>
+
+                {/* Price Filter */}
+                <div>
+                    <h3 className="text-lg font-medium text-gray-700 mb-3">Price Range</h3>
+                    <div className="flex items-center space-x-3">
+                        <input
+                            type="number"
+                            placeholder="Min"
+                            value={priceRange.min}
+                            onChange={(e) => setPriceRange({ ...priceRange, min: e.target.value })}
+                            className="w-full border rounded-lg p-2 text-gray-600 focus:ring focus:ring-blue-300"
+                        />
+                        <span className="text-gray-600">-</span>
+                        <input
+                            type="number"
+                            placeholder="Max"
+                            value={priceRange.max}
+                            onChange={(e) => setPriceRange({ ...priceRange, max: e.target.value })}
+                            className="w-full border rounded-lg p-2 text-gray-600 focus:ring focus:ring-blue-300"
+                        />
                     </div>
                 </div>
             </div>
 
-            {/* Venues List Section */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full lg:w-3/4">
+            {/* Venue Cards */}
+            <div className="w-full lg:w-3/4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
                 {filteredVenues.length > 0 ? (
                     filteredVenues.map((venue) => (
                         <div
                             key={venue.venue_id}
-                            className="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700"
+                            className="bg-white rounded-lg shadow-xl overflow-hidden transform transition duration-300 hover:scale-105"
                         >
                             <img
-                                className="rounded-t-lg w-full"
+                                className="w-full h-48 object-cover"
                                 src={require(`./../Assets/${venue.image[0]}`)}
                                 alt={venue.venue_id}
                             />
                             <div className="p-5">
-                                <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-                                    {venue.name}
-                                </h5>
-                                <p className="mb-2 font-normal text-gray-700 dark:text-gray-400">
+                                <h3 className="text-xl font-bold text-gray-800">{venue.name}</h3>
+                                <p className="text-gray-600 mt-1">
                                     <strong>Location:</strong> {venue.location}
                                 </p>
-                                <p className="mb-2 font-normal text-gray-700 dark:text-gray-400">
+                                <p className="text-gray-600 mt-1">
                                     <strong>Price:</strong> ₹{venue.price} per day
                                 </p>
-                                <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">
+                                <p className="text-gray-600 mt-1">
                                     <strong>Capacity:</strong> {venue.capacity} people
                                 </p>
                                 <Link
                                     to={`/venues/${venue.venue_id}`}
-                                    className="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                                    className="mt-4 block w-full text-center bg-gradient-to-r from-blue-500 to-indigo-600 text-white py-2 rounded-lg font-semibold hover:opacity-90"
                                 >
                                     View Details
                                 </Link>
@@ -234,10 +210,13 @@ const Spots = () => {
                         </div>
                     ))
                 ) : (
-                    <p className="text-center text-gray-700">No venues match your filters.</p>
+                    <p className="text-center text-gray-700 col-span-full">
+                        No venues match your filters.
+                    </p>
                 )}
             </div>
         </div>
+
     );
 };
 
