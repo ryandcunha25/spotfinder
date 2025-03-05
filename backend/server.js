@@ -9,8 +9,7 @@ const favourites = require("./routes/wishlist");
 const razorpayRoutes = require('./routes/razorpay');
 const bookings = require('./routes/bookings');
 const owner_authentication = require('./routes/owner_authentication');
-const email_service = require('./routes/email_service');
-
+const reviews = require('./routes/reviews');
 
 pool.connect();
 
@@ -18,6 +17,8 @@ const app = express();
 
 app.use(cors());
 app.use(bodyParser.json());
+
+// app.use('/cron_jobs', cron_jobs);
 
 app.use('/authentication', authRoutes);
 
@@ -33,8 +34,13 @@ app.use('/bookings', bookings);
 
 app.use('/owner_authentication', owner_authentication);
 
-app.use('/email_service', email_service);
+// app.use('/email_service', email_service);
+
+app.use('/reviews', reviews);
 
 app.listen(5000, () => {
   console.log('\nServer is running on http://localhost:5000');
 });
+
+require('./routes/email_service');
+// require("./cron_jobs");
