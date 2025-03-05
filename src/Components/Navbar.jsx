@@ -18,7 +18,7 @@ const Navbar = () => {
                 <div className="container flex items-center justify-evenly relative">
                     {/* Logo */}
                     <Link to="#">
-                        <img src={require(`./Assets/SpotFinder_logo.png`)} alt="logo" className="w-26 h-16" />
+                        <img src={require(`./Assets/SpotFinderLogo.png`)} style={{height:75}} alt="logo" className="" />
                     </Link>
 
                     {/* Searchbar */}
