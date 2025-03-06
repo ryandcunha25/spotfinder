@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Sidebar from "./Sidebar";
+import Bookings from "./Bookings";
 
 const ManageBookings = () => {
     const [bookings, setBookings] = useState([]);
@@ -30,13 +31,14 @@ const ManageBookings = () => {
         try {
             const response = await axios.get(`http://localhost:5000/bookings/showallbookings/${ownerId}`);
             setBookings(response.data);
+            console.log(response.data)
             setLoading(false);
         } catch (error) {
             console.error("Error fetching bookings:", error);
             setLoading(false);
         }
     };
-    const handleStatusChange = async (booking_id, newStatus) => {
+    const handleStatusChange = async (booking_id, user_id=null, newStatus) => {
         console.log("Processing status change for booking ID:", booking_id, "New status:", newStatus);
         try {
             // // If the status is "Cancelled", process the refund first
@@ -54,7 +56,12 @@ const ManageBookings = () => {
 
             // Update booking status after refund
             await axios.put(`http://localhost:5000/bookings/update-booking-status/${booking_id}`, { status: newStatus });
-
+            await axios.post("http://localhost:5000/notifications/add", {
+                user_id,
+                bookingId: booking_id,
+                message: `Your booking status for booking id: #${booking_id} has been ${newStatus}.`,
+                type: newStatus,
+            });
             // Refresh bookings after update
             fetchBookings();
         } catch (error) {
@@ -95,7 +102,7 @@ const ManageBookings = () => {
     
             if (refundResponse.status === 200) {
                 alert("Refund processed successfully!");
-                await handleStatusChange(selectedBooking.booking_id, "Refunded");
+                await handleStatusChange(selectedBooking.booking_id, selectedBooking.user_id, "Refunded");
                 setIsConfirmOpen(false);
                 closeModal();
             } else {
@@ -177,7 +184,7 @@ const ManageBookings = () => {
                                         {booking.status === "Pending" && (
                                             <button
                                                 className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition duration-200"
-                                                onClick={() => handleStatusChange(booking.booking_id, "Accepted")}
+                                                onClick={() => handleStatusChange(booking.booking_id, booking.user_id, "Accepted")}
                                             >
                                                 Accept
                                             </button>
@@ -187,7 +194,7 @@ const ManageBookings = () => {
                                             booking.status !== "Refunded" && (
                                                 <button
                                                     className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition duration-200"
-                                                    onClick={() => handleStatusChange(booking.booking_id, "Cancelled")}
+                                                    onClick={() => handleStatusChange(booking.booking_id, booking.user_id, "Cancelled")}
                                                 >
                                                     Cancel
                                                 </button>
