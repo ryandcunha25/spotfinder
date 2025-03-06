@@ -5,7 +5,8 @@ const pool = require('../db');
 const router = express.Router();
 require('dotenv').config();
 const otpGenerator = require("otp-generator");
-const sendOTPEmail = require("./email_service");
+const emails = require("./email_service");
+const sendOTPEmail = emails.sendOTPEmail;
 
 router.post("/signup", async (req, res) => {
     const { first_name, last_name, phone, email, password, cpassword } = req.body;
