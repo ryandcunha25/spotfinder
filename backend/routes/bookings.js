@@ -81,9 +81,11 @@ router.put("/update-booking-status/:booking_id", async (req, res) => {
         }
         // Optionally, you can log the payment details or any other required data
         console.log(`Booking status updated for booking id: ${booking_id}`);
-
-        res.status(200).json({ message: 'Booking status updated successfully', booking: result.rows[0] });
-
+ 
+        res.status(200).json({
+            message: 'Booking status updated successfully',
+            booking: result.rows[0],
+        });
 
     } catch (error) {
         console.error('Error updating booking status:', error);
@@ -111,16 +113,11 @@ router.get('/confirmed-booking', async (req, res) => {
     }
 });
 
+// showing bookings for users
+
 router.get('/show-bookings', authenticateToken, async (req, res) => {
     try {
-        // const userId = req.user.id; // Get the userId from the token
         const userId = req.user.id;
-        // const { userId } = req.body;
-        // console.log("Received userId:", userId, "Type:", typeof userId);
-
-
-        // const query = await pool.query(`Select * from bookings`)
-
         const result = await pool.query(
             `SELECT b.*, u.*, v.* FROM bookings b
             JOIN users u ON b.user_id = u.id
