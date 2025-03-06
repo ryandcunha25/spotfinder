@@ -45,7 +45,6 @@ const VenueDetails = () => {
                 if (response.ok) {
                     const data = await response.json();
                     setReviews(data);
-                    console.log(reviews)
                 } else {
                     console.error('Failed to fetch reviews');
                 }
@@ -163,44 +162,87 @@ const VenueDetails = () => {
 
 
             {/* Venue Details */}
-            <div className="bg-white shadow-lg rounded-lg p-6">
-                <h2 className="text-3xl font-semibold text-gray-900 mb-3">{venue.name}</h2>
-                <p className="text-gray-700 mb-4">{venue.description}</p>
+            <div className="max-w-xl mx-auto bg-white shadow-xl rounded-xl p-8">
+                {/* Venue Header */}
+                <h2 className="text-4xl font-bold text-gray-800 mb-2">{venue.name}</h2>
+                <p className="text-gray-600 mb-6">{venue.description}</p>
 
-                <div className="space-y-2">
-                    <p className="text-xl text-primary font-bold">Price: ${venue.price}</p>
-                    <p className="flex items-center text-lg text-yellow-500">
-                        Ratings: {Array.from({ length: Math.floor(venue.ratings) }).map((_, index) => (
-                            <span key={index}>★</span>
-                        ))}
-                    </p>
-                    <p className="text-lg font-medium">Capacity: <span className="text-gray-600">{venue.capacity} people</span></p>
-                    <p className="text-lg font-medium">Location: <span className="text-gray-600">{venue.location}</span></p>
-                    <p className="text-lg font-medium">Amenities:</p>
-                    <ul className="grid grid-cols-2 gap-2 text-gray-700 text-lg ml-4">
-                        {amenities.length > 0 ? (
-                            amenities.map((amenity, index) => (
-                                <li key={index} className="flex items-center gap-2">
-                                    <span className="text-blue-500">✔</span> {amenity}
-                                </li>
-                            ))
-                        ) : (
-                            <p>Loading amenities...</p>
-                        )}
-                    </ul>
+                {/* Price, Ratings & Rating Count */}
+                <div className="flex items-center justify-between mb-6">
+                    <span className="text-2xl text-indigo-600 font-semibold">
+                        ${venue.price}
+                    </span>
 
-                    <p className="text-lg font-medium">Contact: <span className="text-gray-600">{venue.owner} ({venue.contact})</span></p>
+                    <div className="flex items-center">
+                        <div className="relative inline-block mr-2">
+                            {/* Background: 5 empty stars */}
+                            <div className="flex text-gray-300">
+                                {[...Array(5)].map((_, i) => (
+                                    <span key={i} className="text-xl">★</span>
+                                ))}
+                            </div>
+                            {/* Foreground: filled stars clipped based on rating */}
+                            <div
+                                className="absolute top-0 left-0 flex text-yellow-500 overflow-hidden"
+                                style={{ width: `${(venue.ratings / 5) * 100}%` }}
+                            >
+                                {[...Array(5)].map((_, i) => (
+                                    <span key={i} className="text-xl">★</span>
+                                ))}
+                            </div>
+                        </div>
+                        {/* Display the number of ratings */}
+                        <span className="text-lg font-medium text-gray-700">
+                            ({venue.ratings} ratings)
+                        </span>
+                    </div>
+                    
                 </div>
 
-                <div className="flex gap-4 mt-6">
-                    <button onClick={bookVenue} className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition">
+                {/* Venue Details */}
+                <div className="space-y-4">
+                    <p className="text-lg font-medium">
+                        Capacity: <span className="text-gray-700">{venue.capacity} people</span>
+                    </p>
+                    <p className="text-lg font-medium">
+                        Location: <span className="text-gray-700">{venue.location}</span>
+                    </p>
+                    <div>
+                        <p className="text-lg font-medium mb-2">Amenities:</p>
+                        <ul className="grid grid-cols-2 gap-2 text-gray-700 text-lg">
+                            {amenities.length > 0 ? (
+                                amenities.map((amenity, index) => (
+                                    <li key={index} className="flex items-center gap-2">
+                                        <span className="text-green-500">✔</span> {amenity}
+                                    </li>
+                                ))
+                            ) : (
+                                <p>Loading amenities...</p>
+                            )}
+                        </ul>
+                    </div>
+                    <p className="text-lg font-medium">
+                        Contact: <span className="text-gray-700">{venue.owner} ({venue.contact})</span>
+                    </p>
+                </div>
+
+                {/* Action Buttons */}
+                <div className="mt-8 flex space-x-4">
+                    <button
+                        onClick={bookVenue}
+                        className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg transition duration-300"
+                    >
                         Book Now
                     </button>
-                    <button onClick={AddToWishlist} className="bg-gray-600 text-white px-6 py-2 rounded-lg hover:bg-gray-700 transition">
+                    <button
+                        onClick={AddToWishlist}
+                        className="flex-1 bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 rounded-lg transition duration-300"
+                    >
                         Add to Wishlist
                     </button>
                 </div>
             </div>
+
 
             {/* Reviews Section */}
             <div className="md:col-span-2 mt-8">
