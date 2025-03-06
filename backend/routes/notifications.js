@@ -21,7 +21,7 @@ router.get("/:userId", async (req, res) => {
 
 // Endpoint to insert a new notification
 router.post("/add", async (req, res) => {
-    const { user_id, booking_id, message, type } = req.body;
+    const { user_id, bookingId, message, type } = req.body;
 
     if (!user_id || !message) {
         return res.status(400).json({ error: "User ID and message are required" });
@@ -33,7 +33,7 @@ router.post("/add", async (req, res) => {
             VALUES ($1, $2, $3, $4, NOW())
             RETURNING *;
         `;
-        const result = await pool.query(insertNotificationQuery, [user_id, booking_id, message, type]);
+        const result = await pool.query(insertNotificationQuery, [user_id, bookingId, message, type]);
 
         res.status(200).json({
             message: "Notification added successfully",
