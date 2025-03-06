@@ -10,6 +10,7 @@ const razorpayRoutes = require('./routes/razorpay');
 const bookings = require('./routes/bookings');
 const owner_authentication = require('./routes/owner_authentication');
 const reviews = require('./routes/reviews');
+const notifications = require('./routes/notifications');
 
 pool.connect();
 
@@ -34,7 +35,7 @@ app.use('/bookings', bookings);
 
 app.use('/owner_authentication', owner_authentication);
 
-// app.use('/email_service', email_service);
+app.use('/notifications', notifications);
 
 app.use('/reviews', reviews);
 
@@ -43,4 +44,4 @@ app.listen(5000, () => {
 });
 
 require('./routes/email_service');
-// require("./cron_jobs");
+require("./cron_jobs");
