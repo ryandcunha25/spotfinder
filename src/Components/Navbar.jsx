@@ -404,29 +404,29 @@ const Navbar = () => {
                                         <div className="flex-1">
                                             <p className="text-gray-700">{notification.message}</p>
                                             {notification.type === "Review_Request" && (
-                        <button
-                          onClick={() =>
-                            navigate(`/review/${notification.booking_id}`)
-                          }
-                          className="mt-2 inline-flex text-xs items-center bg-blue-500 hover:bg-blue-600 text-white font-medium px-2 py-2 rounded-md transition duration-200"
-                        >
-                          <span>Leave a Review</span>
-                          <svg
-                            className="ml-2 h-4 w-4"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth="2"
-                              d="M14 5l7 7m0 0l-7 7m7-7H3"
-                            />
-                          </svg>
-                        </button>
-                      )}
+                                                <button
+                                                    onClick={() =>
+                                                        navigate(`/review/${notification.booking_id}`)
+                                                    }
+                                                    className="mt-2 inline-flex text-xs items-center bg-blue-500 hover:bg-blue-600 text-white font-medium px-2 py-2 rounded-md transition duration-200"
+                                                >
+                                                    <span>Leave a Review</span>
+                                                    <svg
+                                                        className="ml-2 h-4 w-4"
+                                                        fill="none"
+                                                        stroke="currentColor"
+                                                        viewBox="0 0 24 24"
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                    >
+                                                        <path
+                                                            strokeLinecap="round"
+                                                            strokeLinejoin="round"
+                                                            strokeWidth="2"
+                                                            d="M14 5l7 7m0 0l-7 7m7-7H3"
+                                                        />
+                                                    </svg>
+                                                </button>
+                                            )}
                                         </div>
                                     </div>
                                 ))
