@@ -405,9 +405,7 @@ const Navbar = () => {
                                             <p className="text-gray-700">{notification.message}</p>
                                             {notification.type === "Review_Request" && (
                                                 <button
-                                                    onClick={() =>
-                                                        navigate(`/review/${notification.booking_id}`)
-                                                    }
+                                                    onClick={() => handleReviewClick(notification)                                                    }
                                                     className="mt-2 inline-flex text-xs items-center bg-blue-500 hover:bg-blue-600 text-white font-medium px-2 py-2 rounded-md transition duration-200"
                                                 >
                                                     <span>Leave a Review</span>
