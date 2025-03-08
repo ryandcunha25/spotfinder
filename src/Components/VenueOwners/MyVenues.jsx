@@ -174,7 +174,7 @@ const MyVenues = () => {
             {/* Sidebar */}
             <Sidebar />
 
-            <div className="flex-1 bg-gray-50">
+            <div className="flex-1 bg-gray-50 ml-64">
                 {/* Navbar */}
                 <Navbar />
                 <div className="p-6">

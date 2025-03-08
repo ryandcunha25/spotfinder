@@ -1,90 +1,125 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import { Link } from 'react-router-dom';
+import React from "react";
+import { Link } from "react-router-dom";
 
 const Sidebar = () => {
-    const ownerId = localStorage.getItem("ownerId") || "no owner found"
-    const ownerName = localStorage.getItem("fullName")
-    const Logout = () => {
-        console.log(localStorage.getItem('token'))
-        localStorage.removeItem('token'); // Remove token on logout
-        localStorage.removeItem('ownerId'); // Remove token on logout
-        localStorage.removeItem('fullName'); // Remove token on logout
-        console.log('Logout successful!');
-        window.location.href = 'http://localhost:3000/venueownerslogin'; // Redirect to login page
-    }
-    return (
-        <div className="w-64 h-screen bg-gray-800 text-white flex flex-col">
-            {/* Sidebar Header */}
-            <div className="px-6 py-4 text-2xl font-bold border-b border-gray-700">
-                Id: ({ownerId}) {ownerName}
-            </div>
+  const ownerId = localStorage.getItem("ownerId") || "No owner found";
+  const ownerName = localStorage.getItem("fullName") || "Owner";
 
-            {/* Navigation Links */}
-            <nav className="flex-grow px-4 py-6">
-                <ul className="space-y-4">
-                    <li className="flex items-center space-x-3 hover:bg-gray-700 p-2 rounded-lg">
-                        <Link to="/dashboard">
-                            <i className="bx bx-home w-5 h-5"></i>
-                            <span>Dashboard</span>
-                        </Link>
-                    </li>
-                    <li className="flex items-center space-x-3 hover:bg-gray-700 p-2 rounded-lg">
-                        <Link to="/myvenues">
-                            <i className="bx bx-building w-5 h-5"></i>
-                            <span>My Venues</span>
-                        </Link>
-                    </li>
-                    <li className="flex items-center space-x-3 hover:bg-gray-700 p-2 rounded-lg">
-                        <Link to="/managebookings">
-                            <i className="bx bx-calendar w-5 h-5"></i>
-                            <span>Bookings</span>
-                        </Link>
-                    </li>
-                    <li className="flex items-center space-x-3 hover:bg-gray-700 p-2 rounded-lg">
-                        <Link to="/">
-                            <i className="bx bx-star w-5 h-5"></i>
-                            <span>Reviews & Ratings</span>
-                        </Link>
-                    </li>
-                    <li className="flex items-center space-x-3 hover:bg-gray-700 p-2 rounded-lg">
-                        <Link to="/">
-                            <i className="bx bx-bar-chart w-5 h-5"></i>
-                            <span>Analytics</span>
-                        </Link>
-                    </li>
-                    <li className="flex items-center space-x-3 hover:bg-gray-700 p-2 rounded-lg">
-                        <Link to="/">
-                            <i className="bx bx-tag w-5 h-5"></i>
-                            <span>Promotions</span>
-                        </Link>
-                    </li>
-                    <li className="flex items-center space-x-3 hover:bg-gray-700 p-2 rounded-lg">
-                        <Link to="/">
-                            <i className="bx bx-envelope w-5 h-5"></i>
-                            <span>Messages/Support</span>
-                        </Link>
-                    </li>
-                    <li className="flex items-center space-x-3 hover:bg-gray-700 p-2 rounded-lg">
-                        <Link to="/">
-                            <i className="bx bx-cog w-5 h-5"></i>
-                            <span>Settings</span>
-                        </Link>
-                    </li>
-                </ul>
-            </nav>
+  const Logout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("ownerId");
+    localStorage.removeItem("fullName");
+    window.location.href = "http://localhost:3000/venueownerslogin";
+  };
 
-            {/* Logout Button */}
-            <div className="px-4 py-6 border-t border-gray-700">
-                <button onClick={Logout} className="flex items-center space-x-3 w-full p-2 rounded-lg hover:bg-gray-700">
-                    <i className="bx bx-log-out w-5 h-5"></i>
-                    <span>Logout</span>
-                </button>
-            </div>
+  return (
+    <div className="fixed top-0 left-0 w-64 h-screen bg-gradient-to-b from-gray-800 to-gray-900 text-white flex flex-col">
+      {/* Sidebar Header */}
+      <div className="px-6 py-4 flex items-center border-b border-gray-700">
+        {/* Avatar */}
+        <div className="flex-shrink-0">
+          <div className="h-12 w-12 rounded-full bg-gray-600 flex items-center justify-center">
+            <span className="text-xl font-bold">
+              {ownerName.charAt(0).toUpperCase()}
+            </span>
+          </div>
         </div>
-    );
+        <div className="ml-3">
+          <p className="text-xs text-gray-400">Owner ID: {ownerId}</p>
+          <p className="text-lg font-semibold">{ownerName}</p>
+        </div>
+      </div>
+
+      {/* Navigation Links */}
+      <nav className="flex-grow px-4 py-6 overflow-y-auto">
+        <ul className="space-y-4">
+          <li>
+            <Link
+              to="/dashboard"
+              className="flex items-center p-2 rounded-lg hover:bg-gray-900 transition"
+            >
+              <i className="bx bx-home text-xl mr-3"></i>
+              <span className="text-sm font-medium">Dashboard</span>
+            </Link>
+          </li>
+          <li>
+            <Link
+              to="/myvenues"
+              className="flex items-center p-2 rounded-lg hover:bg-gray-900 transition"
+            >
+              <i className="bx bx-building text-xl mr-3"></i>
+              <span className="text-sm font-medium">My Venues</span>
+            </Link>
+          </li>
+          <li>
+            <Link
+              to="/managebookings"
+              className="flex items-center p-2 rounded-lg hover:bg-gray-900 transition"
+            >
+              <i className="bx bx-calendar text-xl mr-3"></i>
+              <span className="text-sm font-medium">Bookings</span>
+            </Link>
+          </li>
+          <li>
+            <Link
+              to="/"
+              className="flex items-center p-2 rounded-lg hover:bg-gray-900 transition"
+            >
+              <i className="bx bx-star text-xl mr-3"></i>
+              <span className="text-sm font-medium">Reviews & Ratings</span>
+            </Link>
+          </li>
+          <li>
+            <Link
+              to="/analytics"
+              className="flex items-center p-2 rounded-lg hover:bg-gray-900 transition"
+            >
+              <i className="bx bx-bar-chart text-xl mr-3"></i>
+              <span className="text-sm font-medium">Analytics</span>
+            </Link>
+          </li>
+          <li>
+            <Link
+              to="/"
+              className="flex items-center p-2 rounded-lg hover:bg-gray-900 transition"
+            >
+              <i className="bx bx-tag text-xl mr-3"></i>
+              <span className="text-sm font-medium">Promotions</span>
+            </Link>
+          </li>
+          <li>
+            <Link
+              to="/"
+              className="flex items-center p-2 rounded-lg hover:bg-gray-900 transition"
+            >
+              <i className="bx bx-envelope text-xl mr-3"></i>
+              <span className="text-sm font-medium">Messages/Support</span>
+            </Link>
+          </li>
+          <li>
+            <Link
+              to="/"
+              className="flex items-center p-2 rounded-lg hover:bg-gray-900 transition"
+            >
+              <i className="bx bx-cog text-xl mr-3"></i>
+              <span className="text-sm font-medium">Settings</span>
+            </Link>
+          </li>
+        </ul>
+      </nav>
+
+      {/* Logout Button */}
+      <div className="px-4 py-6 border-t border-gray-700">
+        <button
+          onClick={Logout}
+          className="flex items-center w-full p-2 rounded-lg hover:bg-gray-900 transition"
+        >
+          <i className="bx bx-log-out text-xl mr-3"></i>
+          <span className="text-sm font-medium">Logout</span>
+        </button>
+      </div>
+    </div>
+  );
 };
 
 export default Sidebar;
-
-
