@@ -23,13 +23,14 @@ import VenueOwnerLogin from './Components/VenueOwners/VenueOwnerLogin';
 import MyVenues from './Components/VenueOwners/MyVenues';
 import ManageBookings from './Components/VenueOwners/ManageBookings';
 import ReviewForm from "./Components/Users/ReviewForm";
+import Analytics from "./Components/VenueOwners/Analytics";
 
 
 function AppContent() {
   const location = useLocation();
 
   // Define routes where the Navbar should not be displayed
-  const noNavbarRoutes = ["/", "/signup", "/venues/:venueId/book-venue", "/payment", "/payment-confirmation", "/dashboard", "/venueownersregistration", "/venueownerslogin", "/myvenues", "/managebookings", "/managepayments", "/review-form"];
+  const noNavbarRoutes = ["/", "/signup", "/venues/:venueId/book-venue", "/payment", "/payment-confirmation", "/dashboard", "/venueownersregistration", "/venueownerslogin", "/myvenues", "/managebookings", "/managepayments", "/review-form", "/analytics"];
 
   return (
     <SearchProvider>
@@ -60,6 +61,7 @@ function AppContent() {
           <Route path="/myvenues" element={<MyVenues />} />
           <Route path="/managebookings" element={<ManageBookings />} />
           <Route path="/review-form" element={<ReviewForm />} />
+          <Route path="/analytics" element={<Analytics />} />
 
         </Routes>
       </div>
