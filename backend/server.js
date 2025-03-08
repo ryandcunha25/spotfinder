@@ -11,6 +11,7 @@ const bookings = require('./routes/bookings');
 const owner_authentication = require('./routes/owner_authentication');
 const reviews = require('./routes/reviews');
 const notifications = require('./routes/notifications');
+const analytics = require('./routes/analytics');
 
 pool.connect();
 
@@ -38,6 +39,8 @@ app.use('/owner_authentication', owner_authentication);
 app.use('/notifications', notifications);
 
 app.use('/reviews', reviews);
+
+app.use('/analytics', analytics);
 
 app.listen(5000, () => {
   console.log('\nServer is running on http://localhost:5000');
