@@ -114,7 +114,7 @@ const Spots = () => {
     return (
         <div className="container mx-auto py-10 flex flex-col lg:flex-row gap-10">
             {/* Sidebar Filters */}
-            <div className="bg-white h-fit w-1/2 lg:w-1/4 p-6 rounded-lg shadow-2xl">
+            <div className="bg-white h-fit w-fit lg:w-1/4 p-6 rounded-lg shadow-2xl lg:sticky lg:top-[5.25rem]">
                 <h2 className="text-2xl font-semibold text-gray-800 mb-4">Filters</h2>
 
                 {/* Event Type Filter */}
@@ -216,7 +216,6 @@ const Spots = () => {
                 )}
             </div>
         </div>
-
     );
 };
 
