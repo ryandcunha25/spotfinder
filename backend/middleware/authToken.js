@@ -13,6 +13,7 @@ module.exports = (req, res, next) => {
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         req.user = { id: decoded.id }; // Attach user ID to the request object
+        req.owner = { id: decoded.ownerId }; // Attach owner ID to the request object
         next();
     } catch (error) {
         console.error('Invalid token:', error);
