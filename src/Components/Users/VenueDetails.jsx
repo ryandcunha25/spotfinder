@@ -159,8 +159,6 @@ const VenueDetails = () => {
             </div>
 
 
-
-
             {/* Venue Details */}
             <div className="max-w-xl mx-auto bg-white shadow-xl rounded-xl p-8">
                 {/* Venue Header */}
@@ -196,7 +194,7 @@ const VenueDetails = () => {
                             ({venue.ratings} ratings)
                         </span>
                     </div>
-                    
+
                 </div>
 
                 {/* Venue Details */}
@@ -248,19 +246,33 @@ const VenueDetails = () => {
             <div className="md:col-span-2 mt-8">
                 <h3 className="text-2xl font-semibold mb-4">Reviews</h3>
                 {reviews.length > 0 ? (
-                    <ul className="bg-gray-100 p-4 rounded-lg">
+                    <ul className="bg-gray-100 p-4 rounded-lg space-y-4">
                         {reviews.map((review, index) => (
-                            <li key={index} className="border-b py-3">
-                                <span className="font-semibold">{review.first_name + " " + review.last_name}</span>
-                                <span className="text-yellow-500 mx-3">{'★'.repeat(review.rating)} ({review.rating}/5)</span>
-                                <p>{review.review_text}</p>
+                            <li key={index} className="border-b pb-3">
+                                <div className="flex items-center space-x-4">
+                                    {/* Avatar */}
+                                    <span className="text-md font-bold h-8 w-8 rounded-full bg-gray-300 flex items-center justify-center">
+                                        {review.first_name.charAt(0).toUpperCase()}
+                                    </span>
+                                    {/* Name and Rating */}
+                                    <div className="flex items-center space-x-2">
+                                        <span className="font-semibold text-gray-800">
+                                            {review.first_name + " " + review.last_name}
+                                        </span>
+                                        <span className="text-yellow-500">
+                                            {'★'.repeat(review.rating)} ({review.rating}/5)
+                                        </span>
+                                    </div>
+                                </div>
+                                <p className="mt-2 text-gray-700">{review.review_text}</p>
                             </li>
                         ))}
                     </ul>
                 ) : (
-                    <p>No reviews yet. Be the first to review this venue!</p>
+                    <p className="text-gray-500">No reviews yet. Be the first to review this venue!</p>
                 )}
             </div>
+
         </div>
     ) : (
         <p className="text-center text-gray-500">Loading venue details...</p>
