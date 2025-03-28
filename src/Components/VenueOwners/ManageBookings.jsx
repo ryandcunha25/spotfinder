@@ -139,7 +139,7 @@ const ManageBookings = () => {
                 <div className="overflow-x-auto">
                     <table className="w-full border-collapse shadow-md rounded-lg overflow-hidden">
                         <thead>
-                            <tr className="bg-gray-200 text-gray-700 text-sm uppercase">
+                            <tr className="bg-gray-200 text-gray-700 text-sm uppercase sticky top-0">
                                 <th className="p-3 border">Booking ID</th>
                                 <th className="p-3 border">Customer</th>
                                 <th className="p-3 border">Venue</th>

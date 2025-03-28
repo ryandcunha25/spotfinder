@@ -98,6 +98,59 @@ router.post("/send-review-requests", async (req, res) => {
         console.error("Error sending review request notifications:", error);
         return res.status(500).json({ error: "Failed to send review request notifications." });
     }
+}); 
+
+// Fetch reviews for a venue owned by the logged-in owner
+router.get('/owner/:owner_id', async (req, res) => {
+    const { owner_id } = req.params;
+
+    try {
+        const query = `
+            SELECT r.*, u.*, v.* FROM reviews r
+            JOIN bookings b ON r.booking_id = b.booking_id
+            JOIN venues v ON b.venue_id = v.venue_id
+            JOIN users u ON r.user_id = u.id
+            WHERE v.owner_id = $1;
+
+        `;
+
+        const result = await db.query(query, [owner_id]);
+        res.status(200).json({ success: true, reviews: result.rows });
+    } catch (error) {
+        console.error("Error fetching reviews:", error);
+        res.status(500).json({ success: false, message: "Server error" });
+    }
 });
+
+// Optional: Allow owner to respond to a review
+router.post('/owner/reply', async (req, res) => {
+    const { review_id, owner_id, reply } = req.body;
+
+    try {
+        // Ensure that the review belongs to a venue owned by the owner
+        const checkQuery = `
+            SELECT r.id FROM reviews r
+            JOIN venues v ON r.venue_id = v.id
+            WHERE r.id = $1 AND v.owner_id = $2;
+        `;
+        const checkResult = await pool.query(checkQuery, [review_id, owner_id]);
+
+        if (checkResult.rowCount === 0) {
+            return res.status(403).json({ success: false, message: "Unauthorized action" });
+        }
+
+        // Insert the owner's reply
+        const insertQuery = `INSERT INTO review_replies (review_id, owner_id, reply) VALUES ($1, $2, $3) RETURNING *;`;
+        const result = await pool.query(insertQuery, [review_id, owner_id, reply]);
+
+        res.json({ success: true, message: "Reply added successfully", reply: result.rows[0] });
+    } catch (error) {
+        console.error("Error adding reply:", error);
+        res.status(500).json({ success: false, message: "Server error" });
+    }
+});
+
+
+
 
 module.exports = router;

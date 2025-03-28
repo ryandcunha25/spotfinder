@@ -62,7 +62,7 @@ const Sidebar = () => {
           </li>
           <li>
             <Link
-              to="/"
+              to="/manage-review-and-ratings"
               className="flex items-center p-2 rounded-lg hover:bg-gray-900 transition"
             >
               <i className="bx bx-star text-xl mr-3"></i>
