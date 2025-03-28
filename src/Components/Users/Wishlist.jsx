@@ -7,7 +7,8 @@ const Wishlist = () => {
 
   useEffect(() => {
     const fetchWishlist = async () => {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token") || sessionStorage.getItem("token");
+      ;
       if (!token) {
         alert('Please log in to view your wishlist');
         return;

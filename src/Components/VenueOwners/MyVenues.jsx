@@ -72,8 +72,8 @@ const MyVenues = () => {
     const handleAddVenue = async () => {
         console.log("Adding a venue...")
         try {
-            const token = localStorage.getItem("token");
-            const ownerId = localStorage.getItem("ownerId");
+            const token = localStorage.getItem("token") || sessionStorage.getItem("token");
+            const ownerId = localStorage.getItem("ownerId") || sessionStorage.getItem("ownerId"); ;
             const newVenueData = {
                 ownerId,
                 name: newVenue.name,

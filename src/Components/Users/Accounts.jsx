@@ -6,6 +6,9 @@ import { Link } from 'react-router-dom';
 const ProfileSidebar = ({ userName }) => {
     const handleLogout = () => {
         localStorage.removeItem('token');
+        sessionStorage.removeItem('token'); 
+        localStorage.removeItem('userId');
+        sessionStorage.removeItem('userId'); 
         console.log("User logged out!")
         window.location.href = 'http://localhost:3000'; // Redirect to login page
       };
@@ -126,7 +129,7 @@ const Accounts = () => {
 
     useEffect(() => {
         const fetchUserDetails = async () => {
-            const token = localStorage.getItem('token');
+            const token = localStorage.getItem('token') || sessionStorage.getItem('token');
 
             if (!token) {
                 setError('User is not authenticated');

@@ -1,49 +1,36 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import loginBg1 from './Assets/login_bg.jpg';
-import loginBg2 from './Assets/login_bg2.jpg';
-import {
-    BrowserRouter as Router,
-    Switch,
-    Route,
-    Link,
-    useNavigate,
-    useParams
-} from "react-router-dom";
-
+import { Link, useNavigate } from "react-router-dom";
 
 const LoginPage = () => {
     const navigate = useNavigate();
     const [user, setUser] = useState(null);
-
-    // useEffect(() => {
-    //     const fetchUserDetails = async () => {
-    //       const token = localStorage.getItem('authToken');
-
-    //       if (!token) return;
-
-    //       try {
-    //         const response = await axios.get('http://localhost:3000/authentication/user-details', {
-    //           headers: {
-    //             Authorization: token,
-    //           },
-    //         });
-    //         setUser(response.data);
-    //       } catch (error) {
-    //         console.error('Error fetching user details:', error);
-    //       }
-    //     };
-
-    //     fetchUserDetails();
-    //   }, []);
-
+    const [rememberMe, setRememberMe] = useState(false); // State for Remember Me
     const [formData, setFormData] = useState({
         email: '',
         password: '',
     });
 
+    // Check if user is already logged in when component mounts
+    useEffect(() => {
+        const savedEmail = localStorage.getItem('rememberedEmail');
+        if (savedEmail) {
+            setFormData((prev) => ({ ...prev, email: savedEmail }));
+            setRememberMe(true);
+        }
+        if (localStorage.getItem('token') || sessionStorage.getItem('token')) {
+            alert("You are already logged in");
+            navigate('/homepage');
+        }
+    }, [navigate]);
+
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
+
+    const handleRememberMe = (e) => {
+        setRememberMe(e.target.checked);
     };
 
     const handleSubmit = async (e) => {
@@ -51,55 +38,126 @@ const LoginPage = () => {
         try {
             const response = await axios.post('http://localhost:5000/authentication/login', formData);
             const token = response.data.token;
-            localStorage.setItem('token', token);
-            localStorage.setItem('userId', response.data.userdetails.id);
-            console.log('userId', response.data.userdetails.id);
-            console.log('User:', response.data);
-            setUser(user); // Store user details
+
+            if (rememberMe) {
+                localStorage.setItem('token', token); // Store token persistently
+                localStorage.setItem('userId', response.data.userdetails.id);
+                localStorage.setItem('rememberedEmail', formData.email);
+
+            } else {
+                sessionStorage.setItem('token', token); // Store token for session only
+                sessionStorage.setItem('userId', response.data.userdetails.id);
+            }
+
+            setUser(user);
             alert('User Logged in Successfully!');
-            navigate('/homepage')
+            navigate('/homepage');
         } catch (err) {
             alert('Error logging in');
         }
     };
+
     return (
-        <div className="w-full bg-cover bg-blend-darken" style={{ backgroundImage: `url(${loginBg1})`, }}>
-            <section className="flex justify-center items-center min-h-screen w-full bg-center bg-cover"  >
-                <div className="relative filter-none z-10 backdrop-blur-lg w-[400px] h-[450px] bg-transparent border-2 border-white/50 rounded-2xl backdrop-blur-lg flex justify-center items-center">
-                    <div className="w-full">
-                        <form action="" className="w-full" onSubmit={handleSubmit}>
-                            <h2 className="text-2xl text-black text-center font-bold mb-4">Login</h2>
-                            <div className="relative w-[310px] border-b-2 border-white mx-auto mb-8">
-                                <label className="text-sm text-black block mb-2">Email</label>
-                                <input type="email" required onChange={handleChange} name="email" placeholder="Enter email" className="w-full h-[50px] bg-transparent border-b-2 border-gray-200 outline-none placeholder-gray-100 text-black text-lg px-2 placeholder-blue-300 focus:ring-0 peer" />
-                                <ion-icon name="mail-outline" className="absolute right-2 top-[20px] text-black text-lg"></ion-icon>
+        <div className="relative min-h-screen bg-gray-900">
+            {/* Darkened background image */}
+            <div className="absolute inset-0 z-0 overflow-hidden">
+                <img 
+                    src={loginBg1} 
+                    className="w-full h-full object-cover opacity-50"
+                    alt="Venue background"
+                />
+            </div>
+            
+            <section className="relative z-10 flex justify-center items-center min-h-screen px-4">
+                <div className="w-full max-w-md bg-white/10 backdrop-blur-lg rounded-xl shadow-2xl overflow-hidden border border-white/20 p-8">
+                    <div className="text-center mb-8">
+                        <h1 className="text-3xl font-bold text-white">Welcome Back</h1>
+                        <p className="text-white/80 mt-2">Login to your venue booking account</p>
+                    </div>
+
+                    <form onSubmit={handleSubmit} className="space-y-6">
+                        <div>
+                            <label className="block text-sm font-medium text-white/80 mb-2">Email</label>
+                            <div className="relative">
+                                <input 
+                                    type="email" 
+                                    required 
+                                    onChange={handleChange} 
+                                    value={formData.email}
+                                    name="email" 
+                                    placeholder="your@email.com" 
+                                    className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent pl-10"
+                                />
+                                <svg className="absolute left-3 top-3.5 h-5 w-5 text-white/50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                </svg>
                             </div>
-                            <div className="relative w-[310px] border-b-2 border-white mx-auto mb-8">
-                                <label className="text-sm text-black block mb-2">Password</label>
-                                <input type="password" required onChange={handleChange} name="password" placeholder="Enter password" className="w-full h-[50px] bg-transparent border-b-2 border-gray-200 outline-none placeholder-gray-100 text-black text-lg px-2 focus:ring-0 peer" />
-                                <ion-icon name="lock-closed-outline" className="absolute right-2 top-[20px] text-black text-lg"></ion-icon>
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-medium text-white/80 mb-2">Password</label>
+                            <div className="relative">
+                                <input 
+                                    type="password" 
+                                    required 
+                                    onChange={handleChange} 
+                                    name="password" 
+                                    placeholder="••••••••" 
+                                    className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent pl-10"
+                                />
+                                <svg className="absolute left-3 top-3.5 h-5 w-5 text-white/50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                                </svg>
                             </div>
-                            <div className="flex justify-between text-black text-sm mb-4 px-[5px] pl-5">
-                                <label className="flex items-center">
-                                    <input type="checkbox" className="mr-2" />Remember Me
+                        </div>
+
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center">
+                                <input 
+                                    id="remember-me" 
+                                    name="remember-me" 
+                                    type="checkbox" 
+                                    checked={rememberMe}
+                                    onChange={handleRememberMe}
+                                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-white/20 rounded bg-white/10"
+                                />
+                                <label htmlFor="remember-me" className="ml-2 block text-sm text-white/80">
+                                    Remember me
                                 </label>
-                                <a href="#" className="hover:underline pr-5">Forget Password</a>
                             </div>
-                            <button className="w-full h-10 rounded-full bg-white text-gray-800 font-semibold text-lg hover:bg-gray-200 px-6" >Log in</button>
-                            <div className="text-center text-white text-sm mt-6">
-                                <p>Don't have an account?
-                                    <Link to="/signup" className="font-semibold hover:underline">Register</Link>
-                                </p>
+
+                            <div className="text-sm">
+                                <a href="#" className="font-medium text-blue-400 hover:text-blue-300">
+                                    Forgot password?
+                                </a>
                             </div>
-                        </form>
+                        </div>
+
+                        <div>
+                            <button 
+                                type="submit" 
+                                className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-200"
+                            >
+                                Sign in
+                            </button>
+                        </div>
+                    </form>
+
+                    <div className="mt-6 text-center">
+                        <p className="text-sm text-white/70">
+                            Don't have an account?{' '}
+                            <Link 
+                                to="/signup" 
+                                className="font-medium text-blue-400 hover:text-blue-300"
+                            >
+                                Register here
+                            </Link>
+                        </p>
                     </div>
                 </div>
             </section>
-            <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
-            <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
-
         </div>
-    )
-}
+    );
+};
 
-export default LoginPage
+export default LoginPage;

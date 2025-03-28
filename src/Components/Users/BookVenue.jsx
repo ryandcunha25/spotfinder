@@ -99,7 +99,7 @@ const BookVenue = () => {
     const handleProceedToPayment = async (e) => {
         e.preventDefault();
 
-        const token = localStorage.getItem("token");
+        const token = localStorage.getItem("token") || sessionStorage.getItem("token");
         if (!token) {
             setError("User is not authenticated");
             return;
