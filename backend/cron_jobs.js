@@ -60,3 +60,22 @@ cron.schedule("0 * * * *", async () => {
     console.error(error);
   }
 });
+
+
+// Function to delete expired OTPs
+const deleteExpiredOtps = async () => {
+  try {
+    const query = "DELETE FROM otp_verifications WHERE otp_expires_at <= NOW()";
+    await pool.query(query);
+    console.log(`[${new Date().toISOString()}] Expired OTPs deleted successfully.`);
+  } catch (error) {
+    console.error('Error deleting expired OTPs:', error);
+  }
+};
+
+// Schedule the job to run every minute
+cron.schedule('* * * * *', () => {
+  console.log('Running OTP cleanup job...');
+  deleteExpiredOtps();
+});
+
