@@ -105,7 +105,7 @@ const SignUp = () => {
         <div className="relative w-full min-h-screen bg-gray-900">
             {/* Darkened background image */}
             <div 
-                className="absolute inset-0 bg-cover bg-center z-0 opacity-50"
+                className="absolute inset-0 bg-cover bg-center z-0 opacity-25"
                 style={{ backgroundImage: `url(${loginBg1})` }}
             ></div>
             
