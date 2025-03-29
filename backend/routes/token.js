@@ -21,4 +21,22 @@ router.get('/profile', authenticateToken, async (req, res) => {
     }
 });
 
+// In your backend route file (e.g., routes/profile.js)
+router.put('/edit-profile', authenticateToken, async (req, res) => {
+    try {
+        const { first_name, last_name, email, phone } = req.body;
+        const userId = req.user.id;
+
+        await pool.query(
+            "UPDATE users SET first_name = $1, last_name = $2, phone = $3 WHERE id = $4",
+            [first_name, last_name, phone, userId]
+          );
+      
+          res.json({ success: true, message: "Profile updated successfully" });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
 module.exports = router;
