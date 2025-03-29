@@ -66,7 +66,7 @@ const Accounts = () => {
                     <p className="mt-2 text-sm text-gray-500">{error}</p>
                     <div className="mt-4">
                         <button 
-                            onClick={() => navigate('/login')}
+                            onClick={() => navigate('/')}
                             className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors text-sm font-medium"
                         >
                             Go to Login

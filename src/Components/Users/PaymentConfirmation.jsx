@@ -8,6 +8,7 @@ const PaymentConfirmation = () => {
 
   const [bookedVenue, setBookedVenue] = useState(null);
   const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchBookings = async () => {
@@ -16,97 +17,288 @@ const PaymentConfirmation = () => {
         setBookedVenue(response.data);
       } catch (err) {
         console.error('Error fetching bookings:', err);
-        setError('Unable to fetch bookings');
+        setError('Unable to fetch booking details. Please try again later.');
+      } finally {
+        setIsLoading(false);
       }
     };
     fetchBookings();
-  }, []);
+  }, [book_id]);
 
   const handlePrint = () => {
     window.print();
   };
 
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
+          <p className="mt-4 text-gray-600 text-lg">Loading your booking details...</p>
+        </div>
+      </div>
+    );
+  }
+
   if (error) {
-    return <div className="text-red-500">{error}</div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="bg-white p-8 rounded-lg shadow-md max-w-md text-center">
+          <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg className="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+          </div>
+          <h2 className="text-xl font-bold text-gray-800 mb-2">Error Loading Booking</h2>
+          <p className="text-gray-600 mb-6">{error}</p>
+          <Link
+            to="/bookings"
+            className="inline-block bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded-lg transition-colors"
+          >
+            Back to Bookings
+          </Link>
+        </div>
+      </div>
+    );
   }
 
   if (!bookedVenue) {
-    return <div className="text-center text-gray-600 text-lg">Loading your venue booking receipt...</div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <svg className="w-16 h-16 text-gray-400 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+          </svg>
+          <h2 className="text-xl font-medium text-gray-800 mt-4">No Booking Details Found</h2>
+          <p className="text-gray-600 mt-2">We couldn't retrieve your booking information.</p>
+        </div>
+      </div>
+    );
   }
 
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 p-2">
-      <div className="bg-white shadow-lg rounded-lg w-full max-w-5xl p-8">
-        <h1 className="text-3xl font-bold text-gray-800 text-center mb-6">Booked Venue Receipt</h1>
+  // Format date with day name
+  const bookingDate = new Date(bookedVenue.booking_date);
+  const formattedDate = bookingDate.toLocaleDateString('en-US', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
 
-        {/* Booking Reference */}
-        <div className="bg-gray-100 p-4 rounded-lg mb-6 text-center">
-          <p className="text-gray-700 text-lg font-semibold">Reference ID:
-          <span className="text-gray-900 font-bold text-xl"> {bookedVenue.booking_id}</span>
-          </p>
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-10 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-6xl mx-auto">
+        {/* Header Section */}
+        <div className="text-center mb-10">
+          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">Booking Confirmation</h1>
+          <p className="text-lg text-gray-600">Your venue has been booked!</p>
         </div>
 
-        {/* Main Grid Layout - Two Sections Per Row */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* User Details */}
-          <div className="bg-blue-100 p-4 rounded-lg shadow-sm">
-            <h2 className="text-lg font-semibold text-blue-900 mb-3">User Details</h2>
-            <div className="space-y-2 text-gray-800">
-              <p><span className="font-semibold">Name:</span> {bookedVenue.first_name} {bookedVenue.last_name}</p>
-              <p><span className="font-semibold">Email:</span> {bookedVenue.email}</p>
-              <p><span className="font-semibold">Phone:</span> {bookedVenue.phone}</p>
-            </div>
-          </div>
-
-          {/* Venue Details */}
-          <div className="bg-green-100 p-4 rounded-lg shadow-sm">
-            <h2 className="text-lg font-semibold text-green-900 mb-3">Venue Details</h2>
-            <div className="space-y-2 text-gray-800">
-              <p><span className="font-semibold">Venue:</span> {bookedVenue.name}</p>
-              <p><span className="font-semibold">Capacity:</span> {bookedVenue.capacity} Guests</p>
-              <p><span className="font-semibold">Price:</span> ${bookedVenue.price}</p>
-              <p><span className="font-semibold">Ratings:</span> {bookedVenue.ratings} Stars</p>
-              <p><span className="font-semibold">Location:</span> {bookedVenue.location}</p>
+        {/* Main Card */}
+        <div className="bg-white rounded-xl shadow-xl overflow-hidden">
+          {/* Confirmation Banner */}
+          <div className="bg-gradient-to-r from-green-500 to-green-600 p-6 text-white text-center">
+            <div className="flex items-center justify-center mb-1">
+              <svg className="w-8 h-8 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <h2 className="text-2xl font-bold">Booking Successful!</h2>
             </div>
           </div>
 
           {/* Booking Details */}
-          <div className="bg-yellow-100 p-4 rounded-lg shadow-sm">
-            <h2 className="text-lg font-semibold text-yellow-900 mb-3">Booking Details</h2>
-            <div className="space-y-2 text-gray-800">
-              <p><span className="font-semibold">Date:</span> {new Date(bookedVenue.booking_date).toLocaleDateString()}</p>
-              <p><span className="font-semibold">Time:</span> {bookedVenue.start_time} - {bookedVenue.end_time}</p>
-              <p><span className="font-semibold">Event Name:</span> {bookedVenue.event_name}</p>
-              <p><span className="font-semibold">Event Type:</span> {bookedVenue.event_type}</p>
-              <p><span className="font-semibold">Guest Count:</span> {bookedVenue.guest_count}</p>
+          <div className="p-6 md:p-8">
+            {/* Reference ID */}
+            <div className="bg-gray-50 p-4 rounded-lg mb-8 flex items-center justify-between">
+              <div>
+                <h3 className="text-sm font-medium text-gray-500">Booking Reference ID</h3>
+                <p className="text-xl font-bold text-gray-800">{bookedVenue.booking_id}</p>
+              </div>
+              <div>
+                <h3 className="text-sm font-medium text-gray-500">Booking Date</h3>
+                <p className="text-lg font-semibold text-gray-800">{new Date().toLocaleDateString()}</p>
+              </div>
+              <div className="flex text-right">
+                <img
+                  src={require(`./../Assets/SpotFinderLogo.png`)}
+                  alt="Company Logo"
+                  className="h-20 w-auto" // Adjust height as needed
+                />
+              </div>
             </div>
-          </div>
 
-          {/* Additional Services */}
-          <div className="bg-purple-100 p-4 rounded-lg shadow-sm">
-            <h2 className="text-lg font-semibold text-purple-900 mb-3">Additional Services</h2>
-            <div className="space-y-2 text-gray-800">
-              <p><span className="font-semibold">Catering:</span> {bookedVenue.catering ? "Included" : "Not Included"}</p>
-              <p><span className="font-semibold">A/V Equipment:</span> {bookedVenue.avEquipment ? "Included" : "Not Included"}</p>
-              <p><span className="font-semibold">Special Requests:</span> {bookedVenue.special_requests || "None"}</p>
+            {/* Grid Layout */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+              {/* User Details */}
+              <div className="border border-gray-200 rounded-lg p-5">
+                <div className="flex items-center mb-4">
+                  <div className="bg-blue-100 p-2 rounded-full mr-3">
+                    <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                  </div>
+                  <h3 className="text-lg font-semibold text-gray-800">Customer Information</h3>
+                </div>
+                <div className="space-y-3">
+                  <div>
+                    <p className="text-sm text-gray-500">Full Name</p>
+                    <p className="font-medium text-gray-800">{bookedVenue.first_name} {bookedVenue.last_name}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-500">Email Address</p>
+                    <p className="font-medium text-gray-800">{bookedVenue.email}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-500">Phone Number</p>
+                    <p className="font-medium text-gray-800">{bookedVenue.phone}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Venue Details */}
+              <div className="border border-gray-200 rounded-lg p-5">
+                <div className="flex items-center mb-4">
+                  <div className="bg-green-100 p-2 rounded-full mr-3">
+                    <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                    </svg>
+                  </div>
+                  <h3 className="text-lg font-semibold text-gray-800">Venue Details</h3>
+                </div>
+                <div className="space-y-3">
+                  <div>
+                    <p className="text-sm text-gray-500">Venue Name</p>
+                    <p className="font-medium text-gray-800">{bookedVenue.name}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-500">Location</p>
+                    <p className="font-medium text-gray-800">{bookedVenue.location}</p>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <p className="text-sm text-gray-500">Capacity</p>
+                      <p className="font-medium text-gray-800">{bookedVenue.capacity} guests</p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-500">Price</p>
+                      <p className="font-medium text-gray-800">${bookedVenue.price}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Event Details */}
+              <div className="border border-gray-200 rounded-lg p-5">
+                <div className="flex items-center mb-4">
+                  <div className="bg-purple-100 p-2 rounded-full mr-3">
+                    <svg className="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                  </div>
+                  <h3 className="text-lg font-semibold text-gray-800">Event Details</h3>
+                </div>
+                <div className="space-y-3">
+                  <div>
+                    <p className="text-sm text-gray-500">Event Name</p>
+                    <p className="font-medium text-gray-800">{bookedVenue.event_name}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-500">Event Date</p>
+                    <p className="font-medium text-gray-800">{formattedDate}</p>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <p className="text-sm text-gray-500">Time</p>
+                      <p className="font-medium text-gray-800">{bookedVenue.start_time} - {bookedVenue.end_time}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-500">Guests</p>
+                      <p className="font-medium text-gray-800">{bookedVenue.guest_count}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Additional Services */}
+              <div className="border border-gray-200 rounded-lg p-5">
+                <div className="flex items-center mb-4">
+                  <div className="bg-yellow-100 p-2 rounded-full mr-3">
+                    <svg className="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                  <h3 className="text-lg font-semibold text-gray-800">Additional Services</h3>
+                </div>
+                <div className="space-y-3">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <p className="text-sm text-gray-500">Catering</p>
+                      <p className="font-medium text-gray-800">
+                        {bookedVenue.catering ? (
+                          <span className="text-green-600">Included</span>
+                        ) : (
+                          <span className="text-gray-500">Not included</span>
+                        )}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-500">A/V Equipment</p>
+                      <p className="font-medium text-gray-800">
+                        {bookedVenue.avEquipment ? (
+                          <span className="text-green-600">Included</span>
+                        ) : (
+                          <span className="text-gray-500">Not included</span>
+                        )}
+                      </p>
+                    </div>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-500">Special Requests</p>
+                    <p className="font-medium text-gray-800">
+                      {bookedVenue.special_requests || "None"}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Thank You Message */}
+            <div className="bg-blue-50 border border-blue-100 rounded-lg p-6 text-center">
+              <h3 className="text-lg font-semibold text-blue-800 mb-2">Thank you for your booking!</h3>
+              <p className="text-blue-700">A confirmation has been sent to your email address. Please present this confirmation at the venue.</p>
             </div>
           </div>
         </div>
 
-        {/* Action Buttons (Hidden During Print) */}
-        <div className="no-print text-center mt-6 flex justify-center gap-4">
-          <Link to="/bookings" className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded-lg">
+        {/* Action Buttons */}
+        <div className="mt-10 flex flex-col sm:flex-row justify-center gap-4 no-print">
+          <button
+            onClick={handlePrint}
+            className="flex items-center justify-center bg-green-600 hover:bg-green-700 text-white font-medium py-3 px-6 rounded-lg transition-colors shadow-md"
+          >
+            <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+            </svg>
+            Print Confirmation
+          </button>
+          <Link
+            to="/bookings"
+            className="flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-6 rounded-lg transition-colors shadow-md"
+          >
+            <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+            </svg>
             View All Bookings
           </Link>
-          <Link to="/" className="bg-gray-600 hover:bg-gray-700 text-white font-medium py-2 px-6 rounded-lg">
-            Return to Home
-          </Link>
-          <button 
-            onClick={handlePrint} 
-            className="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-6 rounded-lg"
+          <Link
+            to="/"
+            className="flex items-center justify-center bg-gray-600 hover:bg-gray-700 text-white font-medium py-3 px-6 rounded-lg transition-colors shadow-md"
           >
-            Print Receipt
-          </button>
+            <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+            </svg>
+            Return Home
+          </Link>
         </div>
       </div>
     </div>
