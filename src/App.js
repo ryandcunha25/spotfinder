@@ -6,7 +6,7 @@ import HomePage from './Components/Users/HomePage';
 import Navbar from './Components/Navbar';
 import Spots from './Components/Users/Spots';
 import VenueDetails from './Components/Users/VenueDetails';
-import Accounts from './Components/Users/Accounts';
+import Accounts from './Components/Users/Profile/Accounts';
 import Wishlist from './Components/Users/Wishlist';
 import AboutUs from './Components/Users/AboutUs';
 import ContactUs from './Components/Users/ContactUs';
@@ -25,6 +25,7 @@ import ManageBookings from './Components/VenueOwners/ManageBookings';
 import ReviewForm from "./Components/Users/ReviewForm";
 import Analytics from "./Components/VenueOwners/Analytics";
 import ManageRatingReviews from "./Components/VenueOwners/ManageRatingReviews";
+import EditProfile from "./Components/Users/Profile/EditProfile";
 
 
 function AppContent() {
@@ -45,9 +46,9 @@ function AppContent() {
           <Route exact path="/" element={<LoginPage />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/homepage" element={<HomePage />} />
-          <Route path="/spots" element={<Spots />} />
+          <Route path="/venues" element={<Spots />} />
           <Route path="/venues/:venueId" element={<VenueDetails />} />
-          <Route path="/profile" element={<Accounts />} />
+          <Route path="/profile/*" element={<Accounts />} />         
           <Route path="/wishlist" element={<Wishlist />} />
           <Route path="/about" element={<AboutUs />} />
           <Route path="/contact" element={<ContactUs />} />

@@ -194,7 +194,7 @@ const Navbar = () => {
                                 Home
                             </Link>
                             <Link
-                                to="/spots"
+                                to="/venues"
                                 className="text-white hover:text-gray-200 transition duration-300"
                             >
                                 Spots
@@ -333,7 +333,7 @@ const Navbar = () => {
                             </Link>
                             <Link
                                 onClick={() => setIsMobileMenuOpen(false)}
-                                to="/spots"
+                                to="/venues"
                                 className="block text-gray-700 hover:bg-gray-100 px-3 py-2 rounded-md transition duration-300"
                             >
                                 Spots
