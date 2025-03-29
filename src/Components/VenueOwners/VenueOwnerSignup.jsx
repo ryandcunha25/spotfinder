@@ -1,17 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from "react-router-dom";
 import axios from 'axios';
 import loginBg1 from '../Assets/venueownerbg.png';
 
-
 const VenueOwnerSignup = () => {
   const navigate = useNavigate();
+  const [countdown, setCountdown] = useState(0);
+  const [isResendDisabled, setIsResendDisabled] = useState(false);
+  
 
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
     phone: '',
     password: '',
+    confirmPassword: '',
     venueName: '',
     venueDescription: '',
     location: '',
@@ -26,6 +29,22 @@ const VenueOwnerSignup = () => {
   const [otp, setOtp] = useState('');
   const [isOtpSent, setIsOtpSent] = useState(false);
   const [isVerified, setIsVerified] = useState(false);
+
+  // Countdown timer effect
+  useEffect(() => {
+    let timer;
+    if (countdown > 0) {
+      timer = setTimeout(() => setCountdown(countdown - 1), 1000);
+    } else if (countdown === 0 && isResendDisabled) {
+      setIsResendDisabled(false);
+    }
+    return () => clearTimeout(timer);
+  }, [countdown, isResendDisabled]);
+
+  const startCountdown = () => {
+    setCountdown(30);
+    setIsResendDisabled(true);
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -62,18 +81,32 @@ const VenueOwnerSignup = () => {
       alert('Password must be at least 8 characters long');
       return;
     }
+    if (formData.password !== formData.confirmPassword) {
+      alert('Passwords do not match');
+      return;
+    }
     try {
       await axios.post('http://localhost:5000/authentication/send-otp', { email: formData.email });
       setIsOtpSent(true);
+      startCountdown();
       alert('OTP sent to your email');
     } catch (err) {
-      alert('Error sending OTP: ' + err);
+      alert('Error sending OTP: ' + err.message);
+    }
+  };
+
+  const resendOtp = async () => {
+    if (!isResendDisabled) {
+      await sendOtp();
     }
   };
 
   const verifyOtp = async () => {
     try {
-      const response = await axios.post('http://localhost:5000/authentication/verify-otp', { email: formData.email, otp });
+      const response = await axios.post('http://localhost:5000/authentication/verify-otp', {
+        email: formData.email,
+        otp
+      });
       if (response.status === 200) {
         setIsVerified(true);
         alert('OTP verified successfully');
@@ -81,7 +114,7 @@ const VenueOwnerSignup = () => {
         alert('Invalid OTP');
       }
     } catch (err) {
-      alert('Error verifying OTP: ' + err);
+      alert('Error verifying OTP: ' + err.message);
     }
   };
 
@@ -100,230 +133,264 @@ const VenueOwnerSignup = () => {
   };
 
   return (
-    <div
-      className="w-full min-h-screen bg-cover bg-center flex items-center justify-center p-20"
-      style={{ backgroundImage: `url(${loginBg1})` }}
-    >      <div className="md:w-3/4 p-8 bg-transparent bg-opacity-90 backdrop-blur-md border border-gray-300 rounded-lg shadow-lg">
-        <h2 className="text-3xl text-center font-bold mb-8 text-red-200">Register your Venue!</h2>
+    <div className="relative min-h-screen bg-gray-900">
+      {/* Darkened background image */}
+      <div className="absolute inset-0 z-0 overflow-hidden">
+        <img
+          src={loginBg1}
+          className="w-full h-full object-cover opacity-50"
+          alt="Venue background"
+        />
+      </div>
 
-        <form onSubmit={handleSubmit} className="w-full">
-          {!isVerified ? (
-            // Show Personal Details and Verify Gmail Button
-            <>
-              <h3 className="text-xl font-semibold mb-4 text-red-300">Personal Details</h3>
-              <div className="grid grid-cols-1 md:grid-cols-12 gap-6 mb-6">
-                <div
-                  className='col-span-6'>
-                  <label
-                    className="block text-white font-medium mb-2">Full Name</label>
-                  <input
-                    type="text"
-                    name="fullName"
-                    value={formData.fullName}
-                    onChange={handleChange}
-                    required
-                    className="w-full px-3 py-2 border rounded-lg" />
-                </div>
-                <div
-                  className='col-span-6'>
-                  <label
-                    className="block text-white font-medium mb-2">Email</label>
-                  <input
-                    type="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    required
-                    className="w-full px-3 py-2 border rounded-lg" />
+      <div className="relative z-10 flex justify-center items-center min-h-screen px-4 py-8">
+        <div className="w-full max-w-4xl bg-white/10 backdrop-blur-lg rounded-xl shadow-2xl overflow-hidden border border-white/20 p-8">
+          <h2 className="text-3xl text-center font-bold mb-8 text-white">Register your Venue!</h2>
+
+          <form onSubmit={handleSubmit} className="w-full">
+            {!isVerified ? (
+              <>
+                <h3 className="text-xl font-semibold mb-6 text-white">Personal Details</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                  <div>
+                    <label className="block text-white/80 font-medium mb-2">Full Name</label>
+                    <input
+                      type="text"
+                      name="fullName"
+                      value={formData.fullName}
+                      onChange={handleChange}
+                      // required
+                      className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-white/80 font-medium mb-2">Email</label>
+                    <input
+                      type="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleChange}
+                      // required
+                      className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-white/80 font-medium mb-2">Phone</label>
+                    <input
+                      type="number"
+                      name="phone"
+                      value={formData.phone}
+                      onChange={handleChange}
+                      // required
+                      className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-white/80 font-medium mb-2">Password</label>
+                    <input
+                      type="password"
+                      name="password"
+                      value={formData.password}
+                      onChange={handleChange}
+                      // required
+                      className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-white/80 font-medium mb-2">Confirm Password</label>
+                    <input
+                      type="password"
+                      name="confirmPassword"
+                      value={formData.confirmPassword}
+                      onChange={handleChange}
+                      // required
+                      className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
                 </div>
 
-                <div className='col-span-4'>
-                  <label className="block text-white font-medium mb-2">Phone</label>
-                  <input type="number" name="phone" value={formData.phone} onChange={handleChange} length={10} required className="w-full px-3 py-2 border rounded-lg" />
-                </div>
-
-                <div className="col-span-4">
-                  <label className="block text-white font-medium mb-2">Password</label>
-                  <input type="password" name="password" value={formData.password} onChange={handleChange} required className="w-full px-3 py-2 border rounded-lg" />
-                </div>
-                <div className="col-span-4">
-                  <label htmlFor="confirmPassword" className="block text-white font-medium mb-2">Confirm Password</label>
-                  <input
-                    type="password"
-                    id="confirmPassword"
-                    name="confirmPassword"
-                    value={formData.confirmPassword}
-                    onChange={handleChange}
-                    required
-                    className="w-full px-3 py-2 border rounded-lg"
-                  />
-                </div>
-
-                <div className="col-span-12">
+                {/* <div className="mb-6">
                   <button
                     type="button"
                     onClick={sendOtp}
-                    className="w-full bg-blue-500 text-white py-3 px-4 rounded-lg hover:bg-blue-600 transition">
-                    {isOtpSent ? "Resend OTP" : "Verify Gmail"}
+                    disabled={isResendDisabled}
+                    className={`w-full py-3 px-4 rounded-lg font-medium transition ${
+                      isResendDisabled 
+                        ? 'bg-gray-600 text-white/50 cursor-not-allowed'
+                        : 'bg-blue-600 hover:bg-blue-700 text-white'
+                    }`}
+                  >
+                    {isOtpSent 
+                      ? `Resend OTP ${isResendDisabled ? `(${countdown}s)` : ''}`
+                      : 'Verify Email'}
                   </button>
-                </div>
+                </div> */}
 
-                {isOtpSent && (
-                  <div className="col-span-12 mt-4 flex justify-center items-center gap-4">
-                    <input
-                      type="number"
-                      value={otp}
-                      onChange={(e) => setOtp(e.target.value)}
-                      required
-                      className="w-50 px-3 py-2 border rounded-lg text-center"
-                      placeholder="Enter OTP"
-                    />
+                <div className="mb-6">
+                  {!isOtpSent ? (
                     <button
                       type="button"
-                      onClick={verifyOtp}
-                      className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition">
-                      Verify OTP
+                      onClick={sendOtp}
+                      className="w-full py-3 px-4 rounded-lg font-medium transition bg-blue-600 hover:bg-blue-700 text-white"
+                    >
+                      Verify Email
                     </button>
+                  ) : (
+                    <div className="flex flex-col md:flex-row gap-4 items-center">
+                      <input
+                        type="number"
+                        value={otp}
+                        onChange={(e) => setOtp(e.target.value)}
+                        // required
+                        className="flex-1 px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white text-center placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        placeholder="Enter 6-digit OTP"
+                      />
+                      <button
+                        type="button"
+                        onClick={verifyOtp}
+                        className="w-full md:w-auto bg-green-600 hover:bg-green-700 text-white font-medium py-3 px-6 rounded-lg transition"
+                      >
+                        Verify OTP
+                      </button>
+                      <button
+                        type="button"
+                        onClick={resendOtp}
+                        disabled={isResendDisabled}
+                        className={`w-full md:w-auto py-3 px-6 rounded-lg font-medium transition ${isResendDisabled
+                            ? 'bg-gray-600 text-white/50 cursor-not-allowed'
+                            : 'bg-blue-600 hover:bg-blue-700 text-white'
+                          }`}
+                      >
+                        {isResendDisabled ? `Resend in ${countdown}s` : 'Resend OTP'}
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </>
+            ) : (
+              // Venue Details
+              <>
+                <h3 className="text-xl font-semibold mb-6 text-white">Venue Details</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                  <div>
+                    <label className="block text-white/80 font-medium mb-2">Venue Name</label>
+                    <input
+                      type="text"
+                      name="venueName"
+                      value={formData.venueName}
+                      onChange={handleChange}
+                      // required
+                      className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
                   </div>
-                )}
+                  <div>
+                    <label className="block text-white/80 font-medium mb-2">Location</label>
+                    <input
+                      type="text"
+                      name="location"
+                      value={formData.location}
+                      onChange={handleChange}
+                      // required
+                      className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-white/80 font-medium mb-2">Capacity</label>
+                    <input
+                      type="number"
+                      name="capacity"
+                      value={formData.capacity}
+                      onChange={handleChange}
+                      // required
+                      className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-white/80 font-medium mb-2">Price</label>
+                    <input
+                      type="number"
+                      name="price"
+                      value={formData.price}
+                      onChange={handleChange}
+                      // required
+                      className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                </div>
 
-              </div>
-            </>
-          ) : (
-            // Show Venue Details and Submit Button
-            <>
-              {/* Venue Details */}
-              <h3 className="text-xl font-semibold mb-4 text-red-300">Venue Details</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                <div>
-                  <label htmlFor="venueName" className="block text-white font-medium mb-2">Venue Name</label>
+                <div className="mb-6">
+                  <label className="block text-white/80 font-medium mb-2">Venue Description</label>
+                  <textarea
+                    name="venueDescription"
+                    value={formData.venueDescription}
+                    onChange={handleChange}
+                    rows="4"
+                    // required
+                    className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  ></textarea>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                  <div>
+                    <label className="block text-white/80 font-medium mb-2">Amenities (comma separated)</label>
+                    <input
+                      type="text"
+                      value={formData.amenities.join(', ')}
+                      onChange={handleAmenitiesChange}
+                      // required
+                      className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-white/80 font-medium mb-2">Venue Contact</label>
+                    <input
+                      type="number"
+                      name="contact"
+                      value={formData.contact}
+                      onChange={handleChange}
+                      // required
+                      className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                </div>
+
+                <div className="mb-6">
+                  <label className="block text-white/80 font-medium mb-2">Category (comma separated)</label>
                   <input
                     type="text"
-                    id="venueName"
-                    name="venueName"
-                    value={formData.venueName}
-                    onChange={handleChange}
-                    required
-                    className="w-full px-3 py-2 border rounded-lg"
+                    value={formData.category.join(', ')}
+                    onChange={handleCategoryChange}
+                    // required
+                    className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
-                <div>
-                  <label htmlFor="location" className="block text-white font-medium mb-2">Location</label>
+
+                <div className="mb-6">
+                  <label className="block text-white/80 font-medium mb-2">Venue Images</label>
                   <input
-                    type="text"
-                    id="location"
-                    name="location"
-                    value={formData.location}
-                    onChange={handleChange}
-                    required
-                    className="w-full px-3 py-2 border rounded-lg"
+                    type="file"
+                    name="images"
+                    multiple
+                    onChange={handleFileChange}
+                    // required
+                    className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
                   />
                 </div>
-                <div>
-                  <label htmlFor="capacity" className="block text-white font-medium mb-2">Capacity</label>
-                  <input
-                    type="number"
-                    id="capacity"
-                    name="capacity"
-                    value={formData.capacity}
-                    onChange={handleChange}
-                    required
-                    className="w-full px-3 py-2 border rounded-lg"
-                  />
-                </div>
-                <div>
-                  <label htmlFor="price" className="block text-white font-medium mb-2">Price</label>
-                  <input
-                    type="number"
-                    id="price"
-                    name="price"
-                    value={formData.price}
-                    onChange={handleChange}
-                    required
-                    className="w-full px-3 py-2 border rounded-lg"
-                  />
-                </div>
-              </div>
 
-              <div className="mb-6">
-                <label htmlFor="venueDescription" className="block text-white font-medium mb-2">Venue Description</label>
-                <textarea
-                  id="venueDescription"
-                  name="venueDescription"
-                  value={formData.venueDescription}
-                  onChange={handleChange}
-                  rows="4"
-                  required
-                  className="w-full px-3 py-2 border rounded-lg"
-                ></textarea>
-              </div>
+                <button
+                  type="submit"
+                  className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold py-3 px-4 rounded-lg shadow-lg transition duration-200"
+                >
+                  Complete Registration
+                </button>
+              </>
+            )}
+          </form>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                <div>
-                  <label htmlFor="amenities" className="block text-white font-medium mb-2">Amenities (comma-separated)</label>
-                  <input
-                    type="text"
-                    id="amenities"
-                    name="amenities"
-                    value={formData.amenities.join(', ')} // Join the array into a string for display
-                    onChange={handleAmenitiesChange}
-                    required
-                    className="w-full px-3 py-2 border rounded-lg"
-                  />
-                </div>
-                <div>
-                  <label htmlFor="contact" className="block text-white font-medium mb-2">Venue Contact</label>
-                  <input
-                    type="number"
-                    id="contact"
-                    name="contact"
-                    value={formData.contact}
-                    onChange={handleChange}
-                    required
-                    className="w-full px-3 py-2 border rounded-lg"
-                  />
-                </div>
-              </div>
-
-              <div className="mb-6">
-                <label htmlFor="category" className="block text-white font-medium mb-2">Category</label>
-                <input
-                  type="text"
-                  id="category"
-                  name="category"
-                  value={formData.category.join(', ')} // Join the array into a string for display
-                  onChange={handleCategoryChange} // Convert string back into an array on change
-                  required
-                  className="w-full px-3 py-2 border rounded-lg"
-                />
-              </div>
-
-              <div className="mb-6">
-                <label htmlFor="images" className="block text-white font-medium mb-2">Venue Images</label>
-                <input
-                  type="file"
-                  id="images"
-                  name="images"
-                  multiple
-                  onChange={handleFileChange}
-                  required
-                  className="w-full px-3 py-2 border rounded-lg"
-                />
-              </div>
-
-              <button
-                type="submit"
-                className="w-full bg-blue-500 text-white py-3 px-4 rounded-lg hover:bg-blue-600 transition"
-              >
-                Sign Up
-              </button>
-            </>
-          )}
-        </form>
-
-        <div className="text-center text-white text-md mt-6">
-          <p>Already have an owner account? <Link to="/venueownerslogin" className="font-semibold hover:underline">Login</Link></p>
-          <p>Are you a user? <Link to="/signup" className="font-semibold hover:underline">Sign up as one!</Link></p>
+          <div className="text-center text-white/80 text-sm mt-6">
+            <p>Already have an owner account? <Link to="/venueownerslogin" className="text-blue-400 hover:text-blue-300 font-medium">Login</Link></p>
+            <p className="mt-2">Are you a user? <Link to="/signup" className="text-blue-400 hover:text-blue-300 font-medium">Sign up as one!</Link></p>
+          </div>
         </div>
       </div>
     </div>

@@ -4,6 +4,8 @@ const jwt = require('jsonwebtoken');
 const pool = require('../db');
 const router = express.Router();
 require('dotenv').config();
+const emails = require("./email_service");
+const EmailOwnerID = emails.EmailOwnerID;
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your_secret_key';
 
@@ -63,8 +65,6 @@ router.post('/register', async (req, res) => {
             amenities, contact, category, images
         } = req.body;
 
-      
-
         let ownerId;
         let isUnique = false;
 
@@ -75,7 +75,7 @@ router.post('/register', async (req, res) => {
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
-
+        
         const ownerQuery = `
             INSERT INTO venue_owners (owner_id, full_name, email, phone, password)
             VALUES ($1, $2, $3, $4, $5) RETURNING owner_id;
@@ -86,13 +86,15 @@ router.post('/register', async (req, res) => {
         const formattedImages = `{${images.join(',')}}`;
 
         const venueQuery = `
-            INSERT INTO venues (name, location, capacity, price, description, amenities, contact, category, image, owner_id)
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+        INSERT INTO venues (name, location, capacity, price, description, amenities, contact, category, image, owner_id)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
         `;
         await pool.query(venueQuery, [
-            venueName, location, capacity, price, venueDescription,
-            amenities, contact, formattedCategory, formattedImages, ownerId,
+          venueName, location, capacity, price, venueDescription,
+          amenities, contact, formattedCategory, formattedImages, ownerId,
         ]);
+        
+        await EmailOwnerID(ownerId, email, fullName);
 
         res.status(201).json({ message: 'Venue owner and venue registered successfully!' });
     } catch (error) {
