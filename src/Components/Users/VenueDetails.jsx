@@ -104,7 +104,7 @@ const VenueDetails = () => {
         // window.location.href = 'http://localhost:3000/venues/:venueId/book-venue';
         console.log(`Venue "${venue.name}" booked successfully.`);
         navigate(`/venues/${venuename}/book-venue`, {
-            state: { price: venue.price },
+            state: { venueId: venueId },
         });
     };
 

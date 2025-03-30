@@ -34,7 +34,6 @@ router.post('/book', async (req, res) => {
       RETURNING booking_id;
     `;
 
-        const totalPrice = 0; // Replace with actual pricing logic
 
         const result = await pool.query(insertQuery, [
             bookingId,

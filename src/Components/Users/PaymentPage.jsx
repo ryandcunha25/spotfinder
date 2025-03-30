@@ -25,7 +25,7 @@ const PaymentPage = () => {
       const response = await fetch('http://localhost:5000/razorpay/create-booking', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ amount: bookingDetails.price, currency: 'INR' }),
+        body: JSON.stringify({ amount: bookingDetails.total_price, currency: 'INR' }),
       });
 
       const order = await response.json();
@@ -133,7 +133,7 @@ const PaymentPage = () => {
         {/* Price & Payment Button */}
         <div className="flex justify-between items-center">
           <span className="text-3xl font-bold text-gray-900">
-            ₹{bookingDetails.price}
+            ₹{bookingDetails.total_price}
           </span>
           <button
             className="px-6 py-3 text-white bg-green-500 hover:bg-green-600 rounded-lg shadow-lg transition duration-200 ease-in-out focus:outline-none"
