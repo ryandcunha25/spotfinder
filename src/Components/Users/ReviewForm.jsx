@@ -27,7 +27,7 @@ const ReviewForm = () => {
       
           if (response.ok) {
             alert("Review submitted successfully!");
-            navigate("/spots");  // Redirect to the specified page
+            navigate("/venues");  // Redirect to the specified page
           } else {
             console.error("Failed to submit review:", data);
             alert("Failed to submit review.");
