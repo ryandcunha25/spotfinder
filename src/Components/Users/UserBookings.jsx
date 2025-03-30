@@ -314,8 +314,8 @@ const BookingsList = () => {
         
         <div className="space-y-6">
           {renderSection("pending", "Pending Approval")}
-          {renderSection("accepted", "Confirmed Bookings")}
-          {renderSection("success", "Completed Events")}
+          {renderSection("accepted", "Accepted Bookings")}
+          {renderSection("success", "Booked Venues")}
           {renderSection("cancelled", "Cancelled Bookings")}
         </div>
       </div>
