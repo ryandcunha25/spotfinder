@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import VenueMap from './VenueMap'; // Adjust the import path as needed
 
 const VenueDetails = () => {
-    let { venueId } = useParams(); // Capture venueId from URL
-    // venueId = parseInt(venueId)
+    let { venuename } = useParams(); // Capture venueId from URL
+    const location = useLocation();
+    const venueId = location.state?.venueId;
     const [venue, setVenue] = useState(null);
     const [images, setImages] = useState([]);
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -102,7 +103,7 @@ const VenueDetails = () => {
     const bookVenue = () => {
         // window.location.href = 'http://localhost:3000/venues/:venueId/book-venue';
         console.log(`Venue "${venue.name}" booked successfully.`);
-        navigate(`/venues/${venueId}/book-venue`, {
+        navigate(`/venues/${venuename}/book-venue`, {
             state: { price: venue.price },
         });
     };

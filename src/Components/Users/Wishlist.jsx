@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 const Wishlist = () => {
   const [wishlist, setWishlist] = useState([]);
@@ -92,12 +92,13 @@ const Wishlist = () => {
               </h3>
               <p className="text-gray-700 mb-4">{venue.description}</p>
               <div className="flex justify-between">
-                <button
+                <Link
+                  to={`/venues/${venue.name}`}
+                  state={{ venueId: venue.venue_id }}
                   className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded transition duration-300"
-                  onClick={() => handleViewDetails(venue.venue_id)}
                 >
                   View Details
-                </button>
+                </Link>
                 <button
                   className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded transition duration-300"
                   onClick={() => handleRemove(venue.venue_id)}

@@ -117,7 +117,7 @@ const Spots = () => {
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                             </svg>
                             Venue Capacity
-                        </h3>                        
+                        </h3>
                         <div className="space-y-2">
                             {capacityOptions.map((option, index) => (
                                 <div
@@ -172,11 +172,11 @@ const Spots = () => {
                 {/* Venue Cards with improved text visibility */}
                 <div className="flex-1">
                     {filteredVenues.length > 0 ? (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-7">
                             {filteredVenues.map((venue) => (
                                 <div
                                     key={venue.venue_id}
-                                    className="bg-white rounded-xl shadow-md overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1"
+                                    className="bg-white rounded-xl shadow-md overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-2"
                                 >
                                     <div className="relative h-56 overflow-hidden">
                                         <img
@@ -193,10 +193,31 @@ const Spots = () => {
                                     <div className="p-5">
                                         <div className="flex justify-between items-center mb-3">
                                             <div className="flex items-center">
-                                                <svg className="w-5 h-5 text-yellow-500 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                                </svg>
-                                                <span className="text-gray-700">4.8</span>
+                                                {[1, 2, 3, 4, 5].map((star) => {
+                                                    // Determine how much of the star to fill (0-100%)
+                                                    let fillPercentage = 0;
+                                                    if (venue.ratings >= star) {
+                                                        fillPercentage = 100; // Full star
+                                                    } else if (venue.ratings > star - 1) {
+                                                        fillPercentage = Math.round((venue.ratings - (star - 1)) * 100); // Partial star
+                                                    }
+
+                                                    return (
+                                                        <div key={star} className="relative inline-block w-5 h-5 mr-1">
+                                                            {/* Empty star background */}
+                                                            <svg className="absolute w-5 h-5 text-gray-300" fill="currentColor" viewBox="0 0 20 20">
+                                                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                                            </svg>
+                                                            {/* Filled star portion */}
+                                                            <div className="absolute overflow-hidden" style={{ width: `${fillPercentage}%` }}>
+                                                                <svg className="w-5 h-5 text-yellow-500" fill="currentColor" viewBox="0 0 20 20">
+                                                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                                                </svg>
+                                                            </div>
+                                                        </div>
+                                                    );
+                                                })}
+                                                <span className="text-gray-700 ml-1">({venue.ratings})</span>
                                             </div>
                                             <div className="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded">
                                                 {venue.category[0] || "Venue"}
@@ -217,8 +238,9 @@ const Spots = () => {
                                             </p>
                                         </div>
                                         <Link
-                                            to={`/venues/${venue.venue_id}`}
-                                            className="mt-4 block w-full text-center bg-gradient-to-r from-blue-500 to-blue-600 text-white py-2 rounded-lg font-medium hover:from-blue-600 hover:to-blue-700 transition-all duration-300"
+                                            to={`/venues/${venue.name}`}
+                                            state={{ venueId: venue.venue_id }}
+                                            className="mt-4 block w-full text-center bg-gradient-to-r from-blue-500 to-purple-600 text-white py-2 rounded-lg font-medium hover:from-blue-600 hover:to-purple-700 transition-all duration-300"
                                         >
                                             View Details
                                         </Link>

@@ -1,4 +1,5 @@
-import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
+import React, { useEffect } from "react";
+import { BrowserRouter as Router, Routes, Route, useLocation, useNavigate } from "react-router-dom";
 import "./Components/css/output.css";
 import SignUp from './Components/SignUp';
 import LoginPage from './Components/LoginPage';
@@ -25,36 +26,66 @@ import ManageBookings from './Components/VenueOwners/ManageBookings';
 import ReviewForm from "./Components/Users/ReviewForm";
 import Analytics from "./Components/VenueOwners/Analytics";
 import ManageRatingReviews from "./Components/VenueOwners/ManageRatingReviews";
-import EditProfile from "./Components/Users/Profile/EditProfile";
 
 
 function AppContent() {
   const location = useLocation();
+  // const navigate = useNavigate();
+
+  // const isTokenExpired = (token) => {
+  //   if (!token) return true; // If no token, treat it as expired
+
+  //   const tokenParts = token.split('.');
+  //   if (tokenParts.length !== 3) return true; // Invalid token format
+
+  //   try {
+  //     const decodedPayload = JSON.parse(atob(tokenParts[1])); // Decode payload
+  //     const expiry = decodedPayload.exp; // Get expiration time
+  //     if (!expiry) return true; // No expiry in token
+
+  //     return Date.now() >= expiry * 1000; // Convert to milliseconds and check expiration
+  //   } catch (error) {
+  //     return true; // If error occurs, assume token is expired
+  //   }
+  // };
+  // useEffect(() => {
+  //   const token = localStorage.getItem('token');
+  //   if (isTokenExpired(token)) {
+  //     localStorage.removeItem('token'); // Remove expired token
+  //     localStorage.removeItem('userId'); // Remove userId if stored
+  //     alert('Your session has expired. Please log in again.');
+  //     navigate('/login'); // Redirect user to login page
+  //   }
+  // }, []);
 
   // Define routes where the Navbar should not be displayed
-  const noNavbarRoutes = ["/", "/signup", "/venues/:venueId/book-venue", "/payment", "/payment-confirmation",
-      "/dashboard", "/venueownersregistration", "/venueownerslogin", "/myvenues", "/managebookings",
-      "/managepayments", "/manage-review-and-ratings", "/review-form", "/analytics"];
+  const noNavbarRoutes = ["/", "/signup", "/venues/:venuename/book-venue", "/payment", "/payment-confirmation",
+    "/dashboard", "/venueownersregistration", "/venueownerslogin", "/myvenues", "/managebookings",
+    "/managepayments", "/manage-review-and-ratings", "/review-form", "/analytics"];
+
+  const shouldShowNavbar = !noNavbarRoutes.some(route => location.pathname.startsWith(route)) &&
+    !location.pathname.startsWith("/venues/") ||
+    !location.pathname.includes("/book-venue");
 
   return (
     <SearchProvider>
       <div>
         {/* Conditionally render Navbar */}
-        {!noNavbarRoutes.includes(location.pathname) && <Navbar />}
+        {!noNavbarRoutes.includes(location.pathname) && shouldShowNavbar && <Navbar />}
 
         <Routes>
           <Route exact path="/" element={<LoginPage />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/homepage" element={<HomePage />} />
           <Route path="/venues" element={<Spots />} />
-          <Route path="/venues/:venueId" element={<VenueDetails />} />
-          <Route path="/profile/*" element={<Accounts />} />         
+          <Route path="/venues/:venuename" element={<VenueDetails />} />
+          <Route path="/profile/*" element={<Accounts />} />
           <Route path="/wishlist" element={<Wishlist />} />
           <Route path="/about" element={<AboutUs />} />
           <Route path="/contact" element={<ContactUs />} />
           <Route path="/terms-condition" element={<TermsAndConditions />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-          <Route path="/venues/:venueId/book-venue" element={<BookVenue />} />
+          <Route path="/venues/:venuename/book-venue" element={<BookVenue />} />
           <Route path="/payment" element={<PaymentPage />} />
           <Route path="/payment-confirmation" element={<PaymentConfirmation />} />
           <Route path="/bookings" element={<UserBookings />} />
