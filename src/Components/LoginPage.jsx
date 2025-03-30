@@ -19,7 +19,7 @@ const LoginPage = () => {
             setFormData((prev) => ({ ...prev, email: savedEmail }));
             setRememberMe(true);
         }
-        if (localStorage.getItem('token') || sessionStorage.getItem('token')) {
+        if(sessionStorage.getItem('token')) {
             alert("You are already logged in");
             navigate('/homepage');
         }
