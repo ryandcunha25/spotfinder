@@ -4,7 +4,6 @@ import axios from "axios";
 import { StarIcon } from "@heroicons/react/24/solid";
 
 const BookVenue = () => {
-    let { venuename } = useParams();
     const location = useLocation();
     const { venueId } = location.state || {};
     const navigate = useNavigate();
@@ -34,6 +33,8 @@ const BookVenue = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [showSummary, setShowSummary] = useState(false);
     const [totalPrice, setTotalPrice] = useState(0);
+    const [bookedSlots, setBookedSlots] = useState([]);
+
 
     useEffect(() => {
         async function fetchVenueDetails() {
@@ -43,7 +44,7 @@ const BookVenue = () => {
                     const data = await response.json();
                     setCategories(data.category);
                     setVenues(data);
-                    // setTotalPrice(data.price); // Initialize with base price
+                    setTotalPrice(data.price); // Initialize with base price
                 } else {
                     console.error("Failed to fetch venue details");
                 }
@@ -121,14 +122,94 @@ const BookVenue = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+
         if (!formData.agreeToTerms) {
             alert("Please agree to the terms and conditions");
             return;
         }
+
+        if (!isSlotAvailable()) {
+            alert("This time slot is already booked. Please choose a different date or time.");
+            return;
+        }
+
         setShowSummary(true);
     };
 
+    // Add this to your useEffect for fetching venue details
+    useEffect(() => {
+        async function fetchBookedSlots() {
+            try {
+                const response = await fetch(`http://localhost:5000/bookings/venue-booked-dates/${venueId}`);
+                if (response.status == 200) {
+                    const data = await response.json();
+                    setBookedSlots(data);
+                    console.log(data)
+                }
+            } catch (error) {
+                console.error("Error fetching booked slots:", error);
+            }
+        }
+        fetchBookedSlots();
+    }, [venueId]);
+
+    const isSlotAvailable = () => {
+        if (!formData.eventDate || !formData.startTime || !formData.endTime) {
+            return true; // Allow selection if fields are empty
+        }
+    
+        const selectedDate = formData.eventDate; // Expected: "YYYY-MM-DD"
+        const selectedStart = formData.startTime; // Expected: "HH:MM"
+        const selectedEnd = formData.endTime; // Expected: "HH:MM"
+    
+        return !bookedSlots.some(slot => {
+            // Convert slot booking date to "YYYY-MM-DD" for accurate comparison
+            const slotDate = new Date(slot.booking_date).toISOString().split('T')[0];
+    
+            // Check if selected date matches booked date
+            if (slotDate !== selectedDate) {
+                console.log("Slot Date:", slotDate, "| Selected Date:", selectedDate);
+                return false; // Skip checking time if dates don't match
+            }
+    
+            console.log("=====================================");
+            console.log("Slot Start:", slot.start_time, "| Slot End:", slot.end_time);
+            console.log("Selected Start:", selectedStart, "| Selected End:", selectedEnd);
+    
+            // Function to convert time "HH:MM" or "HH:MM:SS" into total minutes
+            const toMinutes = (time) => {
+                const [hours, minutes] = time.split(':').map(Number);
+                return hours * 60 + minutes;
+            };
+    
+            console.log("-------------------------------------------");
+    
+            const slotStart = toMinutes(slot.start_time);
+            const slotEnd = toMinutes(slot.end_time);
+            const selectedStartMin = toMinutes(selectedStart);
+            const selectedEndMin = toMinutes(selectedEnd);
+    
+            console.log("Slot Start (min):", slotStart, "| Slot End (min):", slotEnd);
+            console.log("Selected Start (min):", selectedStartMin, "| Selected End (min):", selectedEndMin);
+    
+            // **Corrected Condition for Time Overlap**
+            const isOverlapping = !(selectedEndMin <= slotStart || selectedStartMin >= slotEnd);
+            
+            isOverlapping ? console.log("❌ Time Overlap - Slot Not Available") : console.log("✅ No Overlap - Slot Available");
+    
+            return isOverlapping; // If true, means the slot is already booked
+        });
+    };
+    
+
+
     const handleConfirmBooking = async () => {
+        if (!isSlotAvailable()) {
+            alert("This time slot has been booked by someone else. Please choose a different date or time.");
+            setShowSummary(false);
+            return;
+        }
+
         const token = localStorage.getItem("token") || sessionStorage.getItem("token");
         if (!token) {
             setError("User is not authenticated");
@@ -158,7 +239,6 @@ const BookVenue = () => {
             alternateContact: formData.alternateContact,
             paymentMethod: formData.paymentMethod,
         };
-        console.log(bookingDetails.price)
 
 
         try {
@@ -344,6 +424,9 @@ const BookVenue = () => {
                                             required
                                             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
                                         />
+                                        {formData.eventDate && !isSlotAvailable() && (
+                                            <p className="mt-1 text-sm text-red-600">This date has conflicting bookings</p>
+                                        )}
                                     </div>
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-1">Number of Guests</label>
@@ -369,6 +452,9 @@ const BookVenue = () => {
                                             required
                                             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
                                         />
+                                        {formData.startTime && !isSlotAvailable() && (
+                                            <p className="mt-1 text-sm text-red-600">This time slot is already booked</p>
+                                        )}
                                     </div>
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-1">End Time</label>
@@ -381,7 +467,11 @@ const BookVenue = () => {
                                             required
                                             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
                                         />
+                                        {formData.endTime && !isSlotAvailable() && (
+                                            <p className="mt-1 text-sm text-red-600">This time slot is already booked</p>
+                                        )}
                                     </div>
+
                                     <div className="md:col-span-2">
                                         <label className="block text-sm font-medium text-gray-700 mb-1">Preferred Setup</label>
                                         <input
