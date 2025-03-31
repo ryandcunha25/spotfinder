@@ -133,6 +133,27 @@ router.get('/show-bookings', authenticateToken, async (req, res) => {
     }
 });
 
+// Route to get all bookings for a specific venue
+router.get("/venue-booked-dates/:venueId", async (req, res) => {
+    const { venueId } = req.params;
+
+    try {
+        const result = await pool.query(
+            `SELECT b.*, u.*, p.* FROM bookings b
+             JOIN users u ON b.user_id = u.id
+             LEFT JOIN payments p ON b.booking_id = p.booking_id
+             WHERE b.venue_id = $1`,
+            [venueId]
+        );
+
+        res.status(200).json(result.rows);
+    } catch (error) {
+        console.error("Error fetching bookings:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+});
+
+
 // venue owners side
 
 // Fetch all bookings with user and venue details
