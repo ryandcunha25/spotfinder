@@ -19,10 +19,7 @@ const LoginPage = () => {
             setFormData((prev) => ({ ...prev, email: savedEmail }));
             setRememberMe(true);
         }
-        if(sessionStorage.getItem('token')) {
-            alert("You are already logged in");
-            navigate('/homepage');
-        }
+
     }, [navigate]);
 
     const handleChange = (e) => {
