@@ -196,12 +196,6 @@ const Navbar = () => {
                                     Home
                                 </Link>
                                 <Link
-                                    to="/venues"
-                                    className="px-3 py-2 text-sm font-medium text-white hover:bg-blue-700 rounded-md transition duration-200"
-                                >
-                                    Spots
-                                </Link>
-                                <Link
                                     to="/about"
                                     className="px-3 py-2 text-sm font-medium text-white hover:bg-blue-700 rounded-md transition duration-200"
                                 >
@@ -212,6 +206,18 @@ const Navbar = () => {
                                     className="px-3 py-2 text-sm font-medium text-white hover:bg-blue-700 rounded-md transition duration-200"
                                 >
                                     Contact Us
+                                </Link>
+                                <Link
+                                    to="/venues"
+                                    className="px-3 py-2 text-sm font-medium text-white hover:bg-blue-700 rounded-md transition duration-200"
+                                >
+                                    Spots
+                                </Link>
+                                <Link
+                                    to="/user-tickets"
+                                    className="px-3 py-2 text-sm font-medium text-white hover:bg-blue-700 rounded-md transition duration-200"
+                                >
+                                    Support
                                 </Link>
                             </div>
                             <Link

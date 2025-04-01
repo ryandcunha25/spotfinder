@@ -26,6 +26,10 @@ import ManageBookings from './Components/VenueOwners/ManageBookings';
 import ReviewForm from "./Components/Users/ReviewForm";
 import Analytics from "./Components/VenueOwners/Analytics";
 import ManageRatingReviews from "./Components/VenueOwners/ManageRatingReviews";
+import SupportTickets from "./Components/Users/CustomerSupport/SupportTickets";
+import NewSupportTicket from "./Components/Users/CustomerSupport/NewSupportTicket";
+import VenueOwnerTickets from "./Components/VenueOwners/CustomerSupport/VenueOwnerTickets";
+// import SupportTicketDetail from "./Components/Users/CustomerSupport/SupportTicketDetail";
 
 
 function AppContent() {
@@ -61,7 +65,7 @@ function AppContent() {
   // Define routes where the Navbar should not be displayed
   const noNavbarRoutes = ["/", "/signup", "/venues/:venuename/book-venue", "/payment", "/payment-confirmation",
     "/dashboard", "/venueownersregistration", "/venueownerslogin", "/myvenues", "/managebookings",
-    "/managepayments", "/manage-review-and-ratings", "/review-form", "/analytics"];
+    "/managepayments", "/manage-review-and-ratings", "/review-form", "/analytics", "/customer-support-handle", ];
 
   const shouldShowNavbar = !noNavbarRoutes.some(route => location.pathname.startsWith(route)) &&
     !location.pathname.startsWith("/venues/") ||
@@ -83,12 +87,16 @@ function AppContent() {
           <Route path="/wishlist" element={<Wishlist />} />
           <Route path="/about" element={<AboutUs />} />
           <Route path="/contact" element={<ContactUs />} />
+          <Route path="/customer-support" element={<NewSupportTicket />} />
           <Route path="/terms-condition" element={<TermsAndConditions />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/venues/:venuename/book-venue" element={<BookVenue />} />
           <Route path="/payment" element={<PaymentPage />} />
           <Route path="/payment-confirmation" element={<PaymentConfirmation />} />
           <Route path="/bookings" element={<UserBookings />} />
+          <Route path="/user-tickets" element={<SupportTickets />} />
+          <Route path="/user-tickets/create-ticket" element={<NewSupportTicket />} />
+          <Route path="/user-tickets/detailedticket/:id" element={<SupportTickets />} />
 
           <Route path="/venueownersregistration" element={<VenueOwnerSignup />} />
           <Route path="/venueownerslogin" element={<VenueOwnerLogin />} />
@@ -98,6 +106,9 @@ function AppContent() {
           <Route path="/manage-review-and-ratings" element={<ManageRatingReviews />} />
           <Route path="/review-form" element={<ReviewForm />} />
           <Route path="/analytics" element={<Analytics />} />
+          <Route path="/ticket-handler" element={<VenueOwnerTickets />} />
+         
+
 
         </Routes>
       </div>
