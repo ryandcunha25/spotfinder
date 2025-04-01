@@ -18,6 +18,7 @@ import {
     Spin
 } from 'antd';
 import { SyncOutlined, EyeOutlined, MessageOutlined, UserOutlined } from '@ant-design/icons';
+import Sidebar from '../Sidebar';
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -59,17 +60,11 @@ const VenueOwnerTickets = () => {
 
     const showTicketDetails = async (ticketId) => {
         try {
-            console.log(ticketId)
             setResponseLoading(true);
             const response = await axios.get(
                 `http://localhost:5000/grievances/venueowners/tickets/${ticketId}`
             );
-
-            // Verify the ID matches what you expect
-            console.log("Received ticket data:", response.data.ticket);
-
             setSelectedTicket(response.data.ticket);
-            console.log(response.data.ticket)
             setTicketResponses(response.data.responses || []);
             setIsModalVisible(true);
         } catch (error) {
@@ -87,33 +82,26 @@ const VenueOwnerTickets = () => {
         }
 
         try {
-            console.log(messageText)
-            console.log(selectedTicket.id)
             const response = await axios.post(
                 `http://localhost:5000/grievances/venueowners/tickets/${selectedTicket.id}/responses`,
                 {
                     message: messageText,
-                    user_id: selectedTicket.user_id  // Assuming you have the user ID in the ticket data
+                    user_id: selectedTicket.user_id
                 },
-               
             );
 
             if (response.data.status === 201) {
                 message.success('Response submitted');
             }
-            
-            // Add the new response to the list
+
             setTicketResponses([...ticketResponses, {
                 ...response.data,
                 is_admin: true,
                 user_name: 'You'
             }]);
-            console.log(response.data.status )
 
             setMessageText('');
-           
 
-            // Refresh the ticket status
             const ticketResponse = await axios.get(
                 `http://localhost:5000/grievances/venueowners/tickets/${selectedTicket.id}`,
             );
@@ -148,19 +136,23 @@ const VenueOwnerTickets = () => {
     const columns = [
         {
             title: 'Ticket ID',
-            dataIndex: 'id',  // Make sure this matches your actual data field
+            dataIndex: 'id',
             key: 'id',
-            render: (id) => <span>#{id}</span>
+            render: (id) => <span className="font-mono">#{id}</span>
         },
         {
             title: 'Subject',
             dataIndex: 'subject',
             key: 'subject',
+            render: (text) => <span className="font-medium">{text}</span>
         },
         {
             title: 'Customer',
             dataIndex: 'first_name',
             key: 'first_name',
+            render: (text, record) => (
+                <span className="font-medium">{text} {record.last_name}</span>
+            )
         },
         {
             title: 'Status',
@@ -173,7 +165,7 @@ const VenueOwnerTickets = () => {
                             status === 'in_progress' ? 'processing' :
                                 status === 'resolved' ? 'success' : 'default'
                     }
-                    text={status.replace('_', ' ')}
+                    text={<span className="capitalize">{status.replace('_', ' ')}</span>}
                 />
             ),
         },
@@ -186,7 +178,7 @@ const VenueOwnerTickets = () => {
                     priority === 'low' ? 'green' :
                         priority === 'medium' ? 'blue' :
                             priority === 'high' ? 'orange' : 'red'
-                }>
+                } className="capitalize">
                     {priority}
                 </Tag>
             ),
@@ -199,7 +191,8 @@ const VenueOwnerTickets = () => {
                     <Button
                         type="link"
                         icon={<EyeOutlined />}
-                        onClick={() => showTicketDetails(record.id)}  // Use the correct field
+                        onClick={() => showTicketDetails(record.id)}
+                        className="text-blue-600 hover:text-blue-800"
                     >
                         View
                     </Button>
@@ -209,154 +202,170 @@ const VenueOwnerTickets = () => {
     ];
 
     return (
-        <div className="venue-owner-tickets">
-            <div className="tickets-header">
-                <h2>Customer Support Tickets</h2>
-                <div>
-                    <Button
-                        icon={<SyncOutlined />}
-                        onClick={fetchTickets}
-                        style={{ marginRight: 16 }}
-                    >
-                        Refresh
-                    </Button>
-                    <Select
-                        defaultValue="all"
-                        style={{ width: 150 }}
-                        onChange={setStatusFilter}
-                    >
-                        <Option value="all">All Statuses</Option>
-                        <Option value="open">Open</Option>
-                        <Option value="in_progress">In Progress</Option>
-                        <Option value="resolved">Resolved</Option>
-                    </Select>
-                </div>
-            </div>
-            <Table
-                columns={columns}
-                dataSource={tickets}
-                rowKey="ticket_id"
-                loading={loading}
-                pagination={{ pageSize: 10 }}
-            />
+        <div className="min-h-screen bg-gray-50 flex">
+            <Sidebar />
 
-            {/* Ticket Details Modal */}
-            <Modal
-                title={`Ticket ${selectedTicket ? formatTicketId(selectedTicket.id) : ''}`}
-                visible={isModalVisible}
-                onCancel={() => setIsModalVisible(false)}
-                footer={null}
-                width={800}
-                style={{ top: 20 }}
-            >
-                {responseLoading ? (
-                    <div style={{ textAlign: 'center', padding: '24px' }}>
-                        <Spin size="large" />
-                    </div>
-                ) : selectedTicket && (
-                    <>
-                        <Descriptions bordered column={2}>
-                            <Descriptions.Item label="Subject" span={2}>
-                                {selectedTicket.subject}
-                            </Descriptions.Item>
-                            <Descriptions.Item label="Customer">
-                                {selectedTicket.first_name} {selectedTicket.last_name}
-                            </Descriptions.Item>
-                            <Descriptions.Item label="Status">
-                                <Select
-                                    value={selectedTicket.status}
-                                    style={{ width: 150 }}
-                                    onChange={handleStatusChange}
-                                >
-                                    <Option value="open">Open</Option>
-                                    <Option value="in_progress">In Progress</Option>
-                                    <Option value="resolved">Resolved</Option>
-                                </Select>
-                            </Descriptions.Item>
-                            <Descriptions.Item label="Priority">
-                                <Tag color={
-                                    selectedTicket.priority === 'low' ? 'green' :
-                                        selectedTicket.priority === 'medium' ? 'blue' :
-                                            selectedTicket.priority === 'high' ? 'orange' : 'red'
-                                }>
-                                    {selectedTicket.priority}
-                                </Tag>
-                            </Descriptions.Item>
-                            <Descriptions.Item label="Created At">
-                                {new Date(selectedTicket.created_at).toLocaleString()}
-                            </Descriptions.Item>
-                            <Descriptions.Item label="Description" span={2}>
-                                {selectedTicket.description}
-                            </Descriptions.Item>
-                        </Descriptions>
-
-                        <Divider orientation="left">Conversation</Divider>
-
-                        <div style={{
-                            maxHeight: '300px',
-                            overflowY: 'auto',
-                            border: '1px solid #f0f0f0',
-                            borderRadius: '4px',
-                            padding: '12px',
-                            marginBottom: '16px'
-                        }}>
-                            <List
-                                dataSource={ticketResponses}
-                                renderItem={(response) => (
-                                    <List.Item style={{ padding: '8px 0' }}>
-                                        <List.Item.Meta
-                                            avatar={
-                                                <Avatar
-                                                    style={{
-                                                        backgroundColor: response.is_admin ? '#1890ff' : '#52c41a'
-                                                    }}
-                                                    icon={<UserOutlined />}
-                                                />
-                                            }
-                                            title={
-                                                response.is_admin ?
-                                                <span style={{
-                                                    color:  '#1890ff',
-                                                    fontWeight: 500
-                                                }}>
-                                                    Support Agent
-                                                </span>
-                                                : <span style={{
-                                                    color:  '#1890ff',
-                                                    fontWeight: 500
-                                                }}>
-                                                    {response.first_name} {response.last_name}
-                                                </span>
-                                            }
-                                            description={response.message}
-                                        />
-                                    </List.Item>
-                                )}
-                            />
-                        </div>
-
-                        <div className="response-section">
-                            <h4><MessageOutlined /> Add Response</h4>
-                            <TextArea
-                                rows={4}
-                                value={messageText}
-                                onChange={(e) => setMessageText(e.target.value)}
-                                placeholder="Type your response here..."
-                            />
+            <div className="ml-64 flex-1 p-6">
+                <div className="bg-white rounded-lg shadow-sm p-6">
+                    <div className="flex justify-between items-center mb-6">
+                        <h2 className="text-2xl font-bold text-gray-800">Customer Support Tickets</h2>
+                        <div className="flex items-center space-x-4">
                             <Button
-                                type="primary"
-                                onClick={handleSubmitResponse}
-                                style={{ marginTop: 16 }}
-                                disabled={!messageText.trim()}
+                                icon={<SyncOutlined />}
+                                onClick={fetchTickets}
+                                className="flex items-center bg-white border border-gray-300 hover:bg-gray-50"
                             >
-                                Submit Response
+                                Refresh
                             </Button>
+                            <Select
+                                defaultValue="all"
+                                style={{ width: 150 }}
+                                onChange={setStatusFilter}
+                                className="w-40"
+                            >
+                                <Option value="all">All Statuses</Option>
+                                <Option value="open">Open</Option>
+                                <Option value="in_progress">In Progress</Option>
+                                <Option value="resolved">Resolved</Option>
+                            </Select>
                         </div>
-                    </>
-                )}
-            </Modal>
+                    </div>
+                    
+                    <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+                        <Table
+                            columns={columns}
+                            dataSource={tickets}
+                            rowKey="ticket_id"
+                            loading={loading}
+                            pagination={{ pageSize: 10 }}
+                            className="rounded-lg"
+                            rowClassName="hover:bg-gray-50"
+                        />
+                    </div>
+                </div>
+
+                {/* Ticket Details Modal */}
+                <Modal
+                    title={
+                        <div className="flex items-center">
+                            <span className="text-xl font-semibold">Ticket {selectedTicket ? formatTicketId(selectedTicket.id) : ''}</span>
+                        </div>
+                    }
+                    visible={isModalVisible}
+                    onCancel={() => setIsModalVisible(false)}
+                    footer={null}
+                    width={800}
+                    className="top-5"
+                    bodyStyle={{ padding: 0 }}
+                >
+                    {responseLoading ? (
+                        <div className="flex justify-center items-center h-64">
+                            <Spin size="large" />
+                        </div>
+                    ) : selectedTicket && (
+                        <div className="space-y-6">
+                            <div className="px-6 pt-6">
+                                <Descriptions bordered column={2} className="custom-descriptions">
+                                    <Descriptions.Item label="Subject" span={2} className="font-medium">
+                                        {selectedTicket.subject}
+                                    </Descriptions.Item>
+                                    <Descriptions.Item label="Customer" className="font-medium">
+                                        {selectedTicket.first_name} {selectedTicket.last_name}
+                                    </Descriptions.Item>
+                                    <Descriptions.Item label="Status">
+                                        <Select
+                                            value={selectedTicket.status}
+                                            style={{ width: 150 }}
+                                            onChange={handleStatusChange}
+                                        >
+                                            <Option value="open">Open</Option>
+                                            <Option value="in_progress">In Progress</Option>
+                                            <Option value="resolved">Resolved</Option>
+                                        </Select>
+                                    </Descriptions.Item>
+                                    <Descriptions.Item label="Priority">
+                                        <Tag color={
+                                            selectedTicket.priority === 'low' ? 'green' :
+                                                selectedTicket.priority === 'medium' ? 'blue' :
+                                                    selectedTicket.priority === 'high' ? 'orange' : 'red'
+                                        } className="capitalize">
+                                            {selectedTicket.priority}
+                                        </Tag>
+                                    </Descriptions.Item>
+                                    <Descriptions.Item label="Created At">
+                                        {new Date(selectedTicket.created_at).toLocaleString()}
+                                    </Descriptions.Item>
+                                    <Descriptions.Item label="Description" span={2} className="whitespace-pre-wrap">
+                                        {selectedTicket.description}
+                                    </Descriptions.Item>
+                                </Descriptions>
+                            </div>
+
+                            <Divider className="my-0" />
+
+                            <div className="px-6">
+                                <h4 className="text-lg font-semibold mb-4">Conversation</h4>
+                                
+                                <div className="border border-gray-200 rounded-lg p-4 max-h-80 overflow-y-auto bg-gray-50">
+                                    <List
+                                        dataSource={ticketResponses}
+                                        renderItem={(response) => (
+                                            <List.Item className="!px-0 !py-3">
+                                                <List.Item.Meta
+                                                    avatar={
+                                                        <Avatar
+                                                            className={response.is_admin ? "bg-blue-500" : "bg-green-500"}
+                                                            icon={<UserOutlined />}
+                                                        />
+                                                    }
+                                                    title={
+                                                        <span className={response.is_admin ? "text-blue-600 font-medium" : "text-green-600 font-medium"}>
+                                                            {response.is_admin ? 'Support Agent' : `${response.first_name} ${response.last_name}`}
+                                                        </span>
+                                                    }
+                                                    description={
+                                                        <div className="whitespace-pre-wrap text-gray-700">
+                                                            {response.message}
+                                                            <div className="text-xs text-gray-500 mt-1">
+                                                                {new Date(response.created_at).toLocaleString()}
+                                                            </div>
+                                                        </div>
+                                                    }
+                                                    className="items-start"
+                                                />
+                                            </List.Item>
+                                        )}
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="px-6 pb-6">
+                                <h4 className="text-lg font-semibold mb-3 flex items-center">
+                                    <MessageOutlined className="mr-2" />
+                                    Add Response
+                                </h4>
+                                <TextArea
+                                    rows={4}
+                                    value={messageText}
+                                    onChange={(e) => setMessageText(e.target.value)}
+                                    placeholder="Type your response here..."
+                                    className="border-gray-300 hover:border-blue-400 focus:border-blue-500"
+                                />
+                                <Button
+                                    type="primary"
+                                    onClick={handleSubmitResponse}
+                                    className="mt-4 bg-blue-600 hover:bg-blue-700"
+                                    disabled={!messageText.trim()}
+                                >
+                                    Submit Response
+                                </Button>
+                            </div>
+                        </div>
+                    )}
+                </Modal>
+            </div>
         </div>
     );
 };
 
-export default VenueOwnerTickets;
+export default VenueOwnerTickets;   

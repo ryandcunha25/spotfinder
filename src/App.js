@@ -65,7 +65,8 @@ function AppContent() {
   // Define routes where the Navbar should not be displayed
   const noNavbarRoutes = ["/", "/signup", "/venues/:venuename/book-venue", "/payment", "/payment-confirmation",
     "/dashboard", "/venueownersregistration", "/venueownerslogin", "/myvenues", "/managebookings",
-    "/managepayments", "/manage-review-and-ratings", "/review-form", "/analytics", "/customer-support-handle", ];
+    "/managepayments", "/manage-review-and-ratings", "/review-form", "/analytics", "/customer-support-handle", 
+    "/user-ticket", "/user-tickets/create-ticket", "/user-tickets/detailedticket/:id", "/ticket-handler"];
 
   const shouldShowNavbar = !noNavbarRoutes.some(route => location.pathname.startsWith(route)) &&
     !location.pathname.startsWith("/venues/") ||
