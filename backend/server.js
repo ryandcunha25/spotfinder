@@ -14,6 +14,7 @@ const notifications = require('./routes/notifications');
 const analytics = require('./routes/analytics');
 const grievances = require('./routes/grievances');
 const dashboard = require('./routes/dashboard');
+const home = require('./routes/home');
 
 pool.connect();
 
@@ -22,7 +23,7 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
-// app.use('/cron_jobs', cron_jobs);
+app.use('/', home);
 
 app.use('/authentication', authRoutes);
 
