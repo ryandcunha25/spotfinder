@@ -9,7 +9,9 @@ const ManageRatingReviews = () => {
     const [loading, setLoading] = useState(true);
     const [sortOrder, setSortOrder] = useState("newest");
     const [filterRating, setFilterRating] = useState("all");
+    const [filterVenue, setFilterVenue] = useState("all");
     const [searchQuery, setSearchQuery] = useState("");
+    const [venues, setVenues] = useState([]);
     const [analytics, setAnalytics] = useState({
         averageRating: 0,
         totalReviews: 0,
@@ -22,19 +24,28 @@ const ManageRatingReviews = () => {
 
     useEffect(() => {
         fetchReviews();
+        fetchVenues();
     }, []);
 
     useEffect(() => {
         applyFilters();
         calculateAnalytics();
-    }, [reviews, sortOrder, filterRating, searchQuery]);
+    }, [reviews, sortOrder, filterRating, filterVenue, searchQuery]);
 
     const fetchReviews = async () => {
         try {
             const response = await axios.get(`http://localhost:5000/reviews/owner/${ownerId}`);
+
             if (response.status === 200) {
                 const sortedReviews = response.data.reviews.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
                 setReviews(sortedReviews);
+
+                // Ensure only unique venue IDs are stored
+                const uniqueVenues = Array.from(
+                    new Map(response.data.reviews.map(review => [review.venue_id, { id: review.venue_id, name: review.name }])).values()
+                );
+
+                setVenues(uniqueVenues);
             }
         } catch (error) {
             console.error("Error fetching reviews:", error);
@@ -43,19 +54,40 @@ const ManageRatingReviews = () => {
         }
     };
 
+
+    const fetchVenues = async () => {
+        try {
+            const response = await axios.get(`http://localhost:5000/venues/owner/${ownerId}`);
+            if (response.status === 200) {
+                setVenues(response.data.venues);
+            }
+        } catch (error) {
+            console.error("Error fetching venues:", error);
+        }
+    };
+
     const applyFilters = () => {
         let updatedReviews = [...reviews];
 
+        // Rating filter
         if (filterRating !== "all") {
             updatedReviews = updatedReviews.filter(review => review.rating == filterRating);
         }
 
-        if (searchQuery.trim()) {
-            updatedReviews = updatedReviews.filter(review =>
-                `${review.first_name} ${review.last_name}`.toLowerCase().includes(searchQuery.toLowerCase())
-            );
+        // Venue filter
+        if (filterVenue !== "all") {
+            updatedReviews = updatedReviews.filter(review => review.venue_id == filterVenue);
         }
 
+        // Search filter
+        if (searchQuery.trim()) {
+            const searchLower = searchQuery.toLowerCase();
+            updatedReviews = updatedReviews.filter(review =>
+                `${review.first_name} ${review.last_name}`.toLowerCase().includes(searchLower) ||
+                (review.venue_name && review.venue_name.toLowerCase().includes(searchLower)))
+        }
+
+        // Sort order
         if (sortOrder === "newest") {
             updatedReviews.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
         } else if (sortOrder === "oldest") {
@@ -65,21 +97,23 @@ const ManageRatingReviews = () => {
         setFilteredReviews(updatedReviews);
     };
 
-    const handleRatingFilterChange = (e) => {
-        setFilterRating(e.target.value);
-    };
-
     const calculateAnalytics = () => {
-        const totalReviews = reviews.length;
-        const ratingSum = reviews.reduce((sum, review) => sum + review.rating, 0);
+        let reviewsToAnalyze = [...reviews];
+
+        if (filterVenue !== "all") {
+            reviewsToAnalyze = reviewsToAnalyze.filter(review => review.venue_id == filterVenue);
+        }
+
+        const totalReviews = reviewsToAnalyze.length;
+        const ratingSum = reviewsToAnalyze.reduce((sum, review) => sum + review.rating, 0);
         const averageRating = totalReviews > 0 ? (ratingSum / totalReviews).toFixed(1) : "N/A";
 
         const ratingDistribution = [1, 2, 3, 4, 5].map(rating => ({
             rating: `${rating} Stars`,
-            count: reviews.filter(review => review.rating === rating).length,
+            count: reviewsToAnalyze.filter(review => review.rating === rating).length,
         }));
 
-        const reviewsByMonth = reviews.reduce((acc, review) => {
+        const reviewsByMonth = reviewsToAnalyze.reduce((acc, review) => {
             let month = new Date(review.created_at).toLocaleString("default", { month: "short", year: "numeric" });
             acc[month] = (acc[month] || 0) + 1;
             return acc;
@@ -130,17 +164,21 @@ const ManageRatingReviews = () => {
                         <div className="bg-white rounded-xl shadow-md p-6 border-l-4 border-green-500">
                             <h3 className="text-sm font-medium text-gray-500">Total Reviews</h3>
                             <div className="mt-2">
-                                <span className="text-3xl font-bold text-gray-800">{reviews.length}</span>
+                                <span className="text-3xl font-bold text-gray-800">{analytics.totalReviews}</span>
                             </div>
                         </div>
-                        {/* Latest Review Card - Modified Section */}
                         <div className="bg-white rounded-xl shadow-sm p-6 border-l-4 border-purple-500">
                             <h3 className="text-sm font-medium text-gray-500">Latest Review</h3>
                             <div className="mt-2">
                                 {reviews.length > 0 ? (
-                                    <p className="text-gray-600 whitespace-normal break-words line-clamp-3">
-                                        "{reviews[0].review_text}"
-                                    </p>
+                                    <>
+                                        <p className="text-gray-600 whitespace-normal break-words line-clamp-2">
+                                            "{reviews[0].review_text}"
+                                        </p>
+                                        <p className="text-sm text-gray-500 mt-1">
+                                            {reviews[0].venue_name || "Unknown Venue"}
+                                        </p>
+                                    </>
                                 ) : (
                                     <p className="text-gray-400 italic">No reviews yet</p>
                                 )}
@@ -151,8 +189,8 @@ const ManageRatingReviews = () => {
                     {/* Filters */}
                     <div className="bg-white rounded-xl shadow-md p-6 mb-8">
                         <h3 className="text-lg font-semibold text-gray-800 mb-4">Filters</h3>
-                        <div className="flex flex-col md:flex-row gap-4">
-                            <div className="flex-1">
+                        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                            <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">Sort by</label>
                                 <select
                                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -163,12 +201,12 @@ const ManageRatingReviews = () => {
                                     <option value="oldest">Oldest First</option>
                                 </select>
                             </div>
-                            <div className="flex-1">
+                            <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">Rating</label>
                                 <select
                                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                                     value={filterRating}
-                                    onChange={handleRatingFilterChange}
+                                    onChange={(e) => setFilterRating(e.target.value)}
                                 >
                                     <option value="all">All Ratings</option>
                                     {[5, 4, 3, 2, 1].map(r => (
@@ -176,12 +214,25 @@ const ManageRatingReviews = () => {
                                     ))}
                                 </select>
                             </div>
-                            <div className="flex-1">
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Venue</label>
+                                <select
+                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                    value={filterVenue}
+                                    onChange={(e) => setFilterVenue(e.target.value)}
+                                >
+                                    <option value="all">All Venues</option>
+                                    {venues.map(venue => (
+                                        <option key={venue.id} value={venue.id}>{venue.name}</option>
+                                    ))}
+                                </select>
+                            </div>
+                            <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">Search</label>
                                 <input
                                     type="text"
                                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                    placeholder="Search by name..."
+                                    placeholder="Search by name or venue..."
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
                                 />
@@ -207,6 +258,7 @@ const ManageRatingReviews = () => {
                                         <div className="flex items-start justify-between">
                                             <div>
                                                 <h4 className="font-medium text-gray-900">{review.first_name} {review.last_name}</h4>
+                                                <p className="text-sm text-gray-500">Reviewed Venue: <span className="font-semibold">{review.name || "Unknown Venue"}</span></p>
                                                 <div className="flex items-center mt-1">
                                                     {[...Array(5)].map((_, i) => (
                                                         <svg
@@ -230,8 +282,13 @@ const ManageRatingReviews = () => {
                                             </span>
                                         </div>
                                         <p className="mt-3 text-gray-600">{review.review_text}</p>
-                                        <div className="mt-3 flex items-center text-sm text-gray-500">
-                                            <span>Booking ID: {review.booking_id}</span>
+                                        <div className="mt-3 flex flex-wrap gap-4 text-sm text-gray-500">
+                                            {/* <span className="bg-gray-100 px-3 py-1 rounded-full">
+                            Venue: {review.name || "Unknown Venue"}
+                        </span> */}
+                                            <span className="bg-gray-100 px-3 py-1 rounded-full">
+                                                Booking ID: {review.booking_id}
+                                            </span>
                                         </div>
                                     </div>
                                 ))}
@@ -239,11 +296,19 @@ const ManageRatingReviews = () => {
                         )}
                     </div>
 
+
                     {/* Analytics */}
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
                         {/* Rating Distribution */}
                         <div className="bg-white rounded-xl shadow-md p-6">
-                            <h3 className="text-lg font-semibold text-gray-800 mb-4">Rating Distribution</h3>
+                            <h3 className="text-lg font-semibold text-gray-800 mb-4">
+                                Rating Distribution
+                                {filterVenue !== "all" && (
+                                    <span className="text-sm font-normal text-gray-500 ml-2">
+                                        (Filtered: {venues.find(v => v.id == filterVenue)?.name || "Selected Venue"})
+                                    </span>
+                                )}
+                            </h3>
                             <div className="h-80">
                                 <ResponsiveContainer width="100%" height="100%">
                                     <PieChart>
@@ -275,7 +340,14 @@ const ManageRatingReviews = () => {
 
                         {/* Review Trends */}
                         <div className="bg-white rounded-xl shadow-md p-6">
-                            <h3 className="text-lg font-semibold text-gray-800 mb-4">Review Trends</h3>
+                            <h3 className="text-lg font-semibold text-gray-800 mb-4">
+                                Review Trends
+                                {filterVenue !== "all" && (
+                                    <span className="text-sm font-normal text-gray-500 ml-2">
+                                        (Filtered: {venues.find(v => v.id == filterVenue)?.name || "Selected Venue"})
+                                    </span>
+                                )}
+                            </h3>
                             <div className="h-80">
                                 <ResponsiveContainer width="100%" height="100%">
                                     <LineChart data={analytics.reviewTrends}>
