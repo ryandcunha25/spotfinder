@@ -29,7 +29,6 @@ import ManageRatingReviews from "./Components/VenueOwners/ManageRatingReviews";
 import SupportTickets from "./Components/Users/CustomerSupport/SupportTickets";
 import NewSupportTicket from "./Components/Users/CustomerSupport/NewSupportTicket";
 import VenueOwnerTickets from "./Components/VenueOwners/CustomerSupport/VenueOwnerTickets";
-// import SupportTicketDetail from "./Components/Users/CustomerSupport/SupportTicketDetail";
 
 
 function AppContent() {
