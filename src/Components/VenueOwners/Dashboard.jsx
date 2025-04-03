@@ -77,16 +77,31 @@ const Dashboard = () => {
   };
 
 
-  // Format revenue data for charts
-  const formatMonthlyRevenue = dashboardData.monthlyRevenue.map(item => ({
-    name: new Date(item.month).toLocaleString('default', { month: 'short' }),
-    revenue: item.total_revenue || 0
-  }));
+  // Update the formatMonthlyRevenue and formatWeeklyRevenue functions:
 
-  const formatWeeklyRevenue = dashboardData.weeklyRevenue.map(item => ({
-    name: `Week ${new Date(item.week).getWeek()}`,
-    revenue: item.total_revenue || 0
-  }));
+  // Format monthly revenue data for charts (sorted by month and showing year)
+  const formatMonthlyRevenue = dashboardData.monthlyRevenue
+    .map(item => ({
+      ...item,
+      monthDate: new Date(item.month) // Create Date object for sorting
+    }))
+    .sort((a, b) => a.monthDate - b.monthDate) // Sort by date
+    .map(item => ({
+      name: `${item.monthDate.toLocaleString('default', { month: 'short' })} ${item.monthDate.getFullYear()}`,
+      revenue: item.total_revenue || 0
+    }));
+
+  // Format weekly revenue data for charts (sorted by week)
+  const formatWeeklyRevenue = dashboardData.weeklyRevenue
+    .map(item => ({
+      ...item,
+      weekDate: new Date(item.week) // Create Date object for sorting
+    }))
+    .sort((a, b) => a.weekDate - b.weekDate) // Sort by date
+    .map(item => ({
+      name: `Week ${item.weekDate.getWeek()}, ${item.weekDate.getFullYear()}`,
+      revenue: item.total_revenue || 0
+    }));
 
 
   return (
@@ -133,12 +148,12 @@ const Dashboard = () => {
               <i className="bx bxs-dollar-circle text-yellow-500 text-3xl"></i>
               <span className="ml-4 text-gray-700">
                 <h3 className="text-2xl font-semibold">
-                  ${Number(
+                  ₹{Number(
                     dashboardData.monthlyRevenue
-                      .map(item => Number(item.total_revenue) || 0) // Ensure numbers
+                      .map(item => Number(item.total_revenue) || 0)
                       .reduce((sum, revenue) => sum + revenue, 0)
-                      .toFixed(2) // Format to 2 decimal places
-                  ).toLocaleString()}
+                      .toFixed(0) // Changed to 0 decimal places
+                  ).toLocaleString('en-IN')}
                 </h3>
                 <p className="text-gray-500">Total Revenue</p>
               </span>
@@ -150,6 +165,7 @@ const Dashboard = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <div className="bg-white shadow-md rounded-lg p-6">
               <h2 className="text-xl font-semibold mb-4 text-gray-800">Monthly Revenue</h2>
+              {/* Monthly Revenue Chart */}
               <div className="h-80">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={formatMonthlyRevenue}>
@@ -162,6 +178,7 @@ const Dashboard = () => {
                   </BarChart>
                 </ResponsiveContainer>
               </div>
+
             </div>
             <div className="bg-white shadow-md rounded-lg p-6">
               <h2 className="text-xl font-semibold mb-4 text-gray-800">Weekly Revenue</h2>
@@ -172,14 +189,13 @@ const Dashboard = () => {
                     <XAxis dataKey="name" />
                     <YAxis
                       scale="linear"
-
-                      domain={[0, 'dataMax + 600000']} // Start from 0 and extend beyond max
-                      tickCount={6} // Adjust based on your expected max value
-                      tickFormatter={(value) => `${(value / 1000).toFixed(0)}k`} // Format as $200k
+                      domain={[0, 'dataMax + 600000']}
+                      tickCount={6}
+                      tickFormatter={(value) => `${(value / 1000).toFixed(0)}k`}
                       allowDecimals={false}
                     />
                     <Tooltip
-                      formatter={(value) => [`${value.toLocaleString()}`, 'Revenue']} // Full value in tooltip
+                      formatter={(value) => [`${value.toLocaleString()}`, 'Revenue']}
                       labelFormatter={(name) => `Week: ${name}`}
                     />
                     <Legend />
