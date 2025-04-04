@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import Sidebar from "./Sidebar";
-import Navbar from "./Navbar";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
   ResponsiveContainer
@@ -109,23 +108,22 @@ const Dashboard = () => {
       <Sidebar />
 
       <div className="flex-1 bg-gray-50 ml-64">
-        <Navbar />
 
         <main className="p-8 space-y-8">
           {/* Header */}
           <div className="head-title mb-6 flex justify-between items-center">
             <div className="left">
-              <h1 className="text-3xl font-semibold text-gray-800">Venue Owner Dashboard</h1>
+              <h1 className="text-3xl font-semibold text-gray-800">Dashboard</h1>
               <ul className="breadcrumb flex items-center space-x-2 text-gray-600">
                 <li><a href="#" className="hover:text-blue-500">Dashboard</a></li>
                 <li><i className="bx bx-chevron-right"></i></li>
                 <li><a className="active text-blue-500" href="#">Overview</a></li>
               </ul>
             </div>
-            <a href="#" className="btn-download flex items-center bg-blue-600 text-white px-4 py-2 rounded-lg shadow-lg hover:bg-blue-700 transition duration-300">
+            {/* <a href="#" className="btn-download flex items-center bg-blue-600 text-white px-4 py-2 rounded-lg shadow-lg hover:bg-blue-700 transition duration-300">
               <i className="bx bxs-cloud-download text-lg"></i>
               <span className="ml-2">Generate Report</span>
-            </a>
+            </a> */}
           </div>
 
           {/* Stats Cards */}

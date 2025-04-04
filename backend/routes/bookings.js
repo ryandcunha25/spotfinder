@@ -114,7 +114,7 @@ router.get('/confirmed-booking', async (req, res) => {
 
 // showing bookings for users
 
-router.get('/show-bookings', authenticateToken, async (req, res) => {
+router.get('/show-bookings/:userId', authenticateToken, async (req, res) => {
     try {
         const userId = req.user.id;
         const result = await pool.query(
@@ -123,8 +123,9 @@ router.get('/show-bookings', authenticateToken, async (req, res) => {
             JOIN venues v ON b.venue_id = v.venue_id
             WHERE b.user_id = $1;
             `,
-            [userId]
+            [req.params.userId]
         );
+        console.log(result.rows);
 
         res.status(200).json(result.rows);
     } catch (err) {

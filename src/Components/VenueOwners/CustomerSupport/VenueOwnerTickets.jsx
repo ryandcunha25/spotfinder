@@ -66,6 +66,7 @@ const VenueOwnerTickets = () => {
             );
             setSelectedTicket(response.data.ticket);
             setTicketResponses(response.data.responses || []);
+            console.log("Ticket responses:", response.data.responses);
             setIsModalVisible(true);
         } catch (error) {
             message.error('Failed to fetch ticket details');
@@ -81,18 +82,21 @@ const VenueOwnerTickets = () => {
             return;
         }
 
+
         try {
             const response = await axios.post(
-                `http://localhost:5000/grievances/venueowners/tickets/${selectedTicket.id}/responses`,
+                `http://localhost:5000/grievances/venueowners/tickets/${ticketResponses[0].ticket_id}/responses`,
                 {
                     message: messageText,
                     user_id: selectedTicket.user_id
                 },
             );
 
-            if (response.data.status === 201) {
+            console.log("Response data:", response.data);
+
+            // if (response.data.status === 200) {
                 message.success('Response submitted');
-            }
+            // }
 
             setTicketResponses([...ticketResponses, {
                 ...response.data,
@@ -103,7 +107,7 @@ const VenueOwnerTickets = () => {
             setMessageText('');
 
             const ticketResponse = await axios.get(
-                `http://localhost:5000/grievances/venueowners/tickets/${selectedTicket.id}`,
+                `http://localhost:5000/grievances/venueowners/tickets/${ticketResponses[0].ticket_id}`,
             );
             setSelectedTicket(ticketResponse.data.ticket);
 

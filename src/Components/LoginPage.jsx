@@ -50,7 +50,7 @@ const LoginPage = () => {
             alert('User Logged in Successfully!');
             navigate('/homepage');
         } catch (err) {
-            alert('Error logging in');
+            alert('Incorrect credentials! Please try again.');
         }
     };
 

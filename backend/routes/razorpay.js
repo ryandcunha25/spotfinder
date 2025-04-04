@@ -22,6 +22,7 @@ router.post('/create-booking', async (req, res) => {
       currency: currency,
       receipt: `order_${Date.now()}`,
     });
+    console.log(order)
     res.status(200).json(order);
   } catch (error) {
     console.error(error);

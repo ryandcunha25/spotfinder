@@ -42,6 +42,16 @@ const SignUp = () => {
 
     const sendOtp = async () => {
         try {
+            // First check if email exists
+            const checkResponse = await axios.post(
+                'http://localhost:5000/authentication/check-email',
+                { email: formData.email }
+            );
+
+            if (checkResponse.data.exists) {
+                alert('This email is already registered. Please use a different email.');
+                return;
+            }
             await axios.post(
                 'http://localhost:5000/authentication/send-otp',
                 { email: formData.email }
@@ -95,7 +105,7 @@ const SignUp = () => {
                 formData
             );
             alert('User registered successfully');
-            navigate('/homepage');
+            navigate('/');
         } catch (err) {
             alert('Error registering user: ' + err);
         }
@@ -104,11 +114,11 @@ const SignUp = () => {
     return (
         <div className="relative w-full min-h-screen bg-gray-900">
             {/* Darkened background image */}
-            <div 
+            <div
                 className="absolute inset-0 bg-cover bg-center z-0 opacity-25"
                 style={{ backgroundImage: `url(${loginBg1})` }}
             ></div>
-            
+
             <section className="relative z-10 flex justify-center items-center min-h-screen px-4">
                 <div className="w-full max-w-md bg-white/10 backdrop-blur-md rounded-xl shadow-2xl overflow-hidden border border-white/20 p-8">
                     <form onSubmit={handleSubmit}>
@@ -189,11 +199,10 @@ const SignUp = () => {
                                         type="button"
                                         onClick={resendOtp}
                                         disabled={resendDisabled}
-                                        className={`flex-1 font-medium py-2 px-4 rounded-lg transition duration-200 ${
-                                            resendDisabled
+                                        className={`flex-1 font-medium py-2 px-4 rounded-lg transition duration-200 ${resendDisabled
                                                 ? "bg-gray-600 text-white/50 cursor-not-allowed"
                                                 : "bg-green-600 hover:bg-green-700 text-white"
-                                        }`}
+                                            }`}
                                     >
                                         {resendDisabled ? `Resend (${countdown}s)` : "Resend"}
                                     </button>

@@ -20,15 +20,15 @@ import {
     Popconfirm,
     Tooltip
 } from 'antd';
-import { 
-    PlusOutlined, 
-    MessageOutlined, 
-    UserOutlined, 
+import {
+    PlusOutlined,
+    MessageOutlined,
+    UserOutlined,
     CloseOutlined,
     CheckOutlined,
     ClockCircleOutlined,
     ExclamationOutlined,
-    InfoOutlined 
+    InfoOutlined
 } from '@ant-design/icons';
 
 const { Title, Text } = Typography;
@@ -72,10 +72,13 @@ const SupportTickets = () => {
         try {
             const response = await axios.get(`http://localhost:5000/grievances/tickets/${ticket_id}/${user_id}`);
             setSelectedTicket(response.data.ticket);
+            console.log(response.data.responses)
             setResponses(response.data.responses.map(r => ({
                 ...r,
-                is_admin: r.is_admin || false,
+                // Keep the original is_admin value from API
+                is_admin: r.is_admin, // Don't modify this
                 message: r.message || '',
+                // Determine user_name based on is_admin
                 user_name: r.is_admin ? 'Support Agent' : 'You',
                 created_at: r.created_at || new Date().toISOString()
             })) || []);
@@ -102,7 +105,7 @@ const SupportTickets = () => {
 
             const newResponse = {
                 ...response.data,
-                is_admin: false,
+                is_admin: false, // This should match what your API expects for user messages
                 user_name: 'You',
                 message: messageText,
                 created_at: new Date().toISOString()
@@ -111,8 +114,7 @@ const SupportTickets = () => {
             setResponses([...responses, newResponse]);
             setMessageText('');
             message.success('Response submitted');
-            
-            // Refresh ticket status if it was closed/resolved
+
             if (selectedTicket.status === 'closed' || selectedTicket.status === 'resolved') {
                 const updatedTicket = { ...selectedTicket, status: 'in_progress' };
                 setSelectedTicket(updatedTicket);
@@ -126,14 +128,13 @@ const SupportTickets = () => {
             setIsSubmitting(false);
         }
     };
-
     const handleCloseTicket = async () => {
         const user_id = localStorage.getItem('userId') || sessionStorage.getItem('userId');
         try {
             await axios.patch(
                 `http://localhost:5000/grievances/tickets/${selectedTicket.id}/${user_id}/close`
             );
-            
+
             const updatedTicket = { ...selectedTicket, status: 'closed' };
             setSelectedTicket(updatedTicket);
             setTickets(tickets.map(t => t.id === updatedTicket.id ? updatedTicket : t));
@@ -166,8 +167,8 @@ const SupportTickets = () => {
             dataIndex: 'subject',
             key: 'subject',
             render: (text, record) => (
-                <Button 
-                    type="link" 
+                <Button
+                    type="link"
                     onClick={() => showTicketDetails(record.id)}
                     style={{ padding: 0, textAlign: 'left' }}
                 >
@@ -181,11 +182,11 @@ const SupportTickets = () => {
             key: 'status',
             width: 150,
             render: (status) => (
-                <Badge 
+                <Badge
                     status={
                         status === 'open' ? 'warning' :
-                        status === 'in_progress' ? 'processing' :
-                        status === 'resolved' ? 'success' : 'default'
+                            status === 'in_progress' ? 'processing' :
+                                status === 'resolved' ? 'success' : 'default'
                     }
                     text={
                         <span style={{ textTransform: 'capitalize' }}>
@@ -203,31 +204,31 @@ const SupportTickets = () => {
             render: (priority) => {
                 let color = '';
                 let icon = null;
-                
+
                 switch (priority) {
-                    case 'low': 
-                        color = 'green'; 
+                    case 'low':
+                        color = 'green';
                         icon = <InfoOutlined />;
                         break;
-                    case 'medium': 
-                        color = 'blue'; 
+                    case 'medium':
+                        color = 'blue';
                         icon = <ExclamationOutlined />;
                         break;
-                    case 'high': 
-                        color = 'orange'; 
+                    case 'high':
+                        color = 'orange';
                         icon = <ExclamationOutlined />;
                         break;
-                    case 'critical': 
-                        color = 'red'; 
+                    case 'critical':
+                        color = 'red';
                         icon = <ExclamationOutlined />;
                         break;
-                    default: 
+                    default:
                         color = 'default';
                 }
-                
+
                 return (
-                    <Tag 
-                        color={color} 
+                    <Tag
+                        color={color}
                         icon={icon}
                         style={{ display: 'flex', alignItems: 'center' }}
                     >
@@ -268,7 +269,7 @@ const SupportTickets = () => {
         const date = new Date(dateString);
         const now = new Date();
         const diffDays = Math.floor((now - date) / (1000 * 60 * 60 * 24));
-        
+
         if (diffDays === 0) {
             return 'Today';
         } else if (diffDays === 1) {
@@ -282,7 +283,7 @@ const SupportTickets = () => {
 
     return (
         <div className="support-tickets-container" style={{ padding: '24px' }}>
-            <Card 
+            <Card
                 title={<Title level={4} style={{ margin: 0 }}>Support Tickets</Title>}
                 extra={
                     <Space>
@@ -314,7 +315,7 @@ const SupportTickets = () => {
                     dataSource={tickets}
                     rowKey="id"
                     loading={loading}
-                    pagination={{ 
+                    pagination={{
                         pageSize: 10,
                         showSizeChanger: false,
                         showTotal: (total) => `Total ${total} tickets`
@@ -348,7 +349,7 @@ const SupportTickets = () => {
                 {selectedTicket && (
                     <>
                         {/* Ticket Info Section (Fixed Height) */}
-                        <div style={{ 
+                        <div style={{
                             flex: 'none',
                             padding: '0 16px',
                             marginBottom: '16px',
@@ -365,8 +366,8 @@ const SupportTickets = () => {
                                 <Descriptions.Item label="Priority" span={1}>
                                     <Tag color={
                                         selectedTicket.priority === 'low' ? 'green' :
-                                        selectedTicket.priority === 'medium' ? 'blue' :
-                                        selectedTicket.priority === 'high' ? 'orange' : 'red'
+                                            selectedTicket.priority === 'medium' ? 'blue' :
+                                                selectedTicket.priority === 'high' ? 'orange' : 'red'
                                     }>
                                         {selectedTicket.priority}
                                     </Tag>
@@ -375,7 +376,7 @@ const SupportTickets = () => {
                                     {new Date(selectedTicket.created_at).toLocaleString()}
                                 </Descriptions.Item>
                                 <Descriptions.Item label="Description" span={2}>
-                                    <div style={{ 
+                                    <div style={{
                                         whiteSpace: 'pre-wrap',
                                         padding: '8px 0',
                                         lineHeight: 1.6
@@ -387,7 +388,7 @@ const SupportTickets = () => {
                         </div>
 
                         {/* Conversation Section (Scrollable) */}
-                        <div style={{ 
+                        <div style={{
                             flex: 1,
                             overflow: 'hidden',
                             display: 'flex',
@@ -395,7 +396,7 @@ const SupportTickets = () => {
                             padding: '0 16px'
                         }}>
                             <Divider orientation="left" style={{ marginTop: 0 }}>Conversation</Divider>
-                            <div style={{ 
+                            <div style={{
                                 flex: 1,
                                 overflowY: 'auto',
                                 border: '1px solid #f0f0f0',
@@ -405,56 +406,42 @@ const SupportTickets = () => {
                                 height: '100%'
                             }}>
                                 <List
-                                    dataSource={responses}
-                                    renderItem={(response) => (
-                                        <List.Item 
-                                            style={{ 
-                                                padding: '12px',
-                                                marginBottom: '8px',
-                                                backgroundColor: '#fff',
-                                                borderRadius: '4px',
-                                                boxShadow: '0 1px 2px rgba(0,0,0,0.1)'
-                                            }}
-                                        >
-                                            <List.Item.Meta
-                                                avatar={
-                                                    <Avatar 
-                                                        style={{ 
-                                                            backgroundColor: response.is_admin ? '#1890ff' : '#52c41a'
-                                                        }}
-                                                        icon={<UserOutlined />}
-                                                    />
-                                                }
-                                                title={
-                                                    <Space>
-                                                        <Text strong style={{ 
-                                                            color: response.is_admin ? '#1890ff' : '#52c41a'
-                                                        }}>
-                                                            {response.user_name}
-                                                        </Text>
-                                                        <Text type="secondary" style={{ fontSize: '0.8em' }}>
-                                                            {formatDate(response.created_at)}
-                                                        </Text>
-                                                    </Space>
-                                                }
-                                                description={
-                                                    <div style={{ 
-                                                        whiteSpace: 'pre-wrap',
-                                                        lineHeight: 1.6,
-                                                        marginTop: '4px'
-                                                    }}>
-                                                        {response.message}
-                                                    </div>
-                                                }
-                                            />
-                                        </List.Item>
-                                    )}
-                                />
+    dataSource={responses}
+    renderItem={(response) => (
+        <List.Item style={{ padding: '12px', marginBottom: '8px', backgroundColor: '#fff', borderRadius: '4px', boxShadow: '0 1px 2px rgba(0,0,0,0.1)' }}>
+            <List.Item.Meta
+                avatar={
+                    <Avatar 
+                        style={{ 
+                            backgroundColor: !response.is_admin ? '#52c41a' : '#1890ff'
+                        }}
+                        icon={<UserOutlined />}
+                    />
+                }
+                title={
+                    <Space>
+                        <Text strong style={{ color: !response.is_admin ? '#52c41a' : '#1890ff' }}>
+                            {response.user_name}
+                        </Text>
+                        <Text type="secondary" style={{ fontSize: '0.8em' }}>
+                            {formatDate(response.created_at)}
+                        </Text>
+                    </Space>
+                }
+                description={
+                    <div style={{ whiteSpace: 'pre-wrap', lineHeight: 1.6, marginTop: '4px' }}>
+                        {response.message}
+                    </div>
+                }
+            />
+        </List.Item>
+    )}
+/>
                             </div>
                         </div>
 
                         {/* Response Section (Fixed Height) */}
-                        <div style={{ 
+                        <div style={{
                             flex: 'none',
                             padding: '16px',
                             borderTop: '1px solid #f0f0f0',

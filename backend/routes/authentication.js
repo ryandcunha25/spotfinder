@@ -74,6 +74,19 @@ router.post("/send-otp", async (req, res) => {
     
 });
 
+// In your authentication routes
+router.post('/check-email', async (req, res) => {
+    try {
+        const { email } = req.body;
+        const result = await pool.query(
+            'SELECT EXISTS(SELECT 1 FROM users WHERE email = $1)',
+            [email]
+        );
+        res.json({ exists: result.rows[0].exists });
+    } catch (error) {
+        res.status(500).json({ message: 'Error checking email' });
+    }
+});
 
 // verifying otp
 router.post("/verify-otp", async (req, res) => {

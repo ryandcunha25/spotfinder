@@ -219,7 +219,7 @@ const NewSupportTicket = () => {
                             className="rounded-lg border-gray-300 hover:border-blue-400 focus:border-blue-500"
                         />
                     </Form.Item>
-
+{/* 
                     <Form.Item 
                         label={<span className="block text-sm font-medium text-gray-700 mb-1">Attachments (optional)</span>}
                         className="mb-8"
@@ -241,7 +241,7 @@ const NewSupportTicket = () => {
                         <div className="text-xs text-gray-500 mt-2">
                             Supported formats: JPG, PNG, PDF (max 5MB per file)
                         </div>
-                    </Form.Item>
+                    </Form.Item> */}
 
                     <div className="flex justify-end border-t border-gray-100 pt-6">
                         <Button 

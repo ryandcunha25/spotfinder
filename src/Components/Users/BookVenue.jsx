@@ -28,7 +28,13 @@ const BookVenue = () => {
 
     const [venues, setVenues] = useState(null);
     const [categories, setCategories] = useState([]);
-    const [user, setUser] = useState(null);
+    const [user, setUser] = useState({
+        first_name: '',
+        last_name: '',
+        email: '',
+        phone: ''
+    });
+    
     const [error, setError] = useState("");
     const [isLoading, setIsLoading] = useState(true);
     const [showSummary, setShowSummary] = useState(false);
@@ -155,12 +161,12 @@ const BookVenue = () => {
 
     const isSlotAvailable = () => {
         if (!formData.eventDate || !formData.startTime || !formData.endTime) {
-            return true; // Allow selection if fields are empty
+            return true; 
         }
     
-        const selectedDate = formData.eventDate; // Expected: "YYYY-MM-DD"
-        const selectedStart = formData.startTime; // Expected: "HH:MM"
-        const selectedEnd = formData.endTime; // Expected: "HH:MM"
+        const selectedDate = formData.eventDate; 
+        const selectedStart = formData.startTime; 
+        const selectedEnd = formData.endTime; 
     
         return !bookedSlots.some(slot => {
             // Convert slot booking date to "YYYY-MM-DD" for accurate comparison
@@ -169,12 +175,9 @@ const BookVenue = () => {
             // Check if selected date matches booked date
             if (slotDate !== selectedDate) {
                 console.log("Slot Date:", slotDate, "| Selected Date:", selectedDate);
-                return false; // Skip checking time if dates don't match
+                return false; 
             }
     
-            console.log("=====================================");
-            console.log("Slot Start:", slot.start_time, "| Slot End:", slot.end_time);
-            console.log("Selected Start:", selectedStart, "| Selected End:", selectedEnd);
     
             // Function to convert time "HH:MM" or "HH:MM:SS" into total minutes
             const toMinutes = (time) => {
@@ -182,20 +185,15 @@ const BookVenue = () => {
                 return hours * 60 + minutes;
             };
     
-            console.log("-------------------------------------------");
-    
             const slotStart = toMinutes(slot.start_time);
             const slotEnd = toMinutes(slot.end_time);
             const selectedStartMin = toMinutes(selectedStart);
             const selectedEndMin = toMinutes(selectedEnd);
     
-            console.log("Slot Start (min):", slotStart, "| Slot End (min):", slotEnd);
-            console.log("Selected Start (min):", selectedStartMin, "| Selected End (min):", selectedEndMin);
-    
             // **Corrected Condition for Time Overlap**
             const isOverlapping = !(selectedEndMin <= slotStart || selectedStartMin >= slotEnd);
             
-            isOverlapping ? console.log("❌ Time Overlap - Slot Not Available") : console.log("✅ No Overlap - Slot Available");
+            isOverlapping ? console.log("Time Overlap - Slot Not Available") : console.log("No Overlap - Slot Available");
     
             return isOverlapping; // If true, means the slot is already booked
         });

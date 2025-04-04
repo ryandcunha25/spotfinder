@@ -80,29 +80,11 @@ const Sidebar = () => {
           </li>
           <li>
             <Link
-              to="/"
-              className="flex items-center p-2 rounded-lg hover:bg-gray-900 transition"
-            >
-              <i className="bx bx-tag text-xl mr-3"></i>
-              <span className="text-sm font-medium">Promotions</span>
-            </Link>
-          </li>
-          <li>
-            <Link
               to="/ticket-handler"
               className="flex items-center p-2 rounded-lg hover:bg-gray-900 transition"
             >
               <i className="bx bx-envelope text-xl mr-3"></i>
               <span className="text-sm font-medium">Messages/Support</span>
-            </Link>
-          </li>
-          <li>
-            <Link
-              to="/"
-              className="flex items-center p-2 rounded-lg hover:bg-gray-900 transition"
-            >
-              <i className="bx bx-cog text-xl mr-3"></i>
-              <span className="text-sm font-medium">Settings</span>
             </Link>
           </li>
         </ul>

@@ -239,7 +239,7 @@ const HomePage = () => {
           </ul>
           <button
             className="bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-lg font-semibold transition duration-300"
-            onClick={() => navigate('/register/owner')}
+            onClick={() => navigate('/venueownersregistration')}
           >
             Register as a Venue Owner
           </button>
@@ -314,7 +314,7 @@ const HomePage = () => {
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
             <div>
-              <h3 className="text-xl font-semibold mb-4">VenueBooker</h3>
+              <h3 className="text-xl font-semibold mb-4">SpotFinder</h3>
               <p className="text-gray-400">Your one-stop platform for finding and booking the perfect event venues.</p>
             </div>
             <div>
@@ -345,7 +345,7 @@ const HomePage = () => {
             </div>
           </div>
           <div className="border-t border-gray-800 pt-8 text-center text-gray-400">
-            <p>&copy; {new Date().getFullYear()} VenueBooker. All rights reserved.</p>
+            <p>&copy; {new Date().getFullYear()} SpotFinder. All rights reserved.</p>
           </div>
         </div>
       </footer>

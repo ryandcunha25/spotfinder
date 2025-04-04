@@ -114,7 +114,7 @@ const VenueOwnerSignup = () => {
         alert('Invalid OTP');
       }
     } catch (err) {
-      alert('Error verifying OTP: ' + err.message);
+      alert('Incorrect OTP. Try Again.');
     }
   };
 

@@ -15,6 +15,7 @@ const PaymentConfirmation = () => {
       try {
         const response = await axios.get(`http://localhost:5000/bookings/confirmed-booking?book_id=${book_id}`);
         setBookedVenue(response.data);
+        console.log(response.data)
       } catch (err) {
         console.error('Error fetching bookings:', err);
         setError('Unable to fetch booking details. Please try again later.');
@@ -28,6 +29,17 @@ const PaymentConfirmation = () => {
   const handlePrint = () => {
     window.print();
   };
+
+  const RupeeIcon = ({ className }) => (
+    <svg
+      className={className}
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="currentColor"
+    >
+      <path d="M13.66 2.097c-.732.83-1.656 1.467-2.686 1.794.677.189 1.302.481 1.846.854-1.115.742-1.999 1.856-2.305 3.148H8.5v1.5h1.045c-.03.239-.045.48-.045.723 0 .244.015.485.045.727H8.5v1.5h1.947c.534 1.422 1.71 2.564 3.197 3.03-.462.38-.994.68-1.579.882.137.03.276.045.415.045.41 0 .805-.095 1.172-.266 1.214-.56 2.179-1.56 2.714-2.766H15.5v-1.5h1.756c.03-.242.044-.483.044-.727 0-.244-.015-.485-.044-.727H15.5v-1.5h2.024c-.253-1.266-.986-2.377-2.024-3.18V7.5h-9v-1.5h3.34c.37-1.387 1.33-2.527 2.62-3.178l.005-.002z" />
+    </svg>
+  );
 
   if (isLoading) {
     return (
@@ -120,7 +132,7 @@ const PaymentConfirmation = () => {
               </div>
               <div className="flex text-right">
                 <img
-                  src={require(`./../Assets/SpotFinderLogo.png`)}
+                  src={require(`./../Assets/logo.png`)}
                   alt="Company Logo"
                   className="h-20 w-auto" // Adjust height as needed
                 />
@@ -180,9 +192,35 @@ const PaymentConfirmation = () => {
                       <p className="font-medium text-gray-800">{bookedVenue.capacity} guests</p>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-500">Price</p>
-                      <p className="font-medium text-gray-800">${bookedVenue.price}</p>
+                      <p className="text-sm text-gray-500">Price Breakdown</p>
+                      <div className="font-medium text-gray-800 flex items-center gap-1">
+                        {/* Base Price */}
+                        <div className="flex items-center">
+                          <span className="text-lg">₹</span>
+                          {bookedVenue.price}
+                        </div>
+
+                        {/* Plus Sign */}
+                        <span className="mx-1">+</span>
+
+                        {/* Fees */}
+                        <div className="flex items-center text-gray-500">
+                          <span className="text-lg">₹</span>
+                          {bookedVenue.total_price - bookedVenue.price}
+                          <span className="ml-1">fee</span>
+                        </div>
+
+                        {/* Equals Sign */}
+                        <span className="mx-1">=</span>
+
+                        {/* Total Price */}
+                        <div className="flex items-center text-green-600 font-semibold">
+                          <span className="text-lg">₹</span>
+                          {bookedVenue.total_price}
+                        </div>
+                      </div>
                     </div>
+
                   </div>
                 </div>
               </div>
@@ -211,10 +249,10 @@ const PaymentConfirmation = () => {
                       <p className="text-sm text-gray-500">Time</p>
                       <p className="font-medium text-gray-800">{bookedVenue.start_time} - {bookedVenue.end_time}</p>
                     </div>
-                    <div>
+                    {/* <div>
                       <p className="text-sm text-gray-500">Guests</p>
                       <p className="font-medium text-gray-800">{bookedVenue.guest_count}</p>
-                    </div>
+                    </div> */}
                   </div>
                 </div>
               </div>
@@ -231,7 +269,7 @@ const PaymentConfirmation = () => {
                 </div>
                 <div className="space-y-3">
                   <div className="grid grid-cols-2 gap-4">
-                    <div>
+                    {/* <div>
                       <p className="text-sm text-gray-500">Catering</p>
                       <p className="font-medium text-gray-800">
                         {bookedVenue.catering ? (
@@ -250,7 +288,7 @@ const PaymentConfirmation = () => {
                           <span className="text-gray-500">Not included</span>
                         )}
                       </p>
-                    </div>
+                    </div> */}
                   </div>
                   <div>
                     <p className="text-sm text-gray-500">Special Requests</p>
@@ -265,7 +303,7 @@ const PaymentConfirmation = () => {
             {/* Thank You Message */}
             <div className="bg-blue-50 border border-blue-100 rounded-lg p-6 text-center">
               <h3 className="text-lg font-semibold text-blue-800 mb-2">Thank you for your booking!</h3>
-              <p className="text-blue-700">A confirmation has been sent to your email address. Please present this confirmation at the venue.</p>
+              <p className="text-blue-700"> Please present this receipt as a confirmation at the venue.</p>
             </div>
           </div>
         </div>

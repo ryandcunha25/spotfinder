@@ -94,20 +94,13 @@ router.get('/tickets/:ticket_id/:user_id', async (req, res) => {
             [ticket_id]
         );
         
-        // Get attachments
-        // const attachmentsResult = await db.query(
-        //     `SELECT * 
-        //      FROM ticket_attachments 
-        //      WHERE ticket_id = $1`,
-        //     [ticket_id]
-        // );
+
+        console.log(responsesResult.rows);
+
         
         res.json({
             ticket,
-            responses: responsesResult.rows.map(r => ({
-                ...r,
-                is_admin: r.user_id !== user_id // Mark if response is from venueowners/support
-            })),
+            responses: responsesResult.rows
             // attachments: attachmentsResult.rows
         });
     } catch (err) {
@@ -164,6 +157,8 @@ router.post('/tickets/:ticket_id/:user_id/responses', async (req, res) => {
              WHERE tr.id = $1`,
             [responseResult.rows[0].id]
         );
+
+        console.log(fullResponse.rows[0]);
 
         res.status(201).json({
             success: true,
@@ -325,6 +320,7 @@ router.get('/venueowners/tickets/:ticketId', async (req, res) => {
             JOIN users u ON g.user_id = u.id
             where g.id = $1
         `, [ticketId]);
+
         
         
         if (result.rows.length === 0) {
@@ -352,20 +348,21 @@ router.get('/venueowners/tickets/:ticketId', async (req, res) => {
 });
 
 // Add response as venue owner
-router.post('/venueowners/tickets/:id/responses', async (req, res) => {
+router.post('/venueowners/tickets/:ticket_id/responses', async (req, res) => {
     try {
         const { message, user_id } = req.body;
-        console.log(req.body, req.params.id)
+        const ticket_id = req.params.ticket_id
+        console.log(req.body, ticket_id)
         const result = await db.query(`
             INSERT INTO ticket_responses 
             (ticket_id, user_id, message, is_admin)
             VALUES ($1, $2, $3, true)
             RETURNING *
-        `, [req.params.id, user_id, message]);
+        `, [ticket_id, user_id, message]);
 
         console.log("sds", result.rows[0])
         
-        res.status(201).json(result.rows[0]);
+        res.json(result.rows[0]);
     } catch (err) {
         res.status(500).json({ error: 'Failed to add response' });
     }

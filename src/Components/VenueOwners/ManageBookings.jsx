@@ -339,7 +339,7 @@ const ManageBookings = () => {
 
                 {viewMode === "table" ? (
                     <div className="bg-white rounded-xl shadow-sm overflow-hidden min-w-fit">
-                        <div className="overflow-x-auto">
+                        {/* <div className="overflow-x-auto"> */}
                             <table className="divide-y divide-gray-200 ">
                                 <thead className="bg-gray-50">
                                     <tr>
@@ -369,7 +369,7 @@ const ManageBookings = () => {
                                             <tr key={booking.id} className="hover:bg-gray-50 transition-colors">
                                                 <td className="px-6 py-4 whitespace-nowrap">
                                                     <div className="flex items-center">
-                                                        <div className="flex-shrink-0 h-10 w-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600">
+                                                        <div className="flex-shrink-0 h-10 w-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600">
                                                             <TicketIcon className="h-5 w-5" />
                                                         </div>
                                                         <div className="ml-4">
@@ -384,7 +384,7 @@ const ManageBookings = () => {
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap">
                                                     <div className="flex items-center">
-                                                        <div className="flex-shrink-0 h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600">
+                                                        <div className="flex-shrink-0 h-10 w-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600">
                                                             {booking.first_name.charAt(0)}{booking.last_name.charAt(0)}
                                                         </div>
                                                         <div className="ml-4">
@@ -399,7 +399,7 @@ const ManageBookings = () => {
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap">
                                                     <div className="flex items-center">
-                                                        <div className="flex-shrink-0 h-10 w-10 rounded-full bg-green-100 flex items-center justify-center text-green-600">
+                                                        <div className="flex-shrink-0 h-10 w-8 rounded-full bg-green-100 flex items-center justify-center text-green-600">
                                                             <BuildingOfficeIcon className="h-5 w-5" />
                                                         </div>
                                                         <div className="ml-4">
@@ -479,7 +479,7 @@ const ManageBookings = () => {
                                     )}
                                 </tbody>
                             </table>
-                        </div>
+                        {/* </div> */}
                     </div>
                 ) : (
                     <div className="bg-white rounded-xl shadow-lg p-6 w-full  mx-auto">
@@ -563,7 +563,7 @@ const ManageBookings = () => {
 
                                 <div className="space-y-4">
                                     <div className="flex items-start">
-                                        <div className="flex-shrink-0 h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 mr-3">
+                                        <div className="flex-shrink-0 h-10 w-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 mr-3">
                                             <CreditCardIcon className="h-5 w-5" />
                                         </div>
                                         <div>
@@ -573,7 +573,7 @@ const ManageBookings = () => {
                                     </div>
 
                                     <div className="flex items-start">
-                                        <div className="flex-shrink-0 h-10 w-10 rounded-full bg-green-100 flex items-center justify-center text-green-600 mr-3">
+                                        <div className="flex-shrink-0 h-10 w-8 rounded-full bg-green-100 flex items-center justify-center text-green-600 mr-3">
                                             <CurrencyDollarIcon className="h-5 w-5" />
                                         </div>
                                         <div>
@@ -583,7 +583,7 @@ const ManageBookings = () => {
                                     </div>
 
                                     <div className="flex items-start">
-                                        <div className="flex-shrink-0 h-10 w-10 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 mr-3">
+                                        <div className="flex-shrink-0 h-10 w-8 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 mr-3">
                                             <ArrowPathIcon className="h-5 w-5" />
                                         </div>
                                         <div>
@@ -593,7 +593,7 @@ const ManageBookings = () => {
                                     </div>
 
                                     <div className="flex items-start">
-                                        <div className="flex-shrink-0 h-10 w-10 rounded-full bg-amber-100 flex items-center justify-center text-amber-600 mr-3">
+                                        <div className="flex-shrink-0 h-10 w-8 rounded-full bg-amber-100 flex items-center justify-center text-amber-600 mr-3">
                                             <CalendarIcon className="h-5 w-5" />
                                         </div>
                                         <div>
@@ -605,7 +605,7 @@ const ManageBookings = () => {
                                     </div>
 
                                     <div className="flex items-start">
-                                        <div className="flex-shrink-0 h-10 w-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 mr-3">
+                                        <div className="flex-shrink-0 h-10 w-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 mr-3">
                                             {paymentDetails.payment_status === 'Success' ? (
                                                 <CheckCircleIcon className="h-5 w-5 text-green-500" />
                                             ) : paymentDetails.payment_status === 'Pending' ? (

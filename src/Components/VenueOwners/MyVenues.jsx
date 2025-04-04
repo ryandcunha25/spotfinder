@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import Sidebar from "./Sidebar";
-import Navbar from "./Navbar";
 
 const MyVenues = () => {
     const [venues, setVenues] = useState([]);
@@ -195,7 +194,6 @@ const MyVenues = () => {
             <Sidebar />
 
             <div className="flex-1 ml-64">
-                <Navbar />
                 
                 <main className="p-8">
                     <div className="flex justify-between items-center mb-8">

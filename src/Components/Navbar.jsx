@@ -98,11 +98,11 @@ const Navbar = () => {
                 <header className="bg-white shadow-sm">
                     <div className="container mx-auto flex items-center justify-between py-3 px-6">
                         {/* Logo */}
-                        <Link to="#" className="flex-shrink-0">
+                        <Link to="/homepage" className="flex-shrink-0">
                             <img
-                                src={require(`./Assets/SpotFinderLogo.png`)}
+                                src={require(`./Assets/logo.png`)}
                                 alt="logo"
-                                className="h-16 transition-transform hover:scale-105"
+                                className="h-20 transition-transform hover:scale-105"
                             />
                         </Link>
                         
