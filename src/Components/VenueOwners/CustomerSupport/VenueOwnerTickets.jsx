@@ -119,7 +119,7 @@ const VenueOwnerTickets = () => {
     const handleStatusChange = async (newStatus) => {
         try {
             await axios.patch(
-                `http://localhost:5000/grievances/venueowners/tickets/${selectedTicket.id}/status`,
+                `http://localhost:5000/grievances/venueowners/tickets/${ticketResponses[0].ticket_id}/status`,
                 { status: newStatus },
             );
             setSelectedTicket({
@@ -252,7 +252,7 @@ const VenueOwnerTickets = () => {
                 <Modal
                     title={
                         <div className="flex items-center">
-                            <span className="text-xl font-semibold">Ticket {selectedTicket ? formatTicketId(selectedTicket.id) : ''}</span>
+                            <span className="text-xl font-semibold">Ticket {selectedTicket ? formatTicketId(ticketResponses[0].ticket_id) : ''}</span>
                         </div>
                     }
                     visible={isModalVisible}
