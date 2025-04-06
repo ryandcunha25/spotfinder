@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import { StarIcon } from "@heroicons/react/24/solid";
+import TermsAndConditions from './TermsAndConditions';
 
 const BookVenue = () => {
     const location = useLocation();
@@ -40,7 +41,7 @@ const BookVenue = () => {
     const [showSummary, setShowSummary] = useState(false);
     const [totalPrice, setTotalPrice] = useState(0);
     const [bookedSlots, setBookedSlots] = useState([]);
-
+    const [showTermsModal, setShowTermsModal] = useState(false);
 
     useEffect(() => {
         async function fetchVenueDetails() {
@@ -50,7 +51,7 @@ const BookVenue = () => {
                     const data = await response.json();
                     setCategories(data.category);
                     setVenues(data);
-                    setTotalPrice(data.price); // Initialize with base price
+                    setTotalPrice(data.price);
                 } else {
                     console.error("Failed to fetch venue details");
                 }
@@ -65,7 +66,7 @@ const BookVenue = () => {
 
     useEffect(() => {
         const fetchUserDetails = async () => {
-            const token = localStorage.getItem("token");
+            const token = localStorage.getItem("token") || sessionStorage.getItem("token");
 
             if (!token) {
                 setError("User is not authenticated");
@@ -78,7 +79,6 @@ const BookVenue = () => {
                     headers: { Authorization: `Bearer ${token}` },
                 });
                 setUser(response.data);
-                console.log(response.data);
             } catch (err) {
                 console.error("Error fetching user profile:", err);
                 setError("Unable to fetch user details");
@@ -109,7 +109,6 @@ const BookVenue = () => {
     const calculateTotalPrice = () => {
         let calculatedPrice = venues?.price || 0;
 
-        // Add additional service charges
         if (formData.catering === "Yes") calculatedPrice += 5000;
         if (formData.avEquipment === "Yes") calculatedPrice += 3000;
         if (formData.decoration === "Yes") calculatedPrice += 4000;
@@ -142,7 +141,6 @@ const BookVenue = () => {
         setShowSummary(true);
     };
 
-    // Add this to your useEffect for fetching venue details
     useEffect(() => {
         async function fetchBookedSlots() {
             try {
@@ -150,7 +148,6 @@ const BookVenue = () => {
                 if (response.status == 200) {
                     const data = await response.json();
                     setBookedSlots(data);
-                    console.log(data)
                 }
             } catch (error) {
                 console.error("Error fetching booked slots:", error);
@@ -169,17 +166,12 @@ const BookVenue = () => {
         const selectedEnd = formData.endTime; 
     
         return !bookedSlots.some(slot => {
-            // Convert slot booking date to "YYYY-MM-DD" for accurate comparison
             const slotDate = new Date(slot.booking_date).toISOString().split('T')[0];
     
-            // Check if selected date matches booked date
             if (slotDate !== selectedDate) {
-                console.log("Slot Date:", slotDate, "| Selected Date:", selectedDate);
                 return false; 
             }
     
-    
-            // Function to convert time "HH:MM" or "HH:MM:SS" into total minutes
             const toMinutes = (time) => {
                 const [hours, minutes] = time.split(':').map(Number);
                 return hours * 60 + minutes;
@@ -190,16 +182,11 @@ const BookVenue = () => {
             const selectedStartMin = toMinutes(selectedStart);
             const selectedEndMin = toMinutes(selectedEnd);
     
-            // **Corrected Condition for Time Overlap**
             const isOverlapping = !(selectedEndMin <= slotStart || selectedStartMin >= slotEnd);
             
-            isOverlapping ? console.log("Time Overlap - Slot Not Available") : console.log("No Overlap - Slot Available");
-    
-            return isOverlapping; // If true, means the slot is already booked
+            return isOverlapping;
         });
     };
-    
-
 
     const handleConfirmBooking = async () => {
         if (!isSlotAvailable()) {
@@ -237,7 +224,6 @@ const BookVenue = () => {
             alternateContact: formData.alternateContact,
             paymentMethod: formData.paymentMethod,
         };
-
 
         try {
             const response = await axios.post("http://localhost:5000/bookings/book", bookingDetails, {
@@ -567,7 +553,14 @@ const BookVenue = () => {
                                 </div>
                                 <div className="ml-3 text-sm">
                                     <label htmlFor="agreeToTerms" className="font-medium text-gray-700">
-                                        I agree to the <a href="#" className="text-blue-600 hover:text-blue-500">terms and conditions</a>
+                                        I agree to the{' '}
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowTermsModal(true)}
+                                            className="text-blue-600 hover:text-blue-500 underline focus:outline-none"
+                                        >
+                                            terms and conditions
+                                        </button>
                                     </label>
                                     <p className="text-gray-500">By proceeding, you agree to our cancellation policy and venue rules.</p>
                                 </div>
@@ -706,8 +699,6 @@ const BookVenue = () => {
                                     <p className="text-gray-700">{formData.specialRequests}</p>
                                 </div>
                             )}
-
-
                         </div>
 
                         {/* Summary Footer */}
@@ -742,6 +733,52 @@ const BookVenue = () => {
                     </div>
                 )}
             </div>
+
+            {/* Terms and Conditions Modal */}
+            {showTermsModal && (
+                <div className="fixed inset-0 z-50 overflow-y-auto">
+                    <div className="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+                        {/* Background overlay */}
+                        <div className="fixed inset-0 transition-opacity" aria-hidden="true">
+                            <div className="absolute inset-0 bg-gray-500 opacity-75"></div>
+                        </div>
+                        
+                        {/* Modal container */}
+                        <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-4xl sm:w-full">
+                            <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                                <div className="sm:flex sm:items-start">
+                                    <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
+                                        <div className="flex justify-between items-center mb-4">
+                                            <h3 className="text-lg leading-6 font-medium text-gray-900">Terms and Conditions</h3>
+                                            <button
+                                                onClick={() => setShowTermsModal(false)}
+                                                className="text-gray-400 hover:text-gray-500"
+                                            >
+                                                <span className="sr-only">Close</span>
+                                                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                                                </svg>
+                                            </button>
+                                        </div>
+                                        <div className="mt-2 max-h-[70vh] overflow-y-auto">
+                                            <TermsAndConditions />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                                <button
+                                    type="button"
+                                    onClick={() => setShowTermsModal(false)}
+                                    className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm"
+                                >
+                                    Close
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

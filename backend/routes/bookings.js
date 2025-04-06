@@ -23,14 +23,16 @@ router.post('/book', async (req, res) => {
         guestCount,
         catering,
         avEquipment,
+        decoration,
+        stageSetup,
         specialRequests
     } = req.body;
     try {
         const insertQuery = `
       INSERT INTO bookings (
         booking_id, event_name, event_type, user_id, venue_id, booking_date, start_time, end_time, 
-        total_price, special_requests, status, created_at
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10,'Pending', CURRENT_TIMESTAMP)
+        total_price, special_requests, guests, catering, avEquipment, decoration, stageSetup, status, created_at
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, 'Pending', CURRENT_TIMESTAMP)
       RETURNING booking_id;
     `;
 
@@ -45,7 +47,12 @@ router.post('/book', async (req, res) => {
             startTime,
             endTime,
             price,
-            specialRequests
+            specialRequests,
+            guestCount,
+            catering,
+            avEquipment,
+            decoration,
+            stageSetup
         ]);
 
         res.status(201).json({
@@ -80,7 +87,7 @@ router.put("/update-booking-status/:booking_id", async (req, res) => {
         }
         // Optionally, you can log the payment details or any other required data
         console.log(`Booking status updated for booking id: ${booking_id}`);
- 
+
         res.status(200).json({
             message: 'Booking status updated successfully',
             booking: result.rows[0],
