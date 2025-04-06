@@ -26,6 +26,7 @@ import {
     UsersIcon
 } from "@heroicons/react/24/outline";
 import { format, parseISO, isSameDay, addDays, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isToday } from "date-fns";
+import {message} from 'antd';
 
 const ManageBookings = () => {
     const [bookings, setBookings] = useState([]);
@@ -85,7 +86,7 @@ const ManageBookings = () => {
             fetchBookings();
         } catch (error) {
             console.error("Error updating booking status:", error);
-            alert("An error occurred. Please try again.");
+            message.error("An error occurred. Please try again.");
         }
     };
 
@@ -97,7 +98,7 @@ const ManageBookings = () => {
             setIsModalOpen(true);
         } catch (error) {
             console.error("Error fetching payment details:", error);
-            alert("Failed to fetch payment details.");
+            message.error("Failed to fetch payment details.");
         }
     };
 
@@ -107,7 +108,7 @@ const ManageBookings = () => {
 
     const confirmRefund = async () => {
         if (!selectedBooking) {
-            alert("Error: No booking selected.");
+            message.error("Error: No booking selected.");
             return;
         }
 
@@ -117,16 +118,16 @@ const ManageBookings = () => {
             );
 
             if (refundResponse.status === 200) {
-                alert("Refund processed successfully!");
+                message.success("Refund processed successfully!");
                 await handleStatusChange(selectedBooking.booking_id, selectedBooking.user_id, "Refunded");
                 setIsConfirmOpen(false);
                 closeModal();
             } else {
-                alert("Refund failed. Please try again.");
+                message.error("Refund failed. Please try again.");
             }
         } catch (error) {
             console.error("Error processing refund:", error);
-            alert("An error occurred. Please try again.");
+            message.error("An error occurred. Please try again.");
         }
     };
 

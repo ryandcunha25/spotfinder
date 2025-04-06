@@ -1,16 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import {message} from 'antd';
+
 
 const Wishlist = () => {
   const [wishlist, setWishlist] = useState([]);
   const navigate = useNavigate();
 
+  const token = localStorage.getItem("token") || sessionStorage.getItem("token");
   useEffect(() => {
     const fetchWishlist = async () => {
-      const token = localStorage.getItem("token") || sessionStorage.getItem("token");
       ;
       if (!token) {
-        alert('Please log in to view your wishlist');
+        message.error('Please log in to view your wishlist');
         return;
       }
 
@@ -23,7 +25,7 @@ const Wishlist = () => {
         if (response.ok) {
           setWishlist(data.wishlist);
         } else {
-          alert(data.message || 'Failed to fetch wishlist');
+          message.error(data.message || 'Failed to fetch wishlist');
         }
       } catch (error) {
         console.error('Error fetching wishlist:', error);
@@ -36,7 +38,7 @@ const Wishlist = () => {
   const handleRemove = async (venueId) => {
     const token = localStorage.getItem('token');
     if (!token) {
-      alert('Please log in to remove venues');
+      message.error('Please log in to remove venues');
       return;
     }
 
@@ -52,14 +54,15 @@ const Wishlist = () => {
 
       const data = await response.json();
       if (response.ok) {
-        alert('Venue removed from wishlist!');
+        message.success('Venue removed from wishlist!');
         setWishlist(wishlist.filter((venue) => venue.id !== venueId));
+        window.location.reload(); // Reload the page to reflect changes
       } else {
-        alert(data.message || 'Failed to remove venue from wishlist');
+        message.error(data.message || 'Failed to remove venue from wishlist');
       }
     } catch (error) {
       console.error('Error removing venue from wishlist:', error);
-      alert('An error occurred. Please try again later.');
+      message.error('An error occurred. Please try again later.');
     }
   };
 

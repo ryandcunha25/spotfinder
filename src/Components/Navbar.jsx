@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { SearchContext } from "./SearchContext";
 
+
 const Navbar = () => {
     const navigate = useNavigate();
     const { searchQuery, setSearchQuery } = useContext(SearchContext);

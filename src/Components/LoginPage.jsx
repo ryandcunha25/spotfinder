@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import loginBg1 from './Assets/login_bg.jpg';
 import { Link, useNavigate } from "react-router-dom";
+import {message} from 'antd';
+
 
 const LoginPage = () => {
     const navigate = useNavigate();
@@ -47,10 +49,10 @@ const LoginPage = () => {
             }
 
             setUser(user);
-            alert('User Logged in Successfully!');
+            message.success('User Logged in Successfully!');
             navigate('/homepage');
         } catch (err) {
-            alert('Incorrect credentials! Please try again.');
+            message.error('Incorrect credentials! Please try again.');
         }
     };
 

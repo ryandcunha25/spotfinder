@@ -6,6 +6,8 @@ import {
     addWeeks, subWeeks, startOfWeek, endOfWeek, parseISO,
     setHours, setMinutes
 } from 'date-fns';
+import { message } from 'antd';
+
 
 const VenueDetails = () => {
     let { venuename } = useParams();
@@ -95,7 +97,7 @@ const VenueDetails = () => {
     const AddToWishlist = async () => {
         const token = localStorage.getItem('token');
         if (!token) {
-            alert('You need to log in to add venues to your wishlist.');
+            message.error('You need to log in to add venues to your wishlist.');
             return;
         }
 
@@ -110,13 +112,13 @@ const VenueDetails = () => {
             });
 
             if (response.ok) {
-                alert('Venue added to wishlist!');
+                message.success('Venue added to wishlist!');
             } else {
-                alert((await response.json()).message || 'Failed to add venue to wishlist');
+                message.error((await response.json()).message || 'Failed to add venue to wishlist');
             }
         } catch (error) {
             console.error('Error adding to wishlist:', error);
-            alert('An error occurred. Please try again later.');
+            message.error('An error occurred. Please try again later.');
         }
     };
 
@@ -421,7 +423,10 @@ const VenueDetails = () => {
             </div>
         </div>
     ) : (
-        <p className="text-center text-gray-500">Loading venue details...</p>
+        <div className="text-center">
+            <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
+            <p className="mt-4 text-lg font-semibold text-gray-700">Loading venue details...</p>
+        </div>
     );
 };
 

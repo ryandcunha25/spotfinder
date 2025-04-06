@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import { StarIcon } from "@heroicons/react/24/solid";
+import {message} from 'antd';
 import TermsAndConditions from './TermsAndConditions';
 
 const BookVenue = () => {
@@ -95,7 +96,7 @@ const BookVenue = () => {
 
         if (name === "guests") {
             if (Number(value) > venues?.capacity) {
-                alert(`Guest count cannot exceed the venue capacity of ${venues.capacity}`);
+                message.error(`Guest count cannot exceed the venue capacity of ${venues.capacity}`);
                 return;
             }
         }
@@ -129,12 +130,12 @@ const BookVenue = () => {
         e.preventDefault();
 
         if (!formData.agreeToTerms) {
-            alert("Please agree to the terms and conditions");
+            message.error("Please agree to the terms and conditions");
             return;
         }
 
         if (!isSlotAvailable()) {
-            alert("This time slot is already booked. Please choose a different date or time.");
+            message.error("This time slot is already booked. Please choose a different date or time.");
             return;
         }
 
@@ -190,7 +191,7 @@ const BookVenue = () => {
 
     const handleConfirmBooking = async () => {
         if (!isSlotAvailable()) {
-            alert("This time slot has been booked by someone else. Please choose a different date or time.");
+            message.error("This time slot has been booked by someone else. Please choose a different date or time.");
             setShowSummary(false);
             return;
         }
@@ -232,7 +233,7 @@ const BookVenue = () => {
 
             if (response.data.success) {
                 navigate("/bookings", { state: { bookingDetails } });
-                alert("Your booking request has been sent successfully!");
+                message.success("Your booking request has been sent successfully!");
             } else {
                 setError("Failed to submit booking");
             }

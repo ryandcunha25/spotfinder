@@ -1,5 +1,7 @@
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import {message} from 'antd';
+
 
 const PaymentPage = () => {
   const location = useLocation();
@@ -146,7 +148,7 @@ const PaymentPage = () => {
               );
 
               if (updateResponse.ok) {
-                alert('Payment successful! Booking confirmed.');
+                message.success('Payment successful! Booking confirmed.');
                 navigate('/payment-confirmation', {
                   state: { book_id: booking_id, eventName: bookingDetails.eventName },
                 });
@@ -154,10 +156,10 @@ const PaymentPage = () => {
                 alert('Payment successful, but booking update failed.');
               }
             } catch (error) {
-              alert('An error occurred while updating booking status.');
+              message.error('An error occurred while updating booking status.');
             }
           } else {
-            alert('Payment verification failed.');
+            message.error('Payment verification failed.');
           }
         },
         prefill: {

@@ -2,6 +2,8 @@ import { useState } from "react";
 import { FaStar } from "react-icons/fa";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from 'axios';
+import {message} from 'antd';
+
 
 const ReviewForm = () => {
     const location = useLocation();
@@ -26,15 +28,15 @@ const ReviewForm = () => {
           const data = await response.json();
       
           if (response.ok) {
-            alert("Review submitted successfully!");
+            message.success("Review submitted successfully!");
             navigate("/venues");  // Redirect to the specified page
           } else {
             console.error("Failed to submit review:", data);
-            alert("Failed to submit review.");
+            message.error("Failed to submit review.");
           }
         } catch (error) {
           console.error("Error submitting review:", error);
-          alert("An error occurred while submitting the review.");
+          message.error("An error occurred while submitting the review.");
         }
       };
       

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from "react-router-dom";
 import axios from 'axios';
 import loginBg1 from '../Assets/venueownerbg.png';
+import {message} from 'antd';
 
 const VenueOwnerSignup = () => {
   const navigate = useNavigate();
@@ -78,20 +79,20 @@ const VenueOwnerSignup = () => {
 
   const sendOtp = async () => {
     if (formData.password.length < 8) {
-      alert('Password must be at least 8 characters long');
+      message.error('Password must be at least 8 characters long');
       return;
     }
     if (formData.password !== formData.confirmPassword) {
-      alert('Passwords do not match');
+      message.error('Passwords do not match');
       return;
     }
     try {
       await axios.post('http://localhost:5000/authentication/send-otp', { email: formData.email });
       setIsOtpSent(true);
       startCountdown();
-      alert('OTP sent to your email');
+      message.success('OTP sent to your email');
     } catch (err) {
-      alert('Error sending OTP: ' + err.message);
+      message.error('Error sending OTP: ' + err.message);
     }
   };
 
@@ -109,12 +110,12 @@ const VenueOwnerSignup = () => {
       });
       if (response.status === 200) {
         setIsVerified(true);
-        alert('OTP verified successfully');
+        message.success('OTP verified successfully');
       } else {
-        alert('Invalid OTP');
+        message.error('Invalid OTP');
       }
     } catch (err) {
-      alert('Incorrect OTP. Try Again.');
+      message.error('Incorrect OTP. Try Again.');
     }
   };
 
@@ -125,10 +126,10 @@ const VenueOwnerSignup = () => {
         formData.category = formData.category.split(',').map((item) => item.trim());
       }
       const response = await axios.post('http://localhost:5000/owner_authentication/register', formData);
-      alert('Registration Successful!');
+      message.success('Registration Successful!');
       navigate('/venueownerslogin');
     } catch (error) {
-      alert('An error occurred during registration. Please try again.');
+      message.error('An error occurred during registration. Please try again.');
     }
   };
 

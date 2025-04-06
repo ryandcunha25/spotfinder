@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import loginBg1 from './Assets/login_bg.jpg';
 import { Link, useNavigate } from "react-router-dom";
 import axios from 'axios';
+import { message } from 'antd';
 
 const SignUp = () => {
     const [formData, setFormData] = useState({
@@ -17,6 +18,9 @@ const SignUp = () => {
     const [resendDisabled, setResendDisabled] = useState(false);
     const [isVerified, setIsVerified] = useState(false);
     const [countdown, setCountdown] = useState(0);
+    const [isSendingOtp, setIsSendingOtp] = useState(false);
+    const [isVerifyingOtp, setIsVerifyingOtp] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const navigate = useNavigate();
 
     const handleChange = (e) => {
@@ -41,6 +45,12 @@ const SignUp = () => {
     }, [countdown, resendDisabled]);
 
     const sendOtp = async () => {
+        if (!formData.email) {
+            message.error('Please enter your email first');
+            return;
+        }
+
+        setIsSendingOtp(true);
         try {
             // First check if email exists
             const checkResponse = await axios.post(
@@ -49,22 +59,31 @@ const SignUp = () => {
             );
 
             if (checkResponse.data.exists) {
-                alert('This email is already registered. Please use a different email.');
+                message.error('This email is already registered. Please use a different email.');
                 return;
             }
+            
             await axios.post(
                 'http://localhost:5000/authentication/send-otp',
                 { email: formData.email }
             );
             setIsOtpSent(true);
             startCountdown();
-            alert('OTP sent to your email');
+            message.success('OTP sent to your email');
         } catch (err) {
-            alert('Error sending OTP: ' + err);
+            message.error('Error sending OTP: ' + err);
+        } finally {
+            setIsSendingOtp(false);
         }
     };
 
     const verifyOtp = async () => {
+        if (!otp) {
+            message.error('Please enter the OTP');
+            return;
+        }
+
+        setIsVerifyingOtp(true);
         try {
             const response = await axios.post(
                 'http://localhost:5000/authentication/verify-otp',
@@ -73,18 +92,20 @@ const SignUp = () => {
             if (response.status === 200) {
                 setIsVerified(true);
                 setIsOtpSent(false);
-                alert('OTP verified successfully');
+                message.success('OTP verified successfully');
             } else {
-                alert('Invalid OTP');
+                message.error('Invalid OTP');
             }
         } catch (err) {
-            alert('Error verifying OTP: ' + err);
+            message.error('Error verifying OTP: ' + err);
+        } finally {
+            setIsVerifyingOtp(false);
         }
     };
 
     const resendOtp = async () => {
         if (!resendDisabled) {
-            sendOtp();
+            await sendOtp();
         }
     };
 
@@ -92,22 +113,30 @@ const SignUp = () => {
         e.preventDefault();
 
         if (formData.phone.length !== 10) {
-            alert('Phone number must be exactly 10 digits');
+            message.error('Phone number must be exactly 10 digits');
             return;
         }
         if (formData.password.length < 8) {
-            alert('Password must be at least 8 characters long');
+            message.error('Password must be at least 8 characters long');
             return;
         }
+        if (formData.password !== formData.cpassword) {
+            message.error('Passwords do not match');
+            return;
+        }
+
+        setIsSubmitting(true);
         try {
             await axios.post(
                 'http://localhost:5000/authentication/signup',
                 formData
             );
-            alert('User registered successfully');
+            message.success('User registered successfully');
             navigate('/');
         } catch (err) {
-            alert('Error registering user: ' + err);
+            message.error('Error registering user: ' + err);
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
@@ -191,20 +220,38 @@ const SignUp = () => {
                                     <button
                                         type="button"
                                         onClick={verifyOtp}
-                                        className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200"
+                                        disabled={isVerifyingOtp}
+                                        className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200 flex items-center justify-center"
                                     >
-                                        Verify OTP
+                                        {isVerifyingOtp ? (
+                                            <>
+                                                <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                                </svg>
+                                                Verifying...
+                                            </>
+                                        ) : 'Verify OTP'}
                                     </button>
                                     <button
                                         type="button"
                                         onClick={resendOtp}
-                                        disabled={resendDisabled}
-                                        className={`flex-1 font-medium py-2 px-4 rounded-lg transition duration-200 ${resendDisabled
+                                        disabled={resendDisabled || isSendingOtp}
+                                        className={`flex-1 font-medium py-2 px-4 rounded-lg transition duration-200 flex items-center justify-center ${
+                                            resendDisabled || isSendingOtp
                                                 ? "bg-gray-600 text-white/50 cursor-not-allowed"
                                                 : "bg-green-600 hover:bg-green-700 text-white"
-                                            }`}
+                                        }`}
                                     >
-                                        {resendDisabled ? `Resend (${countdown}s)` : "Resend"}
+                                        {isSendingOtp ? (
+                                            <>
+                                                <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                                </svg>
+                                                Sending...
+                                            </>
+                                        ) : resendDisabled ? `Resend (${countdown}s)` : "Resend"}
                                     </button>
                                 </div>
                             </div>
@@ -214,9 +261,18 @@ const SignUp = () => {
                             <button
                                 type="button"
                                 onClick={sendOtp}
-                                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition duration-200 mb-5"
+                                disabled={isSendingOtp}
+                                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition duration-200 mb-5 flex items-center justify-center"
                             >
-                                Send Verification OTP
+                                {isSendingOtp ? (
+                                    <>
+                                        <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                        </svg>
+                                        Sending OTP...
+                                    </>
+                                ) : 'Send Verification OTP'}
                             </button>
                         )}
 
@@ -247,9 +303,18 @@ const SignUp = () => {
                                 </div>
                                 <button
                                     type="submit"
-                                    className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold py-3 px-4 rounded-lg shadow-lg transition duration-200 transform hover:scale-105"
+                                    disabled={isSubmitting}
+                                    className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold py-3 px-4 rounded-lg shadow-lg transition duration-200 transform hover:scale-105 flex items-center justify-center"
                                 >
-                                    Complete Registration
+                                    {isSubmitting ? (
+                                        <>
+                                            <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                            </svg>
+                                            Registering...
+                                        </>
+                                    ) : 'Complete Registration'}
                                 </button>
                             </>
                         )}
