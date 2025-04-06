@@ -63,7 +63,7 @@ router.post('/verify-payment', async (req, res) => {
             razorpay_payment_id,
             bookingDetails.booking_id,
             bookingDetails.user_id,
-            bookingDetails.price,
+            bookingDetails.total_price,
             paymentMethod, 
             'Success',
         ];
