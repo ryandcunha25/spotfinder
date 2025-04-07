@@ -173,7 +173,7 @@ const BookingsList = () => {
                   Receipt
                 </button>
               )}
-
+{/* 
               {!isPastEvent && booking.status !== "Cancelled" && (
                 <>
                   <button
@@ -196,7 +196,7 @@ const BookingsList = () => {
                     Cancel
                   </button>
                 </>
-              )}
+              )} */}
 
               {booking.status === "Accepted" && (
                 <button
