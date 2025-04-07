@@ -29,6 +29,7 @@ import ManageRatingReviews from "./Components/VenueOwners/ManageRatingReviews";
 import SupportTickets from "./Components/Users/CustomerSupport/SupportTickets";
 import NewSupportTicket from "./Components/Users/CustomerSupport/NewSupportTicket";
 import VenueOwnerTickets from "./Components/VenueOwners/CustomerSupport/VenueOwnerTickets";
+import ResetPassword from "./Components/ResetPassword";
 
 
 function AppContent() {
@@ -63,13 +64,14 @@ function AppContent() {
 
   // Define routes where the Navbar should not be displayed
   const noNavbarRoutes = ["/", "/signup", "/venues/:venuename/book-venue", "/payment", "/payment-confirmation",
-    "/dashboard", "/venueownersregistration", "/venueownerslogin", "/myvenues", "/managebookings",
-    "/managepayments", "/manage-review-and-ratings", "/review-form", "/analytics", "/customer-support-handle", 
-    "/user-ticket", "/user-tickets/create-ticket", "/user-tickets/detailedticket/:id", "/ticket-handler"];
+    "/dashboard", "/venueownersregistration", "/venueownerslogin", "/myvenues", "/managebookings", "/managepayments",
+    "/manage-review-and-ratings", "/review-form", "/analytics", "/customer-support-handle", "/user-ticket",
+    "/user-tickets/create-ticket", "/user-tickets/detailedticket/:id", "/ticket-handler", "/reset-password/:token"];
 
   const shouldShowNavbar = !noNavbarRoutes.some(route => location.pathname.startsWith(route)) &&
     !location.pathname.startsWith("/venues/") ||
-    !location.pathname.includes("/book-venue");
+    !location.pathname.includes("/book-venue") &&
+    !location.pathname.startsWith("/reset-password");
 
   return (
     <SearchProvider>
@@ -97,6 +99,7 @@ function AppContent() {
           <Route path="/user-tickets" element={<SupportTickets />} />
           <Route path="/user-tickets/create-ticket" element={<NewSupportTicket />} />
           <Route path="/user-tickets/detailedticket/:id" element={<SupportTickets />} />
+          <Route path="/reset-password/:token" element={<ResetPassword />} />
 
           <Route path="/venueownersregistration" element={<VenueOwnerSignup />} />
           <Route path="/venueownerslogin" element={<VenueOwnerLogin />} />

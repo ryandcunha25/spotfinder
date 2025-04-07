@@ -2,27 +2,28 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import loginBg1 from './Assets/login_bg.jpg';
 import { Link, useNavigate } from "react-router-dom";
-import {message} from 'antd';
-
+import { message, Modal, Input, Spin } from 'antd';
 
 const LoginPage = () => {
     const navigate = useNavigate();
-    const [user, setUser] = useState(null);
-    const [rememberMe, setRememberMe] = useState(false); // State for Remember Me
+    const [loading, setLoading] = useState(false);
+    const [rememberMe, setRememberMe] = useState(false);
     const [formData, setFormData] = useState({
         email: '',
         password: '',
     });
+    const [forgotPasswordModalVisible, setForgotPasswordModalVisible] = useState(false);
+    const [resetEmail, setResetEmail] = useState('');
+    const [forgotPasswordLoading, setForgotPasswordLoading] = useState(false);
 
-    // Check if user is already logged in when component mounts
+    // Check for remembered email on component mount
     useEffect(() => {
         const savedEmail = localStorage.getItem('rememberedEmail');
         if (savedEmail) {
-            setFormData((prev) => ({ ...prev, email: savedEmail }));
+            setFormData(prev => ({ ...prev, email: savedEmail }));
             setRememberMe(true);
         }
-
-    }, [navigate]);
+    }, []);
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -34,25 +35,56 @@ const LoginPage = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setLoading(true);
+        
         try {
             const response = await axios.post('http://localhost:5000/authentication/login', formData);
-            const token = response.data.token;
+            const { token, userdetails } = response.data;
 
+            // Store credentials based on remember me choice
             if (rememberMe) {
-                localStorage.setItem('token', token); // Store token persistently
-                localStorage.setItem('userId', response.data.userdetails.id);
+                localStorage.setItem('token', token);
+                localStorage.setItem('userId', userdetails.id);
                 localStorage.setItem('rememberedEmail', formData.email);
-
             } else {
-                sessionStorage.setItem('token', token); // Store token for session only
-                sessionStorage.setItem('userId', response.data.userdetails.id);
+                sessionStorage.setItem('token', token);
+                sessionStorage.setItem('userId', userdetails.id);
+                localStorage.removeItem('rememberedEmail');
             }
 
-            setUser(user);
-            message.success('User Logged in Successfully!');
+            message.success('Login successful! Redirecting...');
             navigate('/homepage');
         } catch (err) {
-            message.error('Incorrect credentials! Please try again.');
+            const errorMessage = err.response?.data?.message || 'Incorrect credentials! Please try again.';
+            message.error(errorMessage);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleForgotPassword = () => {
+        setForgotPasswordModalVisible(true);
+    };
+
+    const handleResetPassword = async () => {
+        if (!resetEmail) {
+            message.error('Please enter your email address');
+            return;
+        }
+
+        setForgotPasswordLoading(true);
+        try {
+            await axios.post('http://localhost:5000/authentication/forgot-password', {
+                email: resetEmail
+            });
+            message.success('Password reset link sent to your email!');
+            setForgotPasswordModalVisible(false);
+            setResetEmail('');
+        } catch (err) {
+            const errorMessage = err.response?.data?.message || 'Failed to send reset link';
+            message.error(errorMessage);
+        } finally {
+            setForgotPasswordLoading(false);
         }
     };
 
@@ -126,9 +158,13 @@ const LoginPage = () => {
                             </div>
 
                             <div className="text-sm">
-                                <a href="#" className="font-medium text-blue-400 hover:text-blue-300">
+                                <button
+                                    type="button"
+                                    onClick={handleForgotPassword}
+                                    className="font-medium text-blue-400 hover:text-blue-300"
+                                >
                                     Forgot password?
-                                </a>
+                                </button>
                             </div>
                         </div>
 
@@ -136,8 +172,9 @@ const LoginPage = () => {
                             <button
                                 type="submit"
                                 className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-200"
+                                disabled={loading}
                             >
-                                Sign in
+                                {loading ? <Spin size="small" /> : 'Sign in'}
                             </button>
                         </div>
                     </form>
@@ -161,6 +198,26 @@ const LoginPage = () => {
                     </div>
                 </div>
             </section>
+
+            {/* Forgot Password Modal */}
+            <Modal
+                title="Reset Password"
+                visible={forgotPasswordModalVisible}
+                onOk={handleResetPassword}
+                onCancel={() => setForgotPasswordModalVisible(false)}
+                confirmLoading={forgotPasswordLoading}
+                okText="Send Reset Link"
+                cancelText="Cancel"
+            >
+                <p className="mb-4">Enter your email address and we'll send you a link to reset your password.</p>
+                <Input
+                    type="email"
+                    placeholder="your@email.com"
+                    value={resetEmail}
+                    onChange={(e) => setResetEmail(e.target.value)}
+                    className="w-full"
+                />
+            </Modal>
         </div>
     );
 };

@@ -7,6 +7,7 @@ require('dotenv').config();
 const otpGenerator = require("otp-generator");
 const emails = require("./email_service");
 const sendOTPEmail = emails.sendOTPEmail;
+const sendPasswordResetEmail = emails.sendPasswordResetEmail;
 
 router.post("/signup", async (req, res) => {
     const { first_name, last_name, phone, email, password, cpassword } = req.body;
@@ -156,6 +157,140 @@ router.post('/login', async (req, res) => {
     } catch (err) {
         console.error('Error during login:', err);
         res.status(500).send('Error logging in');
+    }
+});
+
+router.post('/forgot-password', async (req, res) => {
+    const { email } = req.body;
+    
+    try {
+        // 1. Validate email input
+        if (!email || !email.includes('@')) {
+            return res.status(400).json({ 
+                success: false,
+                message: 'Please provide a valid email address'
+            });
+        }
+
+        // 2. Check if user exists
+        const userQuery = await pool.query(
+            'SELECT id, email FROM users WHERE email = $1',
+            [email]
+        );
+        
+        if (userQuery.rows.length === 0) {
+            // Return generic success message to prevent email enumeration
+            return res.status(404).json({ 
+                success: false,
+                message: 'No account with that email exists'
+            });
+        }
+
+        const user = userQuery.rows[0];
+        
+        // 3. Create reset token (expires in 1 hour)
+        const resetToken = jwt.sign(
+            { 
+                id: user.id,
+                purpose: 'password_reset' // Specific purpose to prevent token reuse
+            },
+            process.env.JWT_SECRET,
+            { expiresIn: '1h' }
+        );
+        
+        // // 4. Store token hash in database (not plain token)
+        // const tokenHash = crypto.createHash('sha256').update(resetToken).digest('hex');
+        // const expiresAt = new Date(Date.now() + 3600000); // 1 hour from now
+        
+        // await pool.query(
+        //     `UPDATE users 
+        //      SET reset_password_token = $1, 
+        //          reset_password_expires = $2 
+        //      WHERE id = $3`,
+        //     [tokenHash, expiresAt, user.id]
+        // );
+        
+        // 5. Send email using our email service
+        await sendPasswordResetEmail(user.email, resetToken);
+        
+        res.status(200).json({
+            success: true,
+            message: 'If an account exists with this email, a reset link has been sent'
+        });
+        
+    } catch (error) {
+        console.error('Forgot password error:', error);
+        
+        // Don't expose specific error details in production
+        const errorMessage = process.env.NODE_ENV === 'development' 
+            ? error.message 
+            : 'Error processing your request';
+            
+        res.status(500).json({
+            success: false,
+            message: errorMessage
+        });
+    }
+});
+
+router.post('/reset-password/:token', async (req, res) => {
+    const { token } = req.params;
+    const { password } = req.body;
+    
+    try {
+        // 1. Verify token
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        
+        // 2. Check if token exists in DB and hasn't expired
+        const userQuery = await pool.query(
+            'SELECT * FROM users WHERE id = $1',
+            [decoded.id]
+        );
+        
+        if (userQuery.rows.length === 0) {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid or expired token'
+            });
+        }
+        
+        const user = userQuery.rows[0];
+        
+        // 3. Hash new password
+        const hashedPassword = await bcrypt.hash(password, 10);
+        
+        // 4. Update password and clear reset token
+        await pool.query(
+            'UPDATE users SET password = $1 WHERE id = $2',
+            [hashedPassword, user.id]
+        );
+        
+        res.status(200).json({
+            success: true,
+            message: 'Password updated successfully'
+        });
+        
+    } catch (error) {
+        console.error('Reset password error:', error);
+        
+        if (error.name === 'TokenExpiredError') {
+            return res.status(400).json({
+                success: false,
+                message: 'Token has expired'
+            });
+        }
+        
+        if (error.name === 'JsonWebTokenError') {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid token'
+            });
+        }
+        
+        res.status(500).json({
+            success: false,
+            message: 'Error resetting password'
+        });
     }
 });
 

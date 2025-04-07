@@ -101,6 +101,80 @@ const EmailOwnerID = async (ownerId, email, name) => {
   }
 };
 
+// Function to send password reset email
+const sendPasswordResetEmail = async (email, resetToken) => {
+  try {
+    // const frontendUrl = process.env.FRONTEND_URL;
+    const frontendUrl =  "http://localhost:3000";
+    const resetUrl = `${frontendUrl}/reset-password/${resetToken}`;
+    
+    
+    await transporter.sendMail({
+      from: `SpotFinder <${process.env.EMAIL_USER}>`,
+      to: email,
+      subject: "Password Reset Request",
+      html: `
+      <div style="max-width: 600px; margin: auto; padding: 0; font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+        <!-- Header with gradient background -->
+        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px 20px; text-align: center;">
+            <h1 style="margin: 0; color: white; font-size: 28px; font-weight: 600;">Password Reset</h1>
+            <p style="color: rgba(255,255,255,0.8); margin: 8px 0 0; font-size: 16px;">SpotFinder Account Security</p>
+        </div>
+      
+        <!-- Email Content -->
+        <div style="padding: 30px; background-color: #ffffff;">
+            <p style="font-size: 16px; line-height: 1.6; color: #4a5568; margin-bottom: 20px;">
+                We received a request to reset your SpotFinder account password.
+            </p>
+            
+            <p style="font-size: 16px; line-height: 1.6; color: #4a5568; margin-bottom: 25px;">
+                Click the button below to reset your password. This link will expire in 1 hour.
+            </p>
+
+            <div style="text-align: center; margin: 30px 0;">
+                <a href="${resetUrl}" 
+                   style="display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+                   color: white; text-decoration: none; padding: 12px 30px; border-radius: 6px; 
+                   font-weight: 500; font-size: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
+                   transition: all 0.3s ease;">
+                   Reset Password
+                </a>
+            </div>
+
+            <p style="font-size: 16px; line-height: 1.6; color: #4a5568; margin-bottom: 25px;">
+                If you didn't request this password reset, you can safely ignore this email. 
+                Your password won't be changed until you access the link above and create a new one.
+            </p>
+
+            <div style="border-top: 1px solid #e2e8f0; padding-top: 20px; margin-top: 20px;">
+                <p style="font-size: 14px; color: #718096; margin-bottom: 5px;">
+                    <strong>Didn't request this change?</strong>
+                </p>
+                <p style="font-size: 14px; color: #718096; margin: 0;">
+                    If you didn't request a password reset, please contact our support team immediately.
+                </p>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <div style="padding: 20px; text-align: center; background-color: #f7fafc; color: #718096; font-size: 14px; border-top: 1px solid #e2e8f0;">
+            <p style="margin: 0; font-size: 13px; color: #a0aec0;">
+                © 2025 SpotFinder. All rights reserved.<br>
+                This is an automated message - please do not reply directly.
+            </p>
+        </div>
+      </div>
+      `,
+    });
+
+    console.log("Password reset email sent successfully");
+  } catch (error) {
+    console.error("Error sending password reset email:", error);
+    throw error; // Re-throw the error to handle it in the calling function
+  }
+};
+
+
 
 // Function to send a review request email
 const sendReviewRequestEmail = async (userEmail, userName, venueName, bookingId) => {
@@ -149,4 +223,4 @@ const sendReviewRequestEmail = async (userEmail, userName, venueName, bookingId)
   }
 };
 
-module.exports = { sendOTPEmail, sendReviewRequestEmail, EmailOwnerID };
+module.exports = { sendOTPEmail, sendReviewRequestEmail, EmailOwnerID, sendPasswordResetEmail };
