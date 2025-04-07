@@ -2,57 +2,68 @@ import { useState } from "react";
 import { FaStar } from "react-icons/fa";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from 'axios';
-import {message} from 'antd';
-
+import { message } from 'antd';
 
 const ReviewForm = () => {
     const location = useLocation();
     const navigate = useNavigate();
 
     // Get userId, bookingId, and previous page from state
-    const { userId, bookingId, message } = location.state || {};
+    const { userId, bookingId, message: notificationMessage, notificationId } = location.state || {};
 
     const [newReview, setNewReview] = useState("");
     const [rating, setRating] = useState(0);
     const [hover, setHover] = useState(null);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const handleSubmit = async () => {
-        try {
-          const response = await fetch("http://localhost:5000/reviews/add", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ userId, bookingId, rating, review: newReview }),
-          });
-      
-          // Parse the response as JSON
-          const data = await response.json();
-      
-          if (response.ok) {
-            message.success("Review submitted successfully!");
-            navigate("/venues");  // Redirect to the specified page
-          } else {
-            console.error("Failed to submit review:", data);
-            message.error("Failed to submit review.");
-          }
-        } catch (error) {
-          console.error("Error submitting review:", error);
-          message.error("An error occurred while submitting the review.");
+        if (!newReview || rating === 0) {
+            message.warning("Please provide both a rating and review text");
+            return;
         }
-      };
-      
+
+        setIsSubmitting(true);
+        
+        try {
+            // Submit the review
+            const reviewResponse = await axios.post("http://localhost:5000/reviews/add", {
+                userId,
+                bookingId,
+                rating,
+                review: newReview
+            });
+            console.log("Review response:", reviewResponse.data);
+
+            if (reviewResponse.data) {
+                // If notificationId exists, delete the notification
+                if (notificationId) {
+                    try {
+                        await axios.delete(`http://localhost:5000/notifications/delete/${notificationId}`);
+                        message.success("Review submitted successfully!");
+                    } catch (error) {
+                        console.error("Error deleting notification:", error);
+                        message.success("Review submitted, but couldn't clear notification");
+                    }
+                } 
+                
+                navigate("/venues");  // Redirect to bookings page
+            } else {
+                message.error("Failed to submit review.");
+            }
+        } catch (error) {
+            console.error("Error submitting review:", error);
+            message.error("An error occurred while submitting the review.");
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
 
     return (
         <div className="flex items-center justify-center min-h-screen bg-gray-100">
             <div className="max-w-lg w-full p-8 bg-white rounded-xl shadow-2xl border border-gray-200">
                 <h4 className="text-2xl font-bold text-center text-gray-800 mb-6">
-                    {message}
+                    {notificationMessage}
                 </h4>
-                {/* {userId && (
-                    <p className="text-center text-sm text-gray-600 mb-4">
-                        Logged in as{" "}
-                        <span className="font-semibold text-gray-800">{userId}</span>
-                    </p>
-                )} */}
                 <textarea
                     className="w-full p-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-400 transition-all duration-200 mb-6"
                     rows="5"
@@ -81,9 +92,12 @@ const ReviewForm = () => {
                 </div>
                 <button
                     onClick={handleSubmit}
-                    className="w-full py-3 bg-green-500 hover:bg-green-600 text-white font-bold rounded-md shadow transform hover:scale-105 transition-transform duration-200"
+                    disabled={isSubmitting}
+                    className={`w-full py-3 bg-green-500 hover:bg-green-600 text-white font-bold rounded-md shadow transition-all duration-200 ${
+                        isSubmitting ? 'opacity-70 cursor-not-allowed' : 'hover:scale-105 transform'
+                    }`}
                 >
-                    Submit Review
+                    {isSubmitting ? 'Submitting...' : 'Submit Review'}
                 </button>
             </div>
         </div>

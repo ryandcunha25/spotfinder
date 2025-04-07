@@ -45,4 +45,32 @@ router.post("/add", async (req, res) => {
     }
 });
 
+router.delete('/deleteall/:userId', async (req, res) => {
+    const { userId } = req.params;
+
+    try {
+        const deleteQuery = 'DELETE FROM notifications WHERE user_id = $1';
+        await pool.query(deleteQuery, [userId]);
+
+        res.status(200).json({ message: 'Notifications deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting notifications:', error);
+        res.status(500).json({ error: 'Failed to delete notifications' });
+    }
+})
+
+router.delete('/delete/:notificationId', async (req, res) => {
+    const { notificationId } = req.params;
+
+    try {
+        const deleteQuery = 'DELETE FROM notifications WHERE notification_id = $1';
+        await pool.query(deleteQuery, [notificationId]);
+
+        res.status(200).json({ message: 'Notifications deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting notifications:', error);
+        res.status(500).json({ error: 'Failed to delete notifications' });
+    }
+})
+
 module.exports = router;
