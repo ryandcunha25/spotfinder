@@ -105,7 +105,7 @@ const EmailOwnerID = async (ownerId, email, name) => {
 const sendPasswordResetEmail = async (email, resetToken) => {
   try {
     // const frontendUrl = process.env.FRONTEND_URL;
-    const frontendUrl =  "http://localhost:3000";
+    const frontendUrl =  "https://spotfinder-chi.vercel.app";
     const resetUrl = `${frontendUrl}/reset-password/${resetToken}`;
     
     
