@@ -17,12 +17,12 @@ const HomePage = () => {
 
   useEffect(() => {
     // Fetch featured venues
-    axios.get('https://84fa-115-98-235-107.ngrok-free.app/featured-venues')
+    axios.get('http://localhost:5000/featured-venues')
       .then(response => setFeaturedVenues(response.data))
       .catch(error => console.error('Error fetching featured venues:', error));
 
     // Fetch testimonials
-    axios.get('https://84fa-115-98-235-107.ngrok-free.app/testimonials')
+    axios.get('http://localhost:5000/testimonials')
       .then(response => setTestimonials(response.data))
       .catch(error => console.error('Error fetching testimonials:', error));
   }, []);
