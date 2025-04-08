@@ -26,7 +26,7 @@ import {
     UsersIcon
 } from "@heroicons/react/24/outline";
 import { format, parseISO, isSameDay, addDays, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isToday } from "date-fns";
-import {message} from 'antd';
+import { message } from 'antd';
 
 const ManageBookings = () => {
     const [bookings, setBookings] = useState([]);
@@ -40,6 +40,8 @@ const ManageBookings = () => {
     const [viewMode, setViewMode] = useState("table");
     const [currentMonth, setCurrentMonth] = useState(new Date());
     const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
+    const [isFiltering, setIsFiltering] = useState(false);
+
 
     useEffect(() => {
         fetchBookings();
@@ -136,14 +138,27 @@ const ManageBookings = () => {
     };
 
     const filteredBookings = bookings.filter(booking => {
-        const statusMatch = filter === "all" ||
-            booking.status.toLowerCase() === filter.toLowerCase();
-
+        // Always apply search filter
         const searchMatch = searchQuery === "" ||
-            booking.booking_id.toString().includes(searchQuery) ||
-            `${booking.first_name} ${booking.last_name}`.toLowerCase().includes(searchQuery.toLowerCase());
-
-        return statusMatch && searchMatch;
+            booking.booking_id.toString().includes(searchQuery);
+    
+        // Apply status filter based on dropdown selection
+        if (filter === "all") {
+            return searchMatch;
+        } else if (filter === "Pending") {
+            return searchMatch && booking.status.toLowerCase() === "pending";
+        } else if (filter === "Accepted") {
+            return searchMatch && booking.status.toLowerCase() === "accepted";
+        } else if (filter === "Success") {
+            return searchMatch && booking.status.toLowerCase() === "success";
+        } else if (filter === "Cancelled") {
+            return searchMatch && booking.status.toLowerCase() === "cancelled" ;
+        } else if (filter === "Refunded") {
+            return searchMatch && booking.status.toLowerCase() === "refunded";
+        } else {
+            // Default case if filter value is unexpected
+            return searchMatch;
+        }
     });
 
     const getStatusBadge = (status) => {
@@ -172,7 +187,6 @@ const ManageBookings = () => {
                     </span>
                 );
             case "cancelled":
-            case "canceled":
                 return (
                     <span className={`${baseClasses} bg-red-100 text-red-800`}>
                         <XCircleIcon className="h-3 w-3 mr-1" />
@@ -259,10 +273,11 @@ const ManageBookings = () => {
                                     className="appearance-none pl-3 pr-8 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 bg-white"
                                 >
                                     <option value="all">All Bookings</option>
-                                    <option value="pending">Pending</option>
-                                    <option value="accepted">Accepted</option>
-                                    <option value="success">Completed</option>
-                                    <option value="cancelled">Cancelled</option>
+                                    <option value="Pending">Pending</option>
+                                    <option value="Accepted">Accepted</option>
+                                    <option value="Success">Success</option>
+                                    <option value="Cancelled">Cancelled</option>
+                                    <option value="Refunded">Refunded</option>
                                 </select>
                                 <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
                                     <ChevronDownIcon className="h-4 w-4 text-gray-400" />
@@ -340,8 +355,7 @@ const ManageBookings = () => {
                                 <p className="text-sm text-gray-500">Cancelled</p>
                                 <p className="text-xl font-semibold">
                                     {bookings.filter(b =>
-                                        b.status.toLowerCase() === "cancelled" ||
-                                        b.status.toLowerCase() === "canceled"
+                                        b.status.toLowerCase() === "cancelled"
                                     ).length}
                                 </p>
                             </div>
@@ -453,7 +467,6 @@ const ManageBookings = () => {
                                                         </button>
                                                     )}
                                                     {booking.status !== "Cancelled" &&
-                                                        booking.status !== "Canceled" &&
                                                         booking.status !== "Refunded" && (
                                                             <button
                                                                 onClick={() => handleStatusChange(booking.booking_id, booking.user_id, "Cancelled")}

@@ -351,7 +351,7 @@ const BookVenue = () => {
                                                     />
                                                 ))}
                                             </div>
-                                            <span className="ml-2 text-gray-600">{venues.ratings} ({venues.review_count || 0} reviews)</span>
+                                            <span className="ml-2 text-gray-600">{venues.ratings}   </span>
                                         </div>
                                         <p className="mt-2 text-gray-600">{venues.location}</p>
                                         <div className="mt-4 grid grid-cols-2 gap-4">

@@ -157,7 +157,10 @@ const Analytics = () => {
                                 <BarChart data={bookingsPerVenue}>
                                     <CartesianGrid strokeDasharray="3 3" />
                                     <XAxis dataKey="name" interval={0} tick={<CustomizedXAxisTick />} />
-                                    <YAxis />
+                                    <YAxis
+                                        domain={[0, (dataMax) => Math.max(12, Math.ceil(dataMax / 5) * 5)]}
+
+                                    />
                                     <Tooltip />
                                     <Legend />
                                     <Bar barSize={50} dataKey="total_bookings" fill="#4F46E5" name="Total Bookings" />
@@ -174,7 +177,7 @@ const Analytics = () => {
                                 <BarChart data={revenueByBookings}>
                                     <CartesianGrid strokeDasharray="3 3" />
                                     <XAxis dataKey="name" interval={0} tick={<CustomizedXAxisTick />} />
-                                    <YAxis />
+                                    <YAxis />    
                                     <Tooltip />
                                     <Legend />
                                     <Bar dataKey="total_revenue" fill="#10B981" name="Revenue (Bookings)" />
@@ -337,8 +340,8 @@ const Analytics = () => {
                                         orientation="right"
                                         label={{ value: 'Total Reviews', angle: 90, position: 'insideRight' }}
                                     />
-                                <Tooltip formatter={(value) => Number(value).toFixed(2)} />
-                                <Legend />
+                                    <Tooltip formatter={(value) => Number(value).toFixed(2)} />
+                                    <Legend />
                                     <Bar
                                         yAxisId="left"
                                         dataKey="avg_rating"

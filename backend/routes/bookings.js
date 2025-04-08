@@ -132,7 +132,6 @@ router.get('/show-bookings/:userId', authenticateToken, async (req, res) => {
             `,
             [req.params.userId]
         );
-        console.log(result.rows);
 
         res.status(200).json(result.rows);
     } catch (err) {
@@ -141,7 +140,7 @@ router.get('/show-bookings/:userId', authenticateToken, async (req, res) => {
     }
 });
 
-// Route to get all bookings for a specific venue
+// Route to get all bookings for a specific venuex
 router.get("/venue-booked-dates/:venueId", async (req, res) => {
     const { venueId } = req.params;
 

@@ -187,6 +187,7 @@ const NewSupportTicket = () => {
                                 <Select 
                                     className="rounded-lg border-gray-300 hover:border-blue-400 h-11"
                                     dropdownClassName="rounded-lg"
+                                    disabled
                                 >
                                     <Option value="low">Low</Option>
                                     <Option value="medium">Medium</Option>
