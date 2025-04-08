@@ -54,7 +54,7 @@ const SignUp = () => {
         try {
             // First check if email exists
             const checkResponse = await axios.post(
-                ' https://84fa-115-98-235-107.ngrok-free.app/authentication/check-email',
+                'https://84fa-115-98-235-107.ngrok-free.app/authentication/check-email',
                 { email: formData.email }
             );
 
@@ -64,7 +64,7 @@ const SignUp = () => {
             }
             
             await axios.post(
-                ' https://84fa-115-98-235-107.ngrok-free.app/authentication/send-otp',
+                'https://84fa-115-98-235-107.ngrok-free.app/authentication/send-otp',
                 { email: formData.email }
             );
             setIsOtpSent(true);
@@ -86,7 +86,7 @@ const SignUp = () => {
         setIsVerifyingOtp(true);
         try {
             const response = await axios.post(
-                ' https://84fa-115-98-235-107.ngrok-free.app/authentication/verify-otp',
+                'https://84fa-115-98-235-107.ngrok-free.app/authentication/verify-otp',
                 { email: formData.email, otp }
             );
             if (response.status === 200) {
@@ -128,7 +128,7 @@ const SignUp = () => {
         setIsSubmitting(true);
         try {
             await axios.post(
-                ' https://84fa-115-98-235-107.ngrok-free.app/authentication/signup',
+                'https://84fa-115-98-235-107.ngrok-free.app/authentication/signup',
                 formData
             );
             message.success('User registered successfully');

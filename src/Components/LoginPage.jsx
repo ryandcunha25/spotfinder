@@ -38,7 +38,7 @@ const LoginPage = () => {
         setLoading(true);
         
         try {
-            const response = await axios.post('http://localhost:5000/authentication/login', formData);
+            const response = await axios.post('https://84fa-115-98-235-107.ngrok-free.app/authentication/login', formData);
             const { token, userdetails } = response.data;
 
             // Store credentials based on remember me choice
@@ -74,7 +74,7 @@ const LoginPage = () => {
 
         setForgotPasswordLoading(true);
         try {
-            await axios.post('http://localhost:5000/authentication/forgot-password', {
+            await axios.post('https://84fa-115-98-235-107.ngrok-free.app/authentication/forgot-password', {
                 email: resetEmail
             });
             message.success('Password reset link sent to your email!');
