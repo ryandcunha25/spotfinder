@@ -105,7 +105,7 @@ const PaymentPage = () => {
 
   const handlePayment = async () => {
     try {
-      const response = await fetch('https://84fa-115-98-235-107.ngrok-free.app/razorpay/create-booking', {
+      const response = await fetch('http://localhost:5000/razorpay/create-booking', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ amount: bookingDetails.total_price, currency: 'INR' }),
@@ -120,7 +120,7 @@ const PaymentPage = () => {
         description: 'Payment for venue reservation',
         order_id: order.id,
         handler: async (response) => {
-          const verifyResponse = await fetch('https://84fa-115-98-235-107.ngrok-free.app/razorpay/verify-payment', {
+          const verifyResponse = await fetch('http://localhost:5000/razorpay/verify-payment', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -135,7 +135,7 @@ const PaymentPage = () => {
           if (result.paymentDetails.payment_status === 'Success') {
             try {
               const updateResponse = await fetch(
-                `https://84fa-115-98-235-107.ngrok-free.app/bookings/update-booking-status/${booking_id}`,
+                `http://localhost:5000/bookings/update-booking-status/${booking_id}`,
                 {
                   method: 'PUT',
                   headers: { 'Content-Type': 'application/json' },

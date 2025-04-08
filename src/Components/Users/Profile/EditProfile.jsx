@@ -43,7 +43,7 @@ const EditProfile = ({ userData, onUpdate }) => {
 
         try {
             const response = await axios.put(
-                'https://84fa-115-98-235-107.ngrok-free.app/token/edit-profile',
+                'http://localhost:5000/token/edit-profile',
                 formData,
                 {
                     headers: { Authorization: `Bearer ${token}` }

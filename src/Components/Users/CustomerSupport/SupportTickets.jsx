@@ -54,7 +54,7 @@ const SupportTickets = () => {
         const user_id = localStorage.getItem('userId') || sessionStorage.getItem('userId');
         try {
             setLoading(true);
-            let url = `https://84fa-115-98-235-107.ngrok-free.app/grievances/alltickets/${user_id}`;
+            let url = `http://localhost:5000/grievances/alltickets/${user_id}`;
             if (statusFilter !== 'all') {
                 url += `?status=${statusFilter}`;
             }
@@ -70,7 +70,7 @@ const SupportTickets = () => {
     const showTicketDetails = async (ticket_id) => {
         const user_id = localStorage.getItem('userId') || sessionStorage.getItem('userId');
         try {
-            const response = await axios.get(`https://84fa-115-98-235-107.ngrok-free.app/grievances/tickets/${ticket_id}/${user_id}`);
+            const response = await axios.get(`http://localhost:5000/grievances/tickets/${ticket_id}/${user_id}`);
             setSelectedTicket(response.data.ticket);
             console.log(response.data.responses)
             setResponses(response.data.responses.map(r => ({
@@ -99,7 +99,7 @@ const SupportTickets = () => {
         setIsSubmitting(true);
         try {
             const response = await axios.post(
-                `https://84fa-115-98-235-107.ngrok-free.app/grievances/tickets/${selectedTicket.id}/${user_id}/responses`,
+                `http://localhost:5000/grievances/tickets/${selectedTicket.id}/${user_id}/responses`,
                 { message: messageText }
             );
 
@@ -132,7 +132,7 @@ const SupportTickets = () => {
         const user_id = localStorage.getItem('userId') || sessionStorage.getItem('userId');
         try {
             await axios.patch(
-                `https://84fa-115-98-235-107.ngrok-free.app/grievances/tickets/${selectedTicket.id}/${user_id}/close`
+                `http://localhost:5000/grievances/tickets/${selectedTicket.id}/${user_id}/close`
             );
 
             const updatedTicket = { ...selectedTicket, status: 'closed' };

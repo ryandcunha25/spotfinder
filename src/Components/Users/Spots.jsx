@@ -22,7 +22,7 @@ const Spots = () => {
     useEffect(() => {
         const fetchVenues = async () => {
             try {
-                const response = await fetch("https://84fa-115-98-235-107.ngrok-free.app/venues");
+                const response = await fetch("http://localhost:5000/venues");
                 const data = await response.json();
                 setVenues(data);
             } catch (error) {

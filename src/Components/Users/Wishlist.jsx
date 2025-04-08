@@ -17,7 +17,7 @@ const Wishlist = () => {
       }
 
       try {
-        const response = await fetch('https://84fa-115-98-235-107.ngrok-free.app/favourites/wishlist', {
+        const response = await fetch('http://localhost:5000/favourites/wishlist', {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -43,7 +43,7 @@ const Wishlist = () => {
     }
 
     try {
-      const response = await fetch('https://84fa-115-98-235-107.ngrok-free.app/favourites/remove-from-wishlist', {
+      const response = await fetch('http://localhost:5000/favourites/remove-from-wishlist', {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',

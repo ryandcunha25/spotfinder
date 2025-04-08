@@ -47,7 +47,7 @@ const BookVenue = () => {
     useEffect(() => {
         async function fetchVenueDetails() {
             try {
-                const response = await fetch(`https://84fa-115-98-235-107.ngrok-free.app/venues/${venueId}`);
+                const response = await fetch(`http://localhost:5000/venues/${venueId}`);
                 if (response.ok) {
                     const data = await response.json();
                     setCategories(data.category);
@@ -76,7 +76,7 @@ const BookVenue = () => {
             }
 
             try {
-                const response = await axios.get("https://84fa-115-98-235-107.ngrok-free.app/token/profile", {
+                const response = await axios.get("http://localhost:5000/token/profile", {
                     headers: { Authorization: `Bearer ${token}` },
                 });
                 setUser(response.data);
@@ -145,7 +145,7 @@ const BookVenue = () => {
     useEffect(() => {
         async function fetchBookedSlots() {
             try {
-                const response = await fetch(`https://84fa-115-98-235-107.ngrok-free.app/bookings/venue-booked-dates/${venueId}`);
+                const response = await fetch(`http://localhost:5000/bookings/venue-booked-dates/${venueId}`);
                 if (response.status == 200) {
                     const data = await response.json();
                     setBookedSlots(data);
@@ -227,7 +227,7 @@ const BookVenue = () => {
         };
 
         try {
-            const response = await axios.post("https://84fa-115-98-235-107.ngrok-free.app/bookings/book", bookingDetails, {
+            const response = await axios.post("http://localhost:5000/bookings/book", bookingDetails, {
                 headers: { Authorization: `Bearer ${token}` },
             });
 

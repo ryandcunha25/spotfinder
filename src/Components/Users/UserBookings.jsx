@@ -33,7 +33,7 @@ const BookingsList = () => {
       const userId = localStorage.getItem("userId") || sessionStorage.getItem("userId");
 
       try {
-        const response = await axios.get(`https://84fa-115-98-235-107.ngrok-free.app/bookings/show-bookings/${userId}`, {
+        const response = await axios.get(`http://localhost:5000/bookings/show-bookings/${userId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
          console.log(response.data)
