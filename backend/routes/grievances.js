@@ -95,7 +95,7 @@ router.get('/tickets/:ticket_id/:user_id', async (req, res) => {
         );
         
 
-        console.log(responsesResult.rows);
+        // console.log(responsesResult.rows);
 
         
         res.json({
@@ -158,7 +158,7 @@ router.post('/tickets/:ticket_id/:user_id/responses', async (req, res) => {
             [responseResult.rows[0].id]
         );
 
-        console.log(fullResponse.rows[0]);
+        // console.log(fullResponse.rows[0]);
 
         res.status(201).json({
             success: true,
@@ -314,7 +314,7 @@ router.get('/venueowners/tickets/:ticketId', async (req, res) => {
     const {ticketId} = req.params
 
     try {
-        console.log(ticketId)
+        // console.log(ticketId)
         const result = await db.query(`
             SELECT g.*, u.* FROM grievances g
             JOIN users u ON g.user_id = u.id
@@ -335,8 +335,8 @@ router.get('/venueowners/tickets/:ticketId', async (req, res) => {
             ORDER BY tr.created_at ASC
         `, [ticketId]);
 
-        console.log(responses.rows)
-        console.log(result.rows[0])
+        // console.log(responses.rows)
+        // console.log(result.rows[0])
         
         res.json({
             ticket: result.rows[0],
@@ -352,7 +352,7 @@ router.post('/venueowners/tickets/:ticket_id/responses', async (req, res) => {
     try {
         const { message, user_id } = req.body;
         const ticket_id = req.params.ticket_id
-        console.log(req.body, ticket_id)
+        // console.log(req.body, ticket_id)
         const result = await db.query(`
             INSERT INTO ticket_responses 
             (ticket_id, user_id, message, is_admin)
@@ -360,7 +360,7 @@ router.post('/venueowners/tickets/:ticket_id/responses', async (req, res) => {
             RETURNING *
         `, [ticket_id, user_id, message]);
 
-        console.log("sds", result.rows[0])
+        // console.log("sds", result.rows[0])
         
         res.json(result.rows[0]);
     } catch (err) {
