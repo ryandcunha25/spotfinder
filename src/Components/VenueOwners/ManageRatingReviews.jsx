@@ -34,7 +34,7 @@ const ManageRatingReviews = () => {
 
     const fetchReviews = async () => {
         try {
-            const response = await axios.get(`https://84fa-115-98-235-107.ngrok-free.app/reviews/owner/${ownerId}`);
+            const response = await axios.get(`http://localhost:5000/reviews/owner/${ownerId}`);
 
             if (response.status === 200) {
                 const sortedReviews = response.data.reviews.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
@@ -57,7 +57,7 @@ const ManageRatingReviews = () => {
 
     const fetchVenues = async () => {
         try {
-            const response = await axios.get(`https://84fa-115-98-235-107.ngrok-free.app/venues/owner/${ownerId}`);
+            const response = await axios.get(`http://localhost:5000/venues/owner/${ownerId}`);
             if (response.status === 200) {
                 setVenues(response.data.venues);
             }

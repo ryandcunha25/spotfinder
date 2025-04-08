@@ -35,7 +35,7 @@ const ResetPassword = () => {
 
     try {
       setLoading(true);
-      await axios.post(`https://84fa-115-98-235-107.ngrok-free.app/authentication/reset-password/${token}`, {
+      await axios.post(`http://localhost:5000/authentication/reset-password/${token}`, {
         password: formData.password
       });
       

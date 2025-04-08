@@ -32,7 +32,7 @@ const MyVenues = () => {
                     return;
                 }
 
-                const response = await fetch(`https://84fa-115-98-235-107.ngrok-free.app/venues/ownerspecific/${ownerId}`, {
+                const response = await fetch(`http://localhost:5000/venues/ownerspecific/${ownerId}`, {
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json",
@@ -94,7 +94,7 @@ const MyVenues = () => {
                 images: newVenue.images,
             };
 
-            const response = await fetch("https://84fa-115-98-235-107.ngrok-free.app/venues/add-venue", {
+            const response = await fetch("http://localhost:5000/venues/add-venue", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -134,7 +134,7 @@ const MyVenues = () => {
         setIsLoading(true);
         try {
             const token = localStorage.getItem("token");
-            const response = await fetch(`https://84fa-115-98-235-107.ngrok-free.app/venues/edit-venue/${editingVenue.venue_id}`, {
+            const response = await fetch(`http://localhost:5000/venues/edit-venue/${editingVenue.venue_id}`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
@@ -170,7 +170,7 @@ const MyVenues = () => {
 
         setIsLoading(true);
         try {
-            const response = await fetch(`https://84fa-115-98-235-107.ngrok-free.app/venues/delete-venue/${venueId}`, {
+            const response = await fetch(`http://localhost:5000/venues/delete-venue/${venueId}`, {
                 method: "DELETE",
             });
 

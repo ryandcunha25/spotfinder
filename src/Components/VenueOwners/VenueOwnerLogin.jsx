@@ -27,7 +27,7 @@ const VenueOwnerLogin = () => {
     e.preventDefault();
     setIsLoading(true);
     try {
-      const response = await axios.post("https://84fa-115-98-235-107.ngrok-free.app/owner_authentication/login", formData);
+      const response = await axios.post("http://localhost:5000/owner_authentication/login", formData);
       setSuccessMessage(response.data.message);
       setErrorMessage("");
       localStorage.setItem('token', response.data.token);
