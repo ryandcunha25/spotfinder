@@ -298,7 +298,7 @@ const VenueOwnerSignup = () => {
 
     setSendOtpLoading(true);
     try {
-      await axios.post('http://localhost:5000/authentication/send-otp', { email: formData.email });
+      await axios.post('https://84fa-115-98-235-107.ngrok-free.app/authentication/send-otp', { email: formData.email });
       setIsOtpSent(true);
       setCurrentStep(2);
       startCountdown();
@@ -322,7 +322,7 @@ const VenueOwnerSignup = () => {
     if (!isResendDisabled) {
       setResendOtpLoading(true);
       try {
-        await axios.post('http://localhost:5000/authentication/send-otp', { email: formData.email });
+        await axios.post('https://84fa-115-98-235-107.ngrok-free.app/authentication/send-otp', { email: formData.email });
         startCountdown();
         message.success('OTP resent to your email');
       } catch (err) {
@@ -341,7 +341,7 @@ const VenueOwnerSignup = () => {
 
     setVerifyOtpLoading(true);
     try {
-      const response = await axios.post('http://localhost:5000/authentication/verify-otp', {
+      const response = await axios.post('https://84fa-115-98-235-107.ngrok-free.app/authentication/verify-otp', {
         email: formData.email,
         otp
       });
@@ -371,7 +371,7 @@ const VenueOwnerSignup = () => {
         category: Array.isArray(formData.category) ? formData.category : formData.category.split(',').map(item => item.trim())
       };
 
-      const response = await axios.post('http://localhost:5000/owner_authentication/register', payload);
+      const response = await axios.post('https://84fa-115-98-235-107.ngrok-free.app/owner_authentication/register', payload);
       message.success('Registration Successful!');
       navigate('/venueownerslogin');
     } catch (error) {

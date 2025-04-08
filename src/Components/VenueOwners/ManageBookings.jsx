@@ -48,7 +48,7 @@ const ManageBookings = () => {
     const fetchBookings = async () => {
         const ownerId = localStorage.getItem("ownerId");
         try {
-            const response = await axios.get(`http://localhost:5000/bookings/showallbookings/${ownerId}`);
+            const response = await axios.get(`https://84fa-115-98-235-107.ngrok-free.app/bookings/showallbookings/${ownerId}`);
             setBookings(response.data);
             setLoading(false);
         } catch (error) {
@@ -76,8 +76,8 @@ const ManageBookings = () => {
 
     const handleStatusChange = async (booking_id, user_id = null, newStatus) => {
         try {
-            await axios.put(`http://localhost:5000/bookings/update-booking-status/${booking_id}`, { status: newStatus });
-            await axios.post("http://localhost:5000/notifications/add", {
+            await axios.put(`https://84fa-115-98-235-107.ngrok-free.app/bookings/update-booking-status/${booking_id}`, { status: newStatus });
+            await axios.post("https://84fa-115-98-235-107.ngrok-free.app/notifications/add", {
                 user_id,
                 bookingId: booking_id,
                 message: `Your booking status for booking id: #${booking_id} has been ${newStatus}.`,
@@ -92,7 +92,7 @@ const ManageBookings = () => {
 
     const fetchPaymentDetails = async (booking) => {
         try {
-            const response = await axios.get(`http://localhost:5000/razorpay/show-payment-details/${booking.booking_id}`);
+            const response = await axios.get(`https://84fa-115-98-235-107.ngrok-free.app/razorpay/show-payment-details/${booking.booking_id}`);
             setPaymentDetails(response.data);
             setSelectedBooking(booking);
             setIsModalOpen(true);
@@ -114,7 +114,7 @@ const ManageBookings = () => {
 
         try {
             const refundResponse = await axios.post(
-                `http://localhost:5000/razorpay/refund/${paymentDetails.payment_id}`
+                `https://84fa-115-98-235-107.ngrok-free.app/razorpay/refund/${paymentDetails.payment_id}`
             );
 
             if (refundResponse.status === 200) {

@@ -23,7 +23,7 @@ const Accounts = () => {
             }
 
             try {
-                const response = await axios.get('http://localhost:5000/token/profile', {
+                const response = await axios.get('https://84fa-115-98-235-107.ngrok-free.app/token/profile', {
                     headers: { Authorization: `Bearer ${token}` },
                 });
                 setUser(response.data);

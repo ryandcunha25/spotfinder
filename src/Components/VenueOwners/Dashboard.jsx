@@ -21,7 +21,7 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
-        const API_BASE = 'http://localhost:5000'; // Update with your backend URL
+        const API_BASE = 'https://84fa-115-98-235-107.ngrok-free.app'; // Update with your backend URL
 
         const ownerId = localStorage.getItem('ownerId'); // 
         // Fetch all data in parallel

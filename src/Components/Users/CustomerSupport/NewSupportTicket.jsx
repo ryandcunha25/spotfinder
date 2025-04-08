@@ -22,7 +22,7 @@ const NewSupportTicket = () => {
 
     const fetchCategories = async () => {
         try {
-            const response = await axios.get('http://localhost:5000/grievances/categories');
+            const response = await axios.get('https://84fa-115-98-235-107.ngrok-free.app/grievances/categories');
             setCategories(response.data);
         } catch (error) {
             message.error('Failed to load categories');
@@ -33,7 +33,7 @@ const NewSupportTicket = () => {
         const userId = localStorage.getItem('userId');
         try {
             setLoading(true);
-            const response = await axios.post('http://localhost:5000/grievances/ticket', {
+            const response = await axios.post('https://84fa-115-98-235-107.ngrok-free.app/grievances/ticket', {
                 ...values,
                 category_id: selectedCategory,
                 user_id: userId
@@ -62,7 +62,7 @@ const NewSupportTicket = () => {
         
         try {
             setUploading(true);
-            await axios.post(`http://localhost:5000/grievances/tickets/${ticketId}/attachments`, formData, {
+            await axios.post(`https://84fa-115-98-235-107.ngrok-free.app/grievances/tickets/${ticketId}/attachments`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },

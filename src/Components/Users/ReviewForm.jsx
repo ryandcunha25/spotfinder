@@ -26,7 +26,7 @@ const ReviewForm = () => {
         
         try {
             // Submit the review
-            const reviewResponse = await axios.post("http://localhost:5000/reviews/add", {
+            const reviewResponse = await axios.post("https://84fa-115-98-235-107.ngrok-free.app/reviews/add", {
                 userId,
                 bookingId,
                 rating,
@@ -38,7 +38,7 @@ const ReviewForm = () => {
                 // If notificationId exists, delete the notification
                 if (notificationId) {
                     try {
-                        await axios.delete(`http://localhost:5000/notifications/delete/${notificationId}`);
+                        await axios.delete(`https://84fa-115-98-235-107.ngrok-free.app/notifications/delete/${notificationId}`);
                         message.success("Review submitted successfully!");
                     } catch (error) {
                         console.error("Error deleting notification:", error);

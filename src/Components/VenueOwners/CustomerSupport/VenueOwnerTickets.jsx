@@ -41,7 +41,7 @@ const VenueOwnerTickets = () => {
     const fetchTickets = async () => {
         try {
             setLoading(true);
-            let url = 'http://localhost:5000/grievances/venueowners/tickets';
+            let url = 'https://84fa-115-98-235-107.ngrok-free.app/grievances/venueowners/tickets';
             if (statusFilter !== 'all') {
                 url += `?status=${statusFilter}`;
             }
@@ -62,7 +62,7 @@ const VenueOwnerTickets = () => {
         try {
             setResponseLoading(true);
             const response = await axios.get(
-                `http://localhost:5000/grievances/venueowners/tickets/${ticketId}`
+                `https://84fa-115-98-235-107.ngrok-free.app/grievances/venueowners/tickets/${ticketId}`
             );
             setSelectedTicket(response.data.ticket);
             setTicketResponses(response.data.responses || []);
@@ -85,7 +85,7 @@ const VenueOwnerTickets = () => {
 
         try {
             const response = await axios.post(
-                `http://localhost:5000/grievances/venueowners/tickets/${ticketResponses[0].ticket_id}/responses`,
+                `https://84fa-115-98-235-107.ngrok-free.app/grievances/venueowners/tickets/${ticketResponses[0].ticket_id}/responses`,
                 {
                     message: messageText,
                     user_id: selectedTicket.user_id
@@ -107,7 +107,7 @@ const VenueOwnerTickets = () => {
             setMessageText('');
 
             const ticketResponse = await axios.get(
-                `http://localhost:5000/grievances/venueowners/tickets/${ticketResponses[0].ticket_id}`,
+                `https://84fa-115-98-235-107.ngrok-free.app/grievances/venueowners/tickets/${ticketResponses[0].ticket_id}`,
             );
             setSelectedTicket(ticketResponse.data.ticket);
 
@@ -119,7 +119,7 @@ const VenueOwnerTickets = () => {
     const handleStatusChange = async (newStatus) => {
         try {
             await axios.patch(
-                `http://localhost:5000/grievances/venueowners/tickets/${ticketResponses[0].ticket_id}/status`,
+                `https://84fa-115-98-235-107.ngrok-free.app/grievances/venueowners/tickets/${ticketResponses[0].ticket_id}/status`,
                 { status: newStatus },
             );
             setSelectedTicket({

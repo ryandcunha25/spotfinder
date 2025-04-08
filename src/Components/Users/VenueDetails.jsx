@@ -33,7 +33,7 @@ const VenueDetails = () => {
     useEffect(() => {
         const fetchVenueDetails = async () => {
             try {
-                const response = await fetch(`http://localhost:5000/venues/${venueId}`);
+                const response = await fetch(`https://84fa-115-98-235-107.ngrok-free.app/venues/${venueId}`);
                 if (response.ok) {
                     const data = await response.json();
                     setVenue(data);
@@ -47,7 +47,7 @@ const VenueDetails = () => {
 
         const fetchReviews = async () => {
             try {
-                const response = await fetch(`http://localhost:5000/reviews/${venueId}`);
+                const response = await fetch(`https://84fa-115-98-235-107.ngrok-free.app/reviews/${venueId}`);
                 if (response.ok) {
                     setReviews(await response.json());
                 }
@@ -58,7 +58,7 @@ const VenueDetails = () => {
 
         const fetchBookedDates = async () => {
             try {
-                const response = await fetch(`http://localhost:5000/bookings/venue-booked-dates/${venueId}`);
+                const response = await fetch(`https://84fa-115-98-235-107.ngrok-free.app/bookings/venue-booked-dates/${venueId}`);
                 if (response.status === 200) {
                     const data = await response.json();
                     // Parse dates and times from database format
@@ -102,7 +102,7 @@ const VenueDetails = () => {
         }
 
         try {
-            const response = await fetch('http://localhost:5000/favourites/add-to-wishlist', {
+            const response = await fetch('https://84fa-115-98-235-107.ngrok-free.app/favourites/add-to-wishlist', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

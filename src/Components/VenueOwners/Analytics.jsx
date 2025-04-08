@@ -69,66 +69,66 @@ const Analytics = () => {
 
         // Fetch Total Bookings per Venue
         axios
-            .get(`http://localhost:5000/analytics/totalBookingsPerVenue?ownerId=${ownerId}`)
+            .get(`https://84fa-115-98-235-107.ngrok-free.app/analytics/totalBookingsPerVenue?ownerId=${ownerId}`)
             .then((response) => setBookingsPerVenue(response.data))
             .catch((error) => console.error('Error fetching bookings per venue:', error));
 
         // Fetch Total Revenue per Venue (Bookings Data)
         axios
-            .get(`http://localhost:5000/analytics/totalRevenueByBookings?ownerId=${ownerId}`)
+            .get(`https://84fa-115-98-235-107.ngrok-free.app/analytics/totalRevenueByBookings?ownerId=${ownerId}`)
             .then((response) => setRevenueByBookings(response.data))
             .catch((error) => console.error('Error fetching revenue by bookings:', error));
 
         // Fetch Total Revenue per Venue (Payments Data)
         axios
-            .get(`http://localhost:5000/analytics/totalRevenueByPayments?ownerId=${ownerId}`)
+            .get(`https://84fa-115-98-235-107.ngrok-free.app/analytics/totalRevenueByPayments?ownerId=${ownerId}`)
             .then((response) => setRevenueByPayments(response.data))
             .catch((error) => console.error('Error fetching revenue by payments:', error));
 
         // Fetch Average Rating and Total Reviews per Venue
         axios
-            .get(`http://localhost:5000/analytics/ratingsAndReviews?ownerId=${ownerId}`)
+            .get(`https://84fa-115-98-235-107.ngrok-free.app/analytics/ratingsAndReviews?ownerId=${ownerId}`)
             .then((response) => setRatingsReviews(response.data))
             .catch((error) => console.error('Error fetching ratings and reviews:', error));
 
         // Fetch Booking Trends by Month
         axios
-            .get(`http://localhost:5000/analytics/bookingTrends?ownerId=${ownerId}`)
+            .get(`https://84fa-115-98-235-107.ngrok-free.app/analytics/bookingTrends?ownerId=${ownerId}`)
             .then((response) => setBookingTrends(response.data))
             .catch((error) => console.error('Error fetching booking trends:', error));
 
         // Fetch Payment Trends by Month
         axios
-            .get(`http://localhost:5000/analytics/paymentTrends?ownerId=${ownerId}`)
+            .get(`https://84fa-115-98-235-107.ngrok-free.app/analytics/paymentTrends?ownerId=${ownerId}`)
             .then((response) => setPaymentTrends(response.data))
             .catch((error) => console.error('Error fetching payment trends:', error));
 
         // New endpoints
-        axios.get(`http://localhost:5000/analytics/paymentMethodDistribution?ownerId=${ownerId}`)
+        axios.get(`https://84fa-115-98-235-107.ngrok-free.app/analytics/paymentMethodDistribution?ownerId=${ownerId}`)
             .then(response => setPaymentMethodDistribution(response.data))
             .catch(error => console.error('Error fetching payment method distribution:', error));
 
-        axios.get(`http://localhost:5000/analytics/popularEventTypes?ownerId=${ownerId}`)
+        axios.get(`https://84fa-115-98-235-107.ngrok-free.app/analytics/popularEventTypes?ownerId=${ownerId}`)
             .then(response => setPopularEventTypes(response.data))
             .catch(error => console.error('Error fetching popular event types:', error));
 
-        axios.get(`http://localhost:5000/analytics/userEngagement?ownerId=${ownerId}`)
+        axios.get(`https://84fa-115-98-235-107.ngrok-free.app/analytics/userEngagement?ownerId=${ownerId}`)
             .then(response => setUserEngagement(response.data))
             .catch(error => console.error('Error fetching user engagement:', error));
 
-        axios.get(`http://localhost:5000/analytics/cancellationRate?ownerId=${ownerId}`)
+        axios.get(`https://84fa-115-98-235-107.ngrok-free.app/analytics/cancellationRate?ownerId=${ownerId}`)
             .then(response => setCancellationRate(response.data))
             .catch(error => console.error('Error fetching cancellation rate:', error));
 
-        axios.get(`http://localhost:5000/analytics/averageEventDuration?ownerId=${ownerId}`)
+        axios.get(`https://84fa-115-98-235-107.ngrok-free.app/analytics/averageEventDuration?ownerId=${ownerId}`)
             .then(response => setAvgEventDuration(response.data))
             .catch(error => console.error('Error fetching average event duration:', error));
 
-        axios.get(`http://localhost:5000/analytics/averageBookingLeadTime?ownerId=${ownerId}`)
+        axios.get(`https://84fa-115-98-235-107.ngrok-free.app/analytics/averageBookingLeadTime?ownerId=${ownerId}`)
             .then(response => setAvgBookingLeadTime(response.data))
             .catch(error => console.error('Error fetching average booking lead time:', error));
 
-        axios.get(`http://localhost:5000/analytics/ratingDistribution?ownerId=${ownerId}`)
+        axios.get(`https://84fa-115-98-235-107.ngrok-free.app/analytics/ratingDistribution?ownerId=${ownerId}`)
             .then(response => setRatingDistribution(response.data))
             .catch(error => console.error('Error fetching rating distribution:', error));
 

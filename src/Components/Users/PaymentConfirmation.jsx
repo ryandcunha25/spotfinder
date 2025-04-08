@@ -13,7 +13,7 @@ const PaymentConfirmation = () => {
   useEffect(() => {
     const fetchBookings = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/bookings/confirmed-booking?book_id=${book_id}`);
+        const response = await axios.get(`https://84fa-115-98-235-107.ngrok-free.app/bookings/confirmed-booking?book_id=${book_id}`);
         setBookedVenue(response.data);
       } catch (err) {
         console.error('Error fetching bookings:', err);
