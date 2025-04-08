@@ -38,47 +38,20 @@ const VenueOwnerTickets = () => {
         fetchTickets();
     }, [statusFilter]);
 
-    // const fetchTickets = async () => {
-    //     try {
-    //         setLoading(true);
-    //         let url = 'http://localhost:5000/grievances/venueowners/tickets';
-    //         if (statusFilter !== 'all') {
-    //             url += `?status=${statusFilter}`;
-    //         }
-    //         const response = await axios.get(url, {
-    //             headers: {
-    //                 Authorization: `Bearer ${localStorage.getItem('venueOwnerToken')}`
-    //             }
-    //         });
-    //         setTickets(response.data);
-    //         console.log(response.data)
-
-    //         setLoading(false);
-    //     } catch (error) {
-    //         message.error('Failed to fetch tickets');
-    //         setLoading(false);
-    //     }
-    // };
-
     const fetchTickets = async () => {
         try {
             setLoading(true);
-            const response = await axios.get('http://localhost:5000/grievances/venueowners/tickets', {
+            let url = 'http://localhost:5000/grievances/venueowners/tickets';
+            if (statusFilter !== 'all') {
+                url += `?status=${statusFilter}`;
+            }
+            const response = await axios.get(url, {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem('venueOwnerToken')}`
                 }
             });
-            
-            // Filter tickets based on the selected status
-            const filteredTickets = statusFilter === 'all' 
-                ? response.data 
-                : response.data.filter(ticket => ticket.status === statusFilter);
-
-                console.log(filteredTickets)
-                console.log(response.data)
-                console.log(statusFilter)
-                
-            setTickets(filteredTickets);
+            console.log(response.data)
+            setTickets(response.data);
             setLoading(false);
         } catch (error) {
             message.error('Failed to fetch tickets');
@@ -93,6 +66,7 @@ const VenueOwnerTickets = () => {
                 `http://localhost:5000/grievances/venueowners/tickets/${ticketId}`
             );
             setSelectedTicket(response.data.ticket);
+            console.log("Ticket details:", response.data.ticket);
             setTicketResponses(response.data.responses || []);
             console.log("Ticket responses:", response.data.responses);
             setIsModalVisible(true);
