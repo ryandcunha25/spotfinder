@@ -20,12 +20,17 @@ pool.connect();
 
 const app = express();
 
-app.use(cors());
-// app.use(cors({ origin: "*" }));
-// app.use(cors({
-//   origin: ["https://spotfinder-chi.vercel.app"], // replace with your frontend
-//   credentials: true
-// }));
+const corsOptions = {
+  origin: [
+    "https://spotfinder-chi.vercel.app",   // your frontend
+    "http://localhost:3000"               // for local testing
+  ],
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+  credentials: true
+};
+
+app.use(cors(corsOptions));
+
 
 
 app.use(bodyParser.json());
