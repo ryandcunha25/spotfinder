@@ -7,6 +7,8 @@ const Spots = () => {
     const [selectedEventTypes, setSelectedEventTypes] = useState([]);
     const [selectedCapacities, setSelectedCapacities] = useState([]);
     const [priceRange, setPriceRange] = useState({ min: "", max: "" });
+    const backendurl = process.env.BACKEND_URL || "http://localhost:5000";
+
 
     const eventTypes = ["Conference", "Weddings", "Birthdays", "Heritage"];
     const capacityOptions = [
@@ -22,7 +24,7 @@ const Spots = () => {
     useEffect(() => {
         const fetchVenues = async () => {
             try {
-                const response = await fetch("http://localhost:5000/venues");
+                const response = await fetch(`${backendurl}/venues`);
                 const data = await response.json();
                 setVenues(data);
             } catch (error) {
