@@ -7,7 +7,7 @@ const Spots = () => {
     const [selectedEventTypes, setSelectedEventTypes] = useState([]);
     const [selectedCapacities, setSelectedCapacities] = useState([]);
     const [priceRange, setPriceRange] = useState({ min: "", max: "" });
-    const backendurl = process.env.BACKEND_URL || "http://localhost:5000";
+    const backendurl = process.env.REACT_APP_BACKEND_URL || "http://localhost:5000";
     console.log("Backend URL:", backendurl);
 
 
