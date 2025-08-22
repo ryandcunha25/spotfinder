@@ -8,6 +8,7 @@ const Spots = () => {
     const [selectedCapacities, setSelectedCapacities] = useState([]);
     const [priceRange, setPriceRange] = useState({ min: "", max: "" });
     const backendurl = process.env.BACKEND_URL || "http://localhost:5000";
+    console.log("Backend URL:", backendurl);
 
 
     const eventTypes = ["Conference", "Weddings", "Birthdays", "Heritage"];
