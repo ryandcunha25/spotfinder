@@ -20,7 +20,7 @@ const Accounts = () => {
 
             if (!token) {
                 message.warning("Please log in to view your profile");
-                navigate("/login");
+                navigate("/");
                 setError('User is not authenticated');
                 setLoading(false);
                 return;
