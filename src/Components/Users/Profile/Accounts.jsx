@@ -33,7 +33,7 @@ const Accounts = () => {
                 setUser(response.data);
             } catch (err) {
                 console.error('Error fetching user profile:', err);
-                setError('Unable to fetch user details. Please try again later.');
+                setError('User not logged in.');
             } finally {
                 setLoading(false);
             }
