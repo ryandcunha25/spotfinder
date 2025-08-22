@@ -18,9 +18,10 @@ const Accounts = () => {
             const token = localStorage.getItem('token') || sessionStorage.getItem('token');
 
             if (!token) {
+                message.warning("Please log in to view your profile");
+                navigate("/login");
                 setError('User is not authenticated');
                 setLoading(false);
-                navigate('/login');
                 return;
             }
 
@@ -67,7 +68,7 @@ const Accounts = () => {
                     <h3 className="mt-3 text-lg font-medium text-gray-900">Error loading profile</h3>
                     <p className="mt-2 text-sm text-gray-500">{error}</p>
                     <div className="mt-4">
-                        <button 
+                        <button
                             onClick={() => navigate('/')}
                             className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors text-sm font-medium"
                         >
@@ -85,18 +86,18 @@ const Accounts = () => {
 
     return (
         <div className="max-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-          <div className="max-w-7xl mx-auto">
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
-              <ProfileSidebar userName={user.first_name} />
-              
-              <Routes>
-                <Route index element={<ProfileInfo userData={user} />} />
-                <Route path="/edit" element={<EditProfile userData={user} onUpdate={handleUpdate} />} />
-              </Routes>
+            <div className="max-w-7xl mx-auto">
+                <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
+                    <ProfileSidebar userName={user.first_name} />
+
+                    <Routes>
+                        <Route index element={<ProfileInfo userData={user} />} />
+                        <Route path="/edit" element={<EditProfile userData={user} onUpdate={handleUpdate} />} />
+                    </Routes>
+                </div>
             </div>
-          </div>
         </div>
-      );
+    );
 };
 
 export default Accounts;
