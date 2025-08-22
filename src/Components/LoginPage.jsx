@@ -196,6 +196,16 @@ const LoginPage = () => {
                                 Log in
                             </Link>
                         </p>
+                        {/* Continue without login link */}
+                        <p className="text-white/70 text-sm mt-4">
+                            Just want to browse?{' '}
+                            <Link 
+                                to="/homepage" 
+                                className="text-blue-400 hover:text-blue-300 font-medium"
+                            >
+                                Continue without login
+                            </Link>
+                        </p>
                     </div>
                 </div>
             </section>
