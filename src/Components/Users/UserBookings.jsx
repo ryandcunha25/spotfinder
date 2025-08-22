@@ -27,6 +27,8 @@ const BookingsList = () => {
       const token = localStorage.getItem("token") || sessionStorage.getItem("token");
 
       if (!token) {
+        message.warning("Please log in to check your bookings");
+        navigate("/");
         setError("Please login to view your bookings");
         setIsLoading(false);
         return;

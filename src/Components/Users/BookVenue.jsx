@@ -72,6 +72,8 @@ const BookVenue = () => {
             const token = localStorage.getItem("token") || sessionStorage.getItem("token");
 
             if (!token) {
+                message.warning("Please log in to book a venue");
+                navigate("/");
                 setError("User is not authenticated");
                 setIsLoading(false);
                 return;

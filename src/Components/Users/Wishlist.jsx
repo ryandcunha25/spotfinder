@@ -14,6 +14,8 @@ const Wishlist = () => {
     const fetchWishlist = async () => {
       ;
       if (!token) {
+        message.warning("Please log in to view your wishlist");
+        navigate("/");
         message.error('Please log in to view your wishlist');
         return;
       }
