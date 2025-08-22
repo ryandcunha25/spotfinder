@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import {message} from 'antd';
+import { message } from 'antd';
 
 
 const Wishlist = () => {
   const [wishlist, setWishlist] = useState([]);
   const navigate = useNavigate();
+  const backendurl = process.env.REACT_APP_BACKEND_URL || "http://localhost:5000";
+
 
   const token = localStorage.getItem("token") || sessionStorage.getItem("token");
   useEffect(() => {
@@ -17,7 +19,7 @@ const Wishlist = () => {
       }
 
       try {
-        const response = await fetch('http://localhost:5000/favourites/wishlist', {
+        const response = await fetch(`${backendurl}/favourites/wishlist`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -43,7 +45,7 @@ const Wishlist = () => {
     }
 
     try {
-      const response = await fetch('http://localhost:5000/favourites/remove-from-wishlist', {
+      const response = await fetch(`${backendurl}/favourites/remove-from-wishlist`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',

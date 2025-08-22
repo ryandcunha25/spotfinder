@@ -19,6 +19,8 @@ const BookingsList = () => {
   const [expandedSection, setExpandedSection] = useState("pending");
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
+  const backendurl = process.env.REACT_APP_BACKEND_URL || "http://localhost:5000";
+
 
   useEffect(() => {
     const fetchBookings = async () => {
@@ -33,10 +35,10 @@ const BookingsList = () => {
       const userId = localStorage.getItem("userId") || sessionStorage.getItem("userId");
 
       try {
-        const response = await axios.get(`http://localhost:5000/bookings/show-bookings/${userId}`, {
+        const response = await axios.get(`${backendurl}/bookings/show-bookings/${userId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-         console.log(response.data)
+        console.log(response.data)
 
         const categorizedBookings = {
           pending: response.data.filter(booking => booking.status === "Pending"),
@@ -173,7 +175,7 @@ const BookingsList = () => {
                   Receipt
                 </button>
               )}
-{/* 
+              {/* 
               {!isPastEvent && booking.status !== "Cancelled" && (
                 <>
                   <button

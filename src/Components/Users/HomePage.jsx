@@ -14,15 +14,17 @@ const HomePage = () => {
   });
   const [featuredVenues, setFeaturedVenues] = useState([]);
   const [testimonials, setTestimonials] = useState([]);
+  const backendurl = process.env.REACT_APP_BACKEND_URL || "http://localhost:5000";
+
 
   useEffect(() => {
     // Fetch featured venues
-    axios.get('http://localhost:5000/featured-venues')
+    axios.get(`${backendurl}/featured-venues`)
       .then(response => setFeaturedVenues(response.data))
       .catch(error => console.error('Error fetching featured venues:', error));
 
     // Fetch testimonials
-    axios.get('http://localhost:5000/testimonials')
+    axios.get(`${backendurl}/testimonials`)
       .then(response => setTestimonials(response.data))
       .catch(error => console.error('Error fetching testimonials:', error));
   }, []);
@@ -99,7 +101,7 @@ const HomePage = () => {
                         className="border border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white px-4 py-2 rounded-lg font-medium transition duration-300"
                         onClick={() => navigate(`/venues/${venue.name}`, { state: { venueId: venue.venue_id } })} // ✅ Corrected `venue.id` to `venue.venue_id`
                       >
-                        View Details    
+                        View Details
                       </button>
                     </div>
                   </div>

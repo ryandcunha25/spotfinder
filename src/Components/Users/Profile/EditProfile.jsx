@@ -13,6 +13,8 @@ const EditProfile = ({ userData, onUpdate }) => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
+    const backendurl = process.env.REACT_APP_BACKEND_URL || "http://localhost:5000";
+
 
     useEffect(() => {
         if (userData) {
@@ -43,7 +45,7 @@ const EditProfile = ({ userData, onUpdate }) => {
 
         try {
             const response = await axios.put(
-                'http://localhost:5000/token/edit-profile',
+                `${backendurl}/token/edit-profile`,
                 formData,
                 {
                     headers: { Authorization: `Bearer ${token}` }
@@ -54,7 +56,7 @@ const EditProfile = ({ userData, onUpdate }) => {
             if (onUpdate) {
                 onUpdate(response.data);
             }
-            
+
             setTimeout(() => {
                 navigate('/profile');
             }, 1000);
@@ -69,12 +71,12 @@ const EditProfile = ({ userData, onUpdate }) => {
     return (
         <div className="col-span-9 bg-white rounded-lg shadow-sm border border-gray-100 p-8">
             <div className="flex justify-between items-center mb-8">
-                
+
                 <div>
                     <h2 className="text-2xl font-bold text-gray-800">Edit Profile</h2>
                     <p className="text-gray-500">Update your personal information</p>
                 </div>
-                <button 
+                <button
                     onClick={() => navigate('/profile')}
                     className="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors text-sm font-medium"
                 >

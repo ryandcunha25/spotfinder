@@ -9,11 +9,12 @@ const PaymentConfirmation = () => {
   const [bookedVenue, setBookedVenue] = useState(null);
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const backendurl = process.env.REACT_APP_BACKEND_URL || "http://localhost:5000";
 
   useEffect(() => {
     const fetchBookings = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/bookings/confirmed-booking?book_id=${book_id}`);
+        const response = await axios.get(`${backendurl}/bookings/confirmed-booking?book_id=${book_id}`);
         setBookedVenue(response.data);
       } catch (err) {
         console.error('Error fetching bookings:', err);

@@ -15,6 +15,8 @@ const NewSupportTicket = () => {
     const [categories, setCategories] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState(null);
     const navigate = useNavigate();
+    const backendurl = process.env.REACT_APP_BACKEND_URL || "http://localhost:5000";
+
 
     useEffect(() => {
         fetchCategories();
@@ -22,7 +24,7 @@ const NewSupportTicket = () => {
 
     const fetchCategories = async () => {
         try {
-            const response = await axios.get('http://localhost:5000/grievances/categories');
+            const response = await axios.get(`${backendurl}/grievances/categories`);
             setCategories(response.data);
         } catch (error) {
             message.error('Failed to load categories');
@@ -33,18 +35,18 @@ const NewSupportTicket = () => {
         const userId = localStorage.getItem('userId');
         try {
             setLoading(true);
-            const response = await axios.post('http://localhost:5000/grievances/ticket', {
+            const response = await axios.post(`${backendurl}/grievances/ticket`, {
                 ...values,
                 category_id: selectedCategory,
                 user_id: userId
             });
-            
+
             message.success('Ticket created successfully!');
-            
+
             if (fileList.length > 0) {
                 await uploadFiles(response.data.id);
             }
-            
+
             navigate(`/user-tickets`);
         } catch (error) {
             message.error('Failed to create ticket');
@@ -59,10 +61,10 @@ const NewSupportTicket = () => {
         fileList.forEach((file) => {
             formData.append('files', file);
         });
-        
+
         try {
             setUploading(true);
-            await axios.post(`http://localhost:5000/grievances/tickets/${ticketId}/attachments`, formData, {
+            await axios.post(`${backendurl}/grievances/tickets/${ticketId}/attachments`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
@@ -102,9 +104,9 @@ const NewSupportTicket = () => {
         <div className="max-w-4xl mx-auto p-4 md:p-6">
             {/* Header with Back Button */}
             <div className="flex items-start mb-8">
-                <Button 
-                    type="text" 
-                    icon={<ArrowLeftOutlined />} 
+                <Button
+                    type="text"
+                    icon={<ArrowLeftOutlined />}
                     onClick={() => navigate('/user-tickets')}
                     className="flex items-center text-gray-600 hover:text-blue-600 mr-4 -ml-2"
                 >
@@ -125,7 +127,7 @@ const NewSupportTicket = () => {
                         Please provide detailed information about your issue
                     </p>
                 </div>
-                
+
                 <Form
                     form={form}
                     layout="vertical"
@@ -140,8 +142,8 @@ const NewSupportTicket = () => {
                                 label={<span className="block text-sm font-medium text-gray-700 mb-1">Subject</span>}
                                 rules={[{ required: true, message: 'Please enter a subject' }]}
                             >
-                                <Input 
-                                    placeholder="Briefly describe your issue" 
+                                <Input
+                                    placeholder="Briefly describe your issue"
                                     className="rounded-lg border-gray-300 hover:border-blue-400 focus:border-blue-500 h-11"
                                 />
                             </Form.Item>
@@ -172,8 +174,8 @@ const NewSupportTicket = () => {
                         name="booking_id"
                         label={<span className="block text-sm font-medium text-gray-700 mb-1">Booking Reference (optional)</span>}
                     >
-                        <Input 
-                            placeholder="Enter booking ID if applicable" 
+                        <Input
+                            placeholder="Enter booking ID if applicable"
                             className="rounded-lg border-gray-300 hover:border-blue-400 focus:border-blue-500 h-11"
                         />
                     </Form.Item>
@@ -184,7 +186,7 @@ const NewSupportTicket = () => {
                                 name="priority"
                                 label={<span className="block text-sm font-medium text-gray-700 mb-1">Priority</span>}
                             >
-                                <Select 
+                                <Select
                                     className="rounded-lg border-gray-300 hover:border-blue-400 h-11"
                                     dropdownClassName="rounded-lg"
                                     disabled
@@ -214,13 +216,13 @@ const NewSupportTicket = () => {
                         label={<span className="block text-sm font-medium text-gray-700 mb-1">Description</span>}
                         rules={[{ required: true, message: 'Please describe your issue in detail' }]}
                     >
-                        <TextArea 
-                            rows={6} 
-                            placeholder="Describe your issue in detail..." 
+                        <TextArea
+                            rows={6}
+                            placeholder="Describe your issue in detail..."
                             className="rounded-lg border-gray-300 hover:border-blue-400 focus:border-blue-500"
                         />
                     </Form.Item>
-{/* 
+                    {/* 
                     <Form.Item 
                         label={<span className="block text-sm font-medium text-gray-700 mb-1">Attachments (optional)</span>}
                         className="mb-8"
@@ -245,9 +247,9 @@ const NewSupportTicket = () => {
                     </Form.Item> */}
 
                     <div className="flex justify-end border-t border-gray-100 pt-6">
-                        <Button 
-                            type="primary" 
-                            htmlType="submit" 
+                        <Button
+                            type="primary"
+                            htmlType="submit"
                             loading={loading || uploading}
                             className="rounded-lg bg-blue-600 hover:bg-blue-700 h-11 px-8 font-medium shadow-sm"
                             size="large"

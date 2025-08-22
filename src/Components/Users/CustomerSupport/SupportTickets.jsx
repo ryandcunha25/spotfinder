@@ -45,6 +45,7 @@ const SupportTickets = () => {
     const [responses, setResponses] = useState([]);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const navigate = useNavigate();
+    const backendurl = process.env.REACT_APP_BACKEND_URL || "http://localhost:5000";
 
     useEffect(() => {
         fetchTickets();
@@ -54,7 +55,7 @@ const SupportTickets = () => {
         const user_id = localStorage.getItem('userId') || sessionStorage.getItem('userId');
         try {
             setLoading(true);
-            let url = `http://localhost:5000/grievances/alltickets/${user_id}`;
+            let url = `${backendurl}/grievances/alltickets/${user_id}`;
             if (statusFilter !== 'all') {
                 url += `?status=${statusFilter}`;
             }
@@ -70,7 +71,7 @@ const SupportTickets = () => {
     const showTicketDetails = async (ticket_id) => {
         const user_id = localStorage.getItem('userId') || sessionStorage.getItem('userId');
         try {
-            const response = await axios.get(`http://localhost:5000/grievances/tickets/${ticket_id}/${user_id}`);
+            const response = await axios.get(`${backendurl}/grievances/tickets/${ticket_id}/${user_id}`);
             setSelectedTicket(response.data.ticket);
             console.log(response.data.responses)
             setResponses(response.data.responses.map(r => ({
@@ -99,7 +100,7 @@ const SupportTickets = () => {
         setIsSubmitting(true);
         try {
             const response = await axios.post(
-                `http://localhost:5000/grievances/tickets/${selectedTicket.id}/${user_id}/responses`,
+                `${backendurl}/grievances/tickets/${selectedTicket.id}/${user_id}/responses`,
                 { message: messageText }
             );
 
@@ -132,7 +133,7 @@ const SupportTickets = () => {
         const user_id = localStorage.getItem('userId') || sessionStorage.getItem('userId');
         try {
             await axios.patch(
-                `http://localhost:5000/grievances/tickets/${selectedTicket.id}/${user_id}/close`
+                `${backendurl}/grievances/tickets/${selectedTicket.id}/${user_id}/close`
             );
 
             const updatedTicket = { ...selectedTicket, status: 'closed' };
@@ -406,37 +407,37 @@ const SupportTickets = () => {
                                 height: '100%'
                             }}>
                                 <List
-    dataSource={responses}
-    renderItem={(response) => (
-        <List.Item style={{ padding: '12px', marginBottom: '8px', backgroundColor: '#fff', borderRadius: '4px', boxShadow: '0 1px 2px rgba(0,0,0,0.1)' }}>
-            <List.Item.Meta
-                avatar={
-                    <Avatar 
-                        style={{ 
-                            backgroundColor: !response.is_admin ? '#52c41a' : '#1890ff'
-                        }}
-                        icon={<UserOutlined />}
-                    />
-                }
-                title={
-                    <Space>
-                        <Text strong style={{ color: !response.is_admin ? '#52c41a' : '#1890ff' }}>
-                            {response.user_name}
-                        </Text>
-                        <Text type="secondary" style={{ fontSize: '0.8em' }}>
-                            {formatDate(response.created_at)}
-                        </Text>
-                    </Space>
-                }
-                description={
-                    <div style={{ whiteSpace: 'pre-wrap', lineHeight: 1.6, marginTop: '4px' }}>
-                        {response.message}
-                    </div>
-                }
-            />
-        </List.Item>
-    )}
-/>
+                                    dataSource={responses}
+                                    renderItem={(response) => (
+                                        <List.Item style={{ padding: '12px', marginBottom: '8px', backgroundColor: '#fff', borderRadius: '4px', boxShadow: '0 1px 2px rgba(0,0,0,0.1)' }}>
+                                            <List.Item.Meta
+                                                avatar={
+                                                    <Avatar
+                                                        style={{
+                                                            backgroundColor: !response.is_admin ? '#52c41a' : '#1890ff'
+                                                        }}
+                                                        icon={<UserOutlined />}
+                                                    />
+                                                }
+                                                title={
+                                                    <Space>
+                                                        <Text strong style={{ color: !response.is_admin ? '#52c41a' : '#1890ff' }}>
+                                                            {response.user_name}
+                                                        </Text>
+                                                        <Text type="secondary" style={{ fontSize: '0.8em' }}>
+                                                            {formatDate(response.created_at)}
+                                                        </Text>
+                                                    </Space>
+                                                }
+                                                description={
+                                                    <div style={{ whiteSpace: 'pre-wrap', lineHeight: 1.6, marginTop: '4px' }}>
+                                                        {response.message}
+                                                    </div>
+                                                }
+                                            />
+                                        </List.Item>
+                                    )}
+                                />
                             </div>
                         </div>
 

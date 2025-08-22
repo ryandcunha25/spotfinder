@@ -2,13 +2,15 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import { StarIcon } from "@heroicons/react/24/solid";
-import {message} from 'antd';
+import { message } from 'antd';
 import TermsAndConditions from './TermsAndConditions';
 
 const BookVenue = () => {
     const location = useLocation();
     const { venueId } = location.state || {};
     const navigate = useNavigate();
+    const backendurl = process.env.REACT_APP_BACKEND_URL || "http://localhost:5000";
+
 
     const [formData, setFormData] = useState({
         eventName: "",
@@ -36,7 +38,7 @@ const BookVenue = () => {
         email: '',
         phone: ''
     });
-    
+
     const [error, setError] = useState("");
     const [isLoading, setIsLoading] = useState(true);
     const [showSummary, setShowSummary] = useState(false);
@@ -47,7 +49,7 @@ const BookVenue = () => {
     useEffect(() => {
         async function fetchVenueDetails() {
             try {
-                const response = await fetch(`http://localhost:5000/venues/${venueId}`);
+                const response = await fetch(`${backendurl}/venues/${venueId}`);
                 if (response.ok) {
                     const data = await response.json();
                     setCategories(data.category);
@@ -76,7 +78,7 @@ const BookVenue = () => {
             }
 
             try {
-                const response = await axios.get("http://localhost:5000/token/profile", {
+                const response = await axios.get(`${backendurl}/token/profile`, {
                     headers: { Authorization: `Bearer ${token}` },
                 });
                 setUser(response.data);
@@ -145,7 +147,7 @@ const BookVenue = () => {
     useEffect(() => {
         async function fetchBookedSlots() {
             try {
-                const response = await fetch(`http://localhost:5000/bookings/venue-booked-dates/${venueId}`);
+                const response = await fetch(`${backendurl}/bookings/venue-booked-dates/${venueId}`);
                 if (response.status == 200) {
                     const data = await response.json();
                     setBookedSlots(data);
@@ -159,32 +161,32 @@ const BookVenue = () => {
 
     const isSlotAvailable = () => {
         if (!formData.eventDate || !formData.startTime || !formData.endTime) {
-            return true; 
+            return true;
         }
-    
-        const selectedDate = formData.eventDate; 
-        const selectedStart = formData.startTime; 
-        const selectedEnd = formData.endTime; 
-    
+
+        const selectedDate = formData.eventDate;
+        const selectedStart = formData.startTime;
+        const selectedEnd = formData.endTime;
+
         return !bookedSlots.some(slot => {
             const slotDate = new Date(slot.booking_date).toISOString().split('T')[0];
-    
+
             if (slotDate !== selectedDate) {
-                return false; 
+                return false;
             }
-    
+
             const toMinutes = (time) => {
                 const [hours, minutes] = time.split(':').map(Number);
                 return hours * 60 + minutes;
             };
-    
+
             const slotStart = toMinutes(slot.start_time);
             const slotEnd = toMinutes(slot.end_time);
             const selectedStartMin = toMinutes(selectedStart);
             const selectedEndMin = toMinutes(selectedEnd);
-    
+
             const isOverlapping = !(selectedEndMin <= slotStart || selectedStartMin >= slotEnd);
-            
+
             return isOverlapping;
         });
     };
@@ -227,7 +229,7 @@ const BookVenue = () => {
         };
 
         try {
-            const response = await axios.post("http://localhost:5000/bookings/book", bookingDetails, {
+            const response = await axios.post(`${backendurl}/bookings/book`, bookingDetails, {
                 headers: { Authorization: `Bearer ${token}` },
             });
 
@@ -743,7 +745,7 @@ const BookVenue = () => {
                         <div className="fixed inset-0 transition-opacity" aria-hidden="true">
                             <div className="absolute inset-0 bg-gray-500 opacity-75"></div>
                         </div>
-                        
+
                         {/* Modal container */}
                         <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-4xl sm:w-full">
                             <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">

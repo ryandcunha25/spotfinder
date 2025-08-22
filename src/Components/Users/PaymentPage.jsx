@@ -1,12 +1,14 @@
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import {message} from 'antd';
+import { message } from 'antd';
 
 
 const PaymentPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const bookingDetails = location.state?.bookingDetails;
+  const backendurl = process.env.REACT_APP_BACKEND_URL || "http://localhost:5000";
+
 
   if (!bookingDetails) {
     return <p className="text-center text-red-500 font-semibold mt-10">Error: No booking details found.</p>;
@@ -25,7 +27,7 @@ const PaymentPage = () => {
     const stars = [];
     const fullStars = Math.floor(rating);
     const decimalPart = rating % 1;
-    
+
     // Full stars
     for (let i = 0; i < fullStars; i++) {
       stars.push(
@@ -44,7 +46,7 @@ const PaymentPage = () => {
         </svg>
       );
     }
-  
+
     // Half star (if needed)
     if (decimalPart > 0) {
       stars.push(
@@ -78,7 +80,7 @@ const PaymentPage = () => {
         </div>
       );
     }
-  
+
     // Empty stars
     const emptyStars = 5 - Math.ceil(rating);
     for (let i = 0; i < emptyStars; i++) {
@@ -98,14 +100,14 @@ const PaymentPage = () => {
         </svg>
       );
     }
-  
+
     return stars;
   };
 
 
   const handlePayment = async () => {
     try {
-      const response = await fetch('http://localhost:5000/razorpay/create-booking', {
+      const response = await fetch(`${backendurl}/razorpay/create-booking`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ amount: bookingDetails.total_price, currency: 'INR' }),
@@ -120,7 +122,7 @@ const PaymentPage = () => {
         description: 'Payment for venue reservation',
         order_id: order.id,
         handler: async (response) => {
-          const verifyResponse = await fetch('http://localhost:5000/razorpay/verify-payment', {
+          const verifyResponse = await fetch(`${backendurl}/razorpay/verify-payment`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -135,7 +137,7 @@ const PaymentPage = () => {
           if (result.paymentDetails.payment_status === 'Success') {
             try {
               const updateResponse = await fetch(
-                `http://localhost:5000/bookings/update-booking-status/${booking_id}`,
+                `${backendurl}/bookings/update-booking-status/${booking_id}`,
                 {
                   method: 'PUT',
                   headers: { 'Content-Type': 'application/json' },

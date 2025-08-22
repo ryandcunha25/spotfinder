@@ -15,6 +15,8 @@ const ReviewForm = () => {
     const [rating, setRating] = useState(0);
     const [hover, setHover] = useState(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const backendurl = process.env.REACT_APP_BACKEND_URL || "http://localhost:5000";
+
 
     const handleSubmit = async () => {
         if (!newReview || rating === 0) {
@@ -23,10 +25,10 @@ const ReviewForm = () => {
         }
 
         setIsSubmitting(true);
-        
+
         try {
             // Submit the review
-            const reviewResponse = await axios.post("http://localhost:5000/reviews/add", {
+            const reviewResponse = await axios.post(`${backendurl}/reviews/add`, {
                 userId,
                 bookingId,
                 rating,
@@ -38,14 +40,14 @@ const ReviewForm = () => {
                 // If notificationId exists, delete the notification
                 if (notificationId) {
                     try {
-                        await axios.delete(`http://localhost:5000/notifications/delete/${notificationId}`);
+                        await axios.delete(`${backendurl}/notifications/delete/${notificationId}`);
                         message.success("Review submitted successfully!");
                     } catch (error) {
                         console.error("Error deleting notification:", error);
                         message.success("Review submitted, but couldn't clear notification");
                     }
-                } 
-                
+                }
+
                 navigate("/venues");  // Redirect to bookings page
             } else {
                 message.error("Failed to submit review.");
@@ -80,9 +82,8 @@ const ReviewForm = () => {
                             <FaStar
                                 key={star}
                                 size={32}
-                                className={`cursor-pointer transition-colors duration-200 ${
-                                    (hover || rating) >= star ? "text-yellow-400" : "text-gray-300"
-                                }`}
+                                className={`cursor-pointer transition-colors duration-200 ${(hover || rating) >= star ? "text-yellow-400" : "text-gray-300"
+                                    }`}
                                 onClick={() => setRating(star)}
                                 onMouseEnter={() => setHover(star)}
                                 onMouseLeave={() => setHover(null)}
@@ -93,9 +94,8 @@ const ReviewForm = () => {
                 <button
                     onClick={handleSubmit}
                     disabled={isSubmitting}
-                    className={`w-full py-3 bg-green-500 hover:bg-green-600 text-white font-bold rounded-md shadow transition-all duration-200 ${
-                        isSubmitting ? 'opacity-70 cursor-not-allowed' : 'hover:scale-105 transform'
-                    }`}
+                    className={`w-full py-3 bg-green-500 hover:bg-green-600 text-white font-bold rounded-md shadow transition-all duration-200 ${isSubmitting ? 'opacity-70 cursor-not-allowed' : 'hover:scale-105 transform'
+                        }`}
                 >
                     {isSubmitting ? 'Submitting...' : 'Submit Review'}
                 </button>

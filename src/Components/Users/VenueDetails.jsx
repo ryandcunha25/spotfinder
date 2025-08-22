@@ -22,6 +22,8 @@ const VenueDetails = () => {
     const [currentMonth, setCurrentMonth] = useState(new Date());
     const [currentWeek, setCurrentWeek] = useState(new Date());
     const navigate = useNavigate();
+    const backendurl = process.env.REACT_APP_BACKEND_URL || "http://localhost:5000";
+
 
     // Helper function to parse time string (HH:MM:SS) and combine with date
     const parseTimeToDate = (dateString, timeString) => {
@@ -33,7 +35,7 @@ const VenueDetails = () => {
     useEffect(() => {
         const fetchVenueDetails = async () => {
             try {
-                const response = await fetch(`http://localhost:5000/venues/${venueId}`);
+                const response = await fetch(`${backendurl}/venues/${venueId}`);
                 if (response.ok) {
                     const data = await response.json();
                     setVenue(data);
@@ -47,7 +49,7 @@ const VenueDetails = () => {
 
         const fetchReviews = async () => {
             try {
-                const response = await fetch(`http://localhost:5000/reviews/${venueId}`);
+                const response = await fetch(`${backendurl}/reviews/${venueId}`);
                 if (response.ok) {
                     setReviews(await response.json());
                 }
@@ -58,7 +60,7 @@ const VenueDetails = () => {
 
         const fetchBookedDates = async () => {
             try {
-                const response = await fetch(`http://localhost:5000/bookings/venue-booked-dates/${venueId}`);
+                const response = await fetch(`${backendurl}/bookings/venue-booked-dates/${venueId}`);
                 if (response.status === 200) {
                     const data = await response.json();
                     // Parse dates and times from database format
@@ -102,7 +104,7 @@ const VenueDetails = () => {
         }
 
         try {
-            const response = await fetch('http://localhost:5000/favourites/add-to-wishlist', {
+            const response = await fetch(`${backendurl}/favourites/add-to-wishlist`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

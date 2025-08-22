@@ -10,6 +10,8 @@ const Accounts = () => {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
+    const backendurl = process.env.REACT_APP_BACKEND_URL || "http://localhost:5000";
+
 
     useEffect(() => {
         const fetchUserDetails = async () => {
@@ -23,7 +25,7 @@ const Accounts = () => {
             }
 
             try {
-                const response = await axios.get('http://localhost:5000/token/profile', {
+                const response = await axios.get(`${backendurl}/token/profile`, {
                     headers: { Authorization: `Bearer ${token}` },
                 });
                 setUser(response.data);
