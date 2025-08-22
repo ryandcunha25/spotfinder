@@ -22,6 +22,7 @@ const SignUp = () => {
     const [isVerifyingOtp, setIsVerifyingOtp] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const navigate = useNavigate();
+    const backendurl = process.env.REACT_APP_BACKEND_URL || "http://localhost:5000";
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -54,7 +55,7 @@ const SignUp = () => {
         try {
             // First check if email exists
             const checkResponse = await axios.post(
-                'http://localhost:5000/authentication/check-email',
+                `${backendurl}/authentication/check-email`,
                 { email: formData.email }
             );
 
@@ -64,7 +65,7 @@ const SignUp = () => {
             }
             
             await axios.post(
-                'http://localhost:5000/authentication/send-otp',
+                `${backendurl}/authentication/send-otp`,
                 { email: formData.email }
             );
             setIsOtpSent(true);
@@ -86,7 +87,7 @@ const SignUp = () => {
         setIsVerifyingOtp(true);
         try {
             const response = await axios.post(
-                'http://localhost:5000/authentication/verify-otp',
+                `${backendurl}/authentication/verify-otp`,
                 { email: formData.email, otp }
             );
             if (response.status === 200) {
@@ -128,7 +129,7 @@ const SignUp = () => {
         setIsSubmitting(true);
         try {
             await axios.post(
-                'http://localhost:5000/authentication/signup',
+                `${backendurl}/authentication/signup`,
                 formData
             );
             message.success('User registered successfully');

@@ -10,11 +10,12 @@ const Navbar = () => {
     const [notifications, setNotifications] = useState([]);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const userId = localStorage.getItem("userId");
+    const backendurl = process.env.REACT_APP_BACKEND_URL || "http://localhost:5000";
 
     useEffect(() => {
         const fetchNotifications = async () => {
             try {
-                const response = await axios.get(`http://localhost:5000/notifications/${userId}`);
+                const response = await axios.get(`${backendurl}/notifications/${userId}`);
                 setNotifications(response.data);
             } catch (error) {
                 console.error("Error fetching notifications:", error);
@@ -40,7 +41,7 @@ const Navbar = () => {
 
     const handleClearNotifications = async () => {
         try {
-            await axios.delete(`http://localhost:5000/notifications/deleteall/${userId}`);
+            await axios.delete(`${backendurl}/notifications/deleteall/${userId}`);
             setNotifications([]);
         } catch (error) {
             console.error("Error clearing notifications:", error);

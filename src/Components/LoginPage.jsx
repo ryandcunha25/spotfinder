@@ -15,6 +15,7 @@ const LoginPage = () => {
     const [forgotPasswordModalVisible, setForgotPasswordModalVisible] = useState(false);
     const [resetEmail, setResetEmail] = useState('');
     const [forgotPasswordLoading, setForgotPasswordLoading] = useState(false);
+    const backendurl = process.env.REACT_APP_BACKEND_URL || "http://localhost:5000";
 
     // Check for remembered email on component mount
     useEffect(() => {
@@ -38,7 +39,7 @@ const LoginPage = () => {
         setLoading(true);
         
         try {
-            const response = await axios.post('http://localhost:5000/authentication/login', formData);
+            const response = await axios.post(`${backendurl}/authentication/login`, formData);
             const { token, userdetails } = response.data;
 
             // Store credentials based on remember me choice
@@ -74,7 +75,7 @@ const LoginPage = () => {
 
         setForgotPasswordLoading(true);
         try {
-            await axios.post('http://localhost:5000/authentication/forgot-password', {
+            await axios.post(`${backendurl}/authentication/forgot-password`, {
                 email: resetEmail
             });
             message.success('Password reset link sent to your email!');

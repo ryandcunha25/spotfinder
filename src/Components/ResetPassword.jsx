@@ -12,6 +12,8 @@ const ResetPassword = () => {
     confirmPassword: ''
   });
   const [loading, setLoading] = useState(false);
+  const backendurl = process.env.REACT_APP_BACKEND_URL || "http://localhost:5000";
+
 
   const handleChange = (e) => {
     setFormData({
@@ -22,7 +24,7 @@ const ResetPassword = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (formData.password !== formData.confirmPassword) {
       message.error('Passwords do not match!');
       return;
@@ -35,10 +37,10 @@ const ResetPassword = () => {
 
     try {
       setLoading(true);
-      await axios.post(`http://localhost:5000/authentication/reset-password/${token}`, {
+      await axios.post(`${backendurl}/authentication/reset-password/${token}`, {
         password: formData.password
       });
-      
+
       message.success('Password reset successfully! Redirecting to login...');
       setTimeout(() => navigate('/'), 2000);
     } catch (error) {
@@ -56,7 +58,7 @@ const ResetPassword = () => {
           <h2 className="text-2xl font-bold text-white">Reset Your Password</h2>
           <p className="text-blue-100 mt-1">Enter your new password below</p>
         </div>
-        
+
         <form onSubmit={handleSubmit} className="p-6 space-y-6">
           <div className="space-y-2">
             <label className="block text-sm font-medium text-gray-700">New Password</label>
@@ -70,7 +72,7 @@ const ResetPassword = () => {
               className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200"
             />
           </div>
-          
+
           <div className="space-y-2">
             <label className="block text-sm font-medium text-gray-700">Confirm Password</label>
             <input
@@ -84,14 +86,13 @@ const ResetPassword = () => {
             />
           </div>
 
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             disabled={loading}
-            className={`w-full py-3 px-4 rounded-lg font-medium text-white transition duration-200 ${
-              loading 
-                ? 'bg-indigo-400 cursor-not-allowed' 
+            className={`w-full py-3 px-4 rounded-lg font-medium text-white transition duration-200 ${loading
+                ? 'bg-indigo-400 cursor-not-allowed'
                 : 'bg-indigo-600 hover:bg-indigo-700 shadow-md'
-            }`}
+              }`}
           >
             {loading ? (
               <span className="flex items-center justify-center">
@@ -109,7 +110,7 @@ const ResetPassword = () => {
           <p className="text-sm text-gray-600">
             Remember your password?{' '}
             <Link
-              to="/" 
+              to="/"
               className="font-medium text-indigo-600 hover:text-indigo-500"
               onClick={(e) => {
                 e.preventDefault();
