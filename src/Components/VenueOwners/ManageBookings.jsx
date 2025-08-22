@@ -41,6 +41,7 @@ const ManageBookings = () => {
     const [currentMonth, setCurrentMonth] = useState(new Date());
     const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
     const [isFiltering, setIsFiltering] = useState(false);
+    const backendurl = process.env.REACT_APP_BACKEND_URL || "http://localhost:5000";    
 
 
     useEffect(() => {
@@ -50,7 +51,7 @@ const ManageBookings = () => {
     const fetchBookings = async () => {
         const ownerId = localStorage.getItem("ownerId");
         try {
-            const response = await axios.get(`http://localhost:5000/bookings/showallbookings/${ownerId}`);
+            const response = await axios.get(`${backendurl}/bookings/showallbookings/${ownerId}`);
             setBookings(response.data);
             setLoading(false);
         } catch (error) {
@@ -78,8 +79,8 @@ const ManageBookings = () => {
 
     const handleStatusChange = async (booking_id, user_id = null, newStatus) => {
         try {
-            await axios.put(`http://localhost:5000/bookings/update-booking-status/${booking_id}`, { status: newStatus });
-            await axios.post("http://localhost:5000/notifications/add", {
+            await axios.put(`${backendurl}/bookings/update-booking-status/${booking_id}`, { status: newStatus });
+            await axios.post(`${backendurl}/notifications/add`, {
                 user_id,
                 bookingId: booking_id,
                 message: `Your booking status for booking id: #${booking_id} has been ${newStatus}.`,
@@ -94,7 +95,7 @@ const ManageBookings = () => {
 
     const fetchPaymentDetails = async (booking) => {
         try {
-            const response = await axios.get(`http://localhost:5000/razorpay/show-payment-details/${booking.booking_id}`);
+            const response = await axios.get(`${backendurl}/razorpay/show-payment-details/${booking.booking_id}`);
             setPaymentDetails(response.data);
             setSelectedBooking(booking);
             setIsModalOpen(true);
@@ -116,7 +117,7 @@ const ManageBookings = () => {
 
         try {
             const refundResponse = await axios.post(
-                `http://localhost:5000/razorpay/refund/${paymentDetails.payment_id}`
+                `${backendurl}/razorpay/refund/${paymentDetails.payment_id}`
             );
 
             if (refundResponse.status === 200) {

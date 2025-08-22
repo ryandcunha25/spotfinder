@@ -9,7 +9,8 @@ const Sidebar = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("ownerId");
     localStorage.removeItem("fullName");
-    window.location.href = "http://localhost:3000/venueownerslogin";
+    const frontendurl = process.env.FRONTEND_URL || "http://localhost:3000";
+    window.location.href = `${frontendurl}/venueownerslogin`;
   };
 
   return (

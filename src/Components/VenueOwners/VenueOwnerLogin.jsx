@@ -14,6 +14,7 @@ const VenueOwnerLogin = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const backendurl = process.env.REACT_APP_BACKEND_URL || "http://localhost:5000";
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -27,7 +28,7 @@ const VenueOwnerLogin = () => {
     e.preventDefault();
     setIsLoading(true);
     try {
-      const response = await axios.post("http://localhost:5000/owner_authentication/login", formData);
+      const response = await axios.post(`${backendurl}/owner_authentication/login`, formData);
       setSuccessMessage(response.data.message);
       setErrorMessage("");
       localStorage.setItem('token', response.data.token);

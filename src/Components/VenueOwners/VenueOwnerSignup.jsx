@@ -57,6 +57,8 @@ const VenueOwnerSignup = () => {
   const [isOtpSent, setIsOtpSent] = useState(false);
   const [isVerified, setIsVerified] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
+  const backendurl = process.env.REACT_APP_BACKEND_URL || "http://localhost:5000";
+
 
   // Steps configuration
   const [steps, setSteps] = useState([
@@ -298,7 +300,7 @@ const VenueOwnerSignup = () => {
 
     setSendOtpLoading(true);
     try {
-      await axios.post('http://localhost:5000/authentication/send-otp', { email: formData.email });
+      await axios.post(`${backendurl}/authentication/send-otp`, { email: formData.email });
       setIsOtpSent(true);
       setCurrentStep(2);
       startCountdown();
@@ -322,7 +324,7 @@ const VenueOwnerSignup = () => {
     if (!isResendDisabled) {
       setResendOtpLoading(true);
       try {
-        await axios.post('http://localhost:5000/authentication/send-otp', { email: formData.email });
+        await axios.post(`${backendurl}/authentication/send-otp`, { email: formData.email });
         startCountdown();
         message.success('OTP resent to your email');
       } catch (err) {
@@ -341,7 +343,7 @@ const VenueOwnerSignup = () => {
 
     setVerifyOtpLoading(true);
     try {
-      const response = await axios.post('http://localhost:5000/authentication/verify-otp', {
+      const response = await axios.post(`${backendurl}/authentication/verify-otp`, {
         email: formData.email,
         otp
       });
@@ -371,7 +373,7 @@ const VenueOwnerSignup = () => {
         category: Array.isArray(formData.category) ? formData.category : formData.category.split(',').map(item => item.trim())
       };
 
-      const response = await axios.post('http://localhost:5000/owner_authentication/register', payload);
+      const response = await axios.post(`${backendurl}/owner_authentication/register`, payload);
       message.success('Registration Successful!');
       navigate('/venueownerslogin');
     } catch (error) {
@@ -593,8 +595,8 @@ const VenueOwnerSignup = () => {
                     onClick={resendOtp}
                     disabled={isResendDisabled || resendOtpLoading}
                     className={`w-1/2 md:w-auto py-3 px-6 rounded-lg font-medium transition flex items-center justify-center ${isResendDisabled || resendOtpLoading
-                        ? 'bg-gray-600 text-white/50 cursor-not-allowed'
-                        : 'bg-blue-600 hover:bg-blue-700 text-white'
+                      ? 'bg-gray-600 text-white/50 cursor-not-allowed'
+                      : 'bg-blue-600 hover:bg-blue-700 text-white'
                       }`}
                   >
                     {resendOtpLoading && <LoadingSpinner />}

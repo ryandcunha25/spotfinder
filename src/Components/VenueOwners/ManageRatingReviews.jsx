@@ -21,6 +21,7 @@ const ManageRatingReviews = () => {
 
     const ownerId = localStorage.getItem("ownerId");
     const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#FF0000"];
+    const backendurl = process.env.REACT_APP_BACKEND_URL || "http://localhost:5000";
 
     useEffect(() => {
         fetchReviews();
@@ -34,7 +35,7 @@ const ManageRatingReviews = () => {
 
     const fetchReviews = async () => {
         try {
-            const response = await axios.get(`http://localhost:5000/reviews/owner/${ownerId}`);
+            const response = await axios.get(`${backendurl}/reviews/owner/${ownerId}`);
 
             if (response.status === 200) {
                 const sortedReviews = response.data.reviews.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
@@ -57,7 +58,7 @@ const ManageRatingReviews = () => {
 
     const fetchVenues = async () => {
         try {
-            const response = await axios.get(`http://localhost:5000/venues/owner/${ownerId}`);
+            const response = await axios.get(`${backendurl}/venues/owner/${ownerId}`);
             if (response.status === 200) {
                 setVenues(response.data.venues);
             }

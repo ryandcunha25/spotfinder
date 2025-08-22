@@ -19,6 +19,8 @@ const MyVenues = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
     const [successMessage, setSuccessMessage] = useState(null);
+    const backendurl = process.env.REACT_APP_BACKEND_URL || "http://localhost:5000";
+
 
     useEffect(() => {
         const fetchVenues = async () => {
@@ -32,7 +34,7 @@ const MyVenues = () => {
                     return;
                 }
 
-                const response = await fetch(`http://localhost:5000/venues/ownerspecific/${ownerId}`, {
+                const response = await fetch(`${backendurl}/venues/ownerspecific/${ownerId}`, {
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json",
@@ -94,7 +96,7 @@ const MyVenues = () => {
                 images: newVenue.images,
             };
 
-            const response = await fetch("http://localhost:5000/venues/add-venue", {
+            const response = await fetch(`${backendurl}/venues/add-venue`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -134,7 +136,7 @@ const MyVenues = () => {
         setIsLoading(true);
         try {
             const token = localStorage.getItem("token");
-            const response = await fetch(`http://localhost:5000/venues/edit-venue/${editingVenue.venue_id}`, {
+            const response = await fetch(`${backendurl}/venues/edit-venue/${editingVenue.venue_id}`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
@@ -170,7 +172,7 @@ const MyVenues = () => {
 
         setIsLoading(true);
         try {
-            const response = await fetch(`http://localhost:5000/venues/delete-venue/${venueId}`, {
+            const response = await fetch(`${backendurl}/venues/delete-venue/${venueId}`, {
                 method: "DELETE",
             });
 

@@ -64,71 +64,73 @@ const Analytics = () => {
     const ownerId = localStorage.getItem('ownerId');
     console.log('Owner ID:', ownerId);
 
+    const backendurl = process.env.REACT_APP_BACKEND_URL || "http://localhost:5000";
+
     useEffect(() => {
         if (!ownerId) return;
 
         // Fetch Total Bookings per Venue
         axios
-            .get(`http://localhost:5000/analytics/totalBookingsPerVenue?ownerId=${ownerId}`)
+            .get(`${backendurl}/analytics/totalBookingsPerVenue?ownerId=${ownerId}`)
             .then((response) => setBookingsPerVenue(response.data))
             .catch((error) => console.error('Error fetching bookings per venue:', error));
 
         // Fetch Total Revenue per Venue (Bookings Data)
         axios
-            .get(`http://localhost:5000/analytics/totalRevenueByBookings?ownerId=${ownerId}`)
+            .get(`${backendurl}/analytics/totalRevenueByBookings?ownerId=${ownerId}`)
             .then((response) => setRevenueByBookings(response.data))
             .catch((error) => console.error('Error fetching revenue by bookings:', error));
 
         // Fetch Total Revenue per Venue (Payments Data)
         axios
-            .get(`http://localhost:5000/analytics/totalRevenueByPayments?ownerId=${ownerId}`)
+            .get(`${backendurl}/analytics/totalRevenueByPayments?ownerId=${ownerId}`)
             .then((response) => setRevenueByPayments(response.data))
             .catch((error) => console.error('Error fetching revenue by payments:', error));
 
         // Fetch Average Rating and Total Reviews per Venue
         axios
-            .get(`http://localhost:5000/analytics/ratingsAndReviews?ownerId=${ownerId}`)
+            .get(`${backendurl}/analytics/ratingsAndReviews?ownerId=${ownerId}`)
             .then((response) => setRatingsReviews(response.data))
             .catch((error) => console.error('Error fetching ratings and reviews:', error));
 
         // Fetch Booking Trends by Month
         axios
-            .get(`http://localhost:5000/analytics/bookingTrends?ownerId=${ownerId}`)
+            .get(`${backendurl}/analytics/bookingTrends?ownerId=${ownerId}`)
             .then((response) => setBookingTrends(response.data))
             .catch((error) => console.error('Error fetching booking trends:', error));
 
         // Fetch Payment Trends by Month
         axios
-            .get(`http://localhost:5000/analytics/paymentTrends?ownerId=${ownerId}`)
+            .get(`${backendurl}/analytics/paymentTrends?ownerId=${ownerId}`)
             .then((response) => setPaymentTrends(response.data))
             .catch((error) => console.error('Error fetching payment trends:', error));
 
         // New endpoints
-        axios.get(`http://localhost:5000/analytics/paymentMethodDistribution?ownerId=${ownerId}`)
+        axios.get(`${backendurl}/analytics/paymentMethodDistribution?ownerId=${ownerId}`)
             .then(response => setPaymentMethodDistribution(response.data))
             .catch(error => console.error('Error fetching payment method distribution:', error));
 
-        axios.get(`http://localhost:5000/analytics/popularEventTypes?ownerId=${ownerId}`)
+        axios.get(`${backendurl}/analytics/popularEventTypes?ownerId=${ownerId}`)
             .then(response => setPopularEventTypes(response.data))
             .catch(error => console.error('Error fetching popular event types:', error));
 
-        axios.get(`http://localhost:5000/analytics/userEngagement?ownerId=${ownerId}`)
+        axios.get(`${backendurl}/analytics/userEngagement?ownerId=${ownerId}`)
             .then(response => setUserEngagement(response.data))
             .catch(error => console.error('Error fetching user engagement:', error));
 
-        axios.get(`http://localhost:5000/analytics/cancellationRate?ownerId=${ownerId}`)
+        axios.get(`${backendurl}/analytics/cancellationRate?ownerId=${ownerId}`)
             .then(response => setCancellationRate(response.data))
             .catch(error => console.error('Error fetching cancellation rate:', error));
 
-        axios.get(`http://localhost:5000/analytics/averageEventDuration?ownerId=${ownerId}`)
+        axios.get(`${backendurl}/analytics/averageEventDuration?ownerId=${ownerId}`)
             .then(response => setAvgEventDuration(response.data))
             .catch(error => console.error('Error fetching average event duration:', error));
 
-        axios.get(`http://localhost:5000/analytics/averageBookingLeadTime?ownerId=${ownerId}`)
+        axios.get(`${backendurl}/analytics/averageBookingLeadTime?ownerId=${ownerId}`)
             .then(response => setAvgBookingLeadTime(response.data))
             .catch(error => console.error('Error fetching average booking lead time:', error));
 
-        axios.get(`http://localhost:5000/analytics/ratingDistribution?ownerId=${ownerId}`)
+        axios.get(`${backendurl}/analytics/ratingDistribution?ownerId=${ownerId}`)
             .then(response => setRatingDistribution(response.data))
             .catch(error => console.error('Error fetching rating distribution:', error));
 

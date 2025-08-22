@@ -33,6 +33,7 @@ const VenueOwnerTickets = () => {
     const [responseLoading, setResponseLoading] = useState(false);
     const [messageText, setMessageText] = useState('');
     const navigate = useNavigate();
+    const backendurl = process.env.REACT_APP_BACKEND_URL || "http://localhost:5000";
 
     useEffect(() => {
         fetchTickets();
@@ -41,7 +42,7 @@ const VenueOwnerTickets = () => {
     // const fetchTickets = async () => {
     //     try {
     //         setLoading(true);
-    //         let url = 'http://localhost:5000/grievances/venueowners/tickets';
+    //         let url = '${backendurl}/grievances/venueowners/tickets';
     //         if (statusFilter !== 'all') {
     //             url += `?status=${statusFilter}`;
     //         }
@@ -63,7 +64,7 @@ const VenueOwnerTickets = () => {
     const fetchTickets = async () => {
         try {
             setLoading(true);
-            const response = await axios.get('http://localhost:5000/grievances/venueowners/tickets', {
+            const response = await axios.get(`${backendurl}/grievances/venueowners/tickets`, {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem('venueOwnerToken')}`
                 }
@@ -90,7 +91,7 @@ const VenueOwnerTickets = () => {
         try {
             setResponseLoading(true);
             const response = await axios.get(
-                `http://localhost:5000/grievances/venueowners/tickets/${ticketId}`
+                `${backendurl}/grievances/venueowners/tickets/${ticketId}`
             );
             setSelectedTicket(response.data.ticket);
             setTicketResponses(response.data.responses || []);
@@ -113,7 +114,7 @@ const VenueOwnerTickets = () => {
 
         try {
             const response = await axios.post(
-                `http://localhost:5000/grievances/venueowners/tickets/${ticketResponses[0].ticket_id}/responses`,
+                `${backendurl}/grievances/venueowners/tickets/${ticketResponses[0].ticket_id}/responses`,
                 {
                     message: messageText,
                     user_id: selectedTicket.user_id
@@ -135,7 +136,7 @@ const VenueOwnerTickets = () => {
             setMessageText('');
 
             const ticketResponse = await axios.get(
-                `http://localhost:5000/grievances/venueowners/tickets/${ticketResponses[0].ticket_id}`,
+                `${backendurl}/grievances/venueowners/tickets/${ticketResponses[0].ticket_id}`,
             );
             setSelectedTicket(ticketResponse.data.ticket);
 
@@ -147,7 +148,7 @@ const VenueOwnerTickets = () => {
     const handleStatusChange = async (newStatus) => {
         try {
             await axios.patch(
-                `http://localhost:5000/grievances/venueowners/tickets/${ticketResponses[0].ticket_id}/status`,
+                `${backendurl}/grievances/venueowners/tickets/${ticketResponses[0].ticket_id}/status`,
                 { status: newStatus },
             );
             setSelectedTicket({
