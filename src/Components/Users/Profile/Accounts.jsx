@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Routes, Route, useNavigate } from 'react-router-dom';
+import { message } from 'antd';
 import ProfileSidebar from './ProfileSidebar';
 import ProfileInfo from './ProfileInfo';
 import EditProfile from './EditProfile';
