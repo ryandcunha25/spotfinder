@@ -37,7 +37,7 @@ SpotFinder is a venue booking and management system where users can browse venue
 
 5. **Run the backend**
    ```bash
-   cd backend <br>
+   cd backend
    node server.js
    ```
 
