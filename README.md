@@ -41,7 +41,7 @@ SpotFinder is a venue booking and management system where users can browse venue
    node server.js
    ```
 
-6. **Install Dependencies**
+6. **Run the frontend**
    ```bash
    npm start
    ```
